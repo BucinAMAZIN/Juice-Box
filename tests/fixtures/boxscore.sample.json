@@ -1,0 +1,27 @@
+{
+  "id": 2026020301,
+  "gameState": "OFF",
+  "awayTeam": { "abbrev": "DET" },
+  "homeTeam": { "abbrev": "VAN" },
+  "playerByGameStats": {
+    "awayTeam": {
+      "forwards": [
+        { "playerId": 8478864, "name": { "default": "A. DeBrincat" }, "position": "R", "goals": 1, "assists": 1, "points": 2, "sog": 5, "toi": "19:12" },
+        { "playerId": 8477946, "name": { "default": "D. Larkin" }, "position": "C", "goals": 0, "assists": 0, "points": 0, "sog": 2, "toi": "20:03" }
+      ],
+      "defense": [
+        { "playerId": 8480865, "name": { "default": "M. Seider" }, "position": "D", "goals": 0, "assists": 1, "points": 1, "sog": 3, "toi": "24:30" }
+      ],
+      "goalies": [
+        { "playerId": 8478048, "name": { "default": "A. Lyon" }, "position": "G", "toi": "60:00" }
+      ]
+    },
+    "homeTeam": {
+      "forwards": [
+        { "playerId": 8478873, "name": { "default": "E. Pettersson" }, "position": "C", "goals": 0, "assists": 0, "points": 0, "sog": 1, "toi": "21:00" },
+        { "name": { "default": "" }, "position": "L", "goals": 9, "assists": 9, "points": 9, "sog": 9, "toi": "10:00" }
+      ],
+      "defense": []
+    }
+  }
+}
