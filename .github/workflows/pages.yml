@@ -91,6 +91,7 @@ jobs:
           npm run streaks -- --dry-run
           npm run grade-streaks -- --dry-run
           npm run blowouts -- --dry-run
+          npx tsx scripts/probe-ncaa.ts
 
       - name: Commit data
         if: steps.task.outputs.task == 'picks' || steps.task.outputs.task == 'grade' || steps.task.outputs.task == 'backfill'
