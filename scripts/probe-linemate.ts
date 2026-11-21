@@ -21,16 +21,16 @@ function prune(v: unknown, depth = 0): unknown {
   return v;
 }
 
-for (const sport of ["nba", "nhl", "nfl"]) {
-  console.log(`\n=== ${sport} ===`);
-  for (const q of ["limit=2000", ""]) {
-    const rows = (await get(`${API}/${sport}/v1/trends/straights${q ? "?" + q : ""}`)) as Array<{ market?: { name?: string; level?: string }; type?: string; gameId?: string }> | null;
-    if (!Array.isArray(rows)) continue;
-    const names = new Map<string, number>();
-    for (const r of rows) names.set(`${r.type}/${r.market?.name}`, (names.get(`${r.type}/${r.market?.name}`) ?? 0) + 1);
-    console.log(`  q="${q}": ${rows.length} rows; markets:`, JSON.stringify([...names]));
-    if (q === "limit=2000" && sport === "nba" && rows[0]) {
-      console.log("  SAMPLE ROW:", JSON.stringify(prune(rows[0])).slice(0, 5500));
-    }
-  }
+type Row = { market?: { name?: string }; gameId?: string };
+const base = `${API}/nba/v1/trends/straights`;
+for (const q of ["limit=100", "limit=50", "limit=20&offset=20", "limit=20&page=2", "markets=POINTS", "market=POINTS&limit=50", "gameId=20261120-IND-CLE", "sortBy=hitRate&limit=50", "minHitRate=0.8"]) {
+  const rows = (await get(`${base}?${q}`)) as Row[] | null;
+  if (Array.isArray(rows)) console.log(`  ${q}: ${rows.length} rows, first=${rows[0]?.gameId}/${rows[0]?.market?.name}, last=${rows.at(-1)?.gameId}/${rows.at(-1)?.market?.name}`);
 }
+const rows = (await get(base)) as Array<Record<string, unknown>> | null;
+if (rows?.[0]) {
+  console.log("TOP-LEVEL KEYS:", Object.keys(rows[0]).join(","));
+  console.log("SAMPLE ROW:", JSON.stringify(prune(rows[0])).slice(0, 6500));
+}
+const games = (await get(`${API}/nba/v3/games/current`)) as Array<Record<string, unknown>> | null;
+if (games?.[0]) console.log("GAME KEYS:", Object.keys(games[0]).join(","));
