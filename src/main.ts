@@ -32,6 +32,6 @@ function draw(): void {
   active[2](view, ledger);
 }
 
-root.append(h("header", { class: "bar" }, h("h1", {}, "Juice Box"), h("span", { class: "tag" }, "price it before it drops")), view, nav);
+root.append(h("header", { class: "bar" }, h("h1", {}, "Juice Box"), h("span", { class: "tag" }, "price it before it drops"), h("span", { class: "ver", title: "Site version" }, __APP_VERSION__)), view, nav);
 window.addEventListener("hashchange", draw);
 draw();
