@@ -13,6 +13,14 @@ It does not place bets, connect to a sportsbook, or tell you what to wager. Anyt
 - **Grade it.** Grade by hand, or pull the final box score from the NHL API. Grades are write-once.
 - **Judge the model, not the streak.** The Stats tab shows record, profit and ROI, plus closing line value, Brier score, log loss and a calibration table. It warns while the sample is small.
 
+## Plays, alt lines and tickets (engine only, no screen yet)
+
+- **Alt-line ladders** (`src/core/ladder.ts`): price every "N+" rung of a prop from the model, compare to the book's alternate price, and rank rungs by expected value. Alternate lines are usually posted one-sided, so the book probability still includes the vig and the edge shown is conservative.
+- **+100 ticket builder** (`src/core/ticket.ts`): search combinations of legs for tickets that pay at least +100, ranked by expected value. Legs from the same game are kept apart by default because their outcomes are correlated. When you allow them, the ticket is flagged and its joint probability should not be trusted, since it assumes independence.
+- **Play of the day** (`src/core/potd.ts`): one play per sport (NBA, NFL, NHL, MLB), the best expected value inside a price window. The default window is -110 to -135, and a real no-vig comparison is required. If nothing qualifies, the answer is no play, not a forced one.
+
+A +100 ticket pays about 2.0 in decimal odds, so it needs a joint win rate above 50% to break even. Two legs near -240 each, or three near -150, is the usual shape.
+
 ## How the model works
 
 Expected count = per-60 rate × projected minutes, summed over game states (5v5, power play, penalty kill). Opponent, pace and similar adjustments are multiplied in and clamped to ±30%. Counts are modeled as a negative binomial, since shots are more spread out than a Poisson allows.
