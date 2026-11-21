@@ -1,6 +1,20 @@
 {
- "updatedAt": "2026-11-21T20:06:20.598Z",
+ "updatedAt": "2026-11-21T20:09:56.632Z",
  "games": [
+  {
+   "id": "401864545",
+   "start": "2026-11-21T01:00Z",
+   "date": "2026-11-20",
+   "fav": "AFA",
+   "dog": "UTEP",
+   "spread": 23.5,
+   "total": 48.5,
+   "status": "post",
+   "favScore": 52,
+   "dogScore": 3,
+   "points": 55,
+   "result": "over"
+  },
   {
    "id": "401856747",
    "start": "2026-11-21T20:30Z",
