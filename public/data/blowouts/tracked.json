@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-21T20:17:36.736Z",
+ "updatedAt": "2026-11-21T20:40:52.617Z",
  "games": [
   {
    "id": "401864545",
@@ -16,6 +16,34 @@
    "result": "over"
   },
   {
+   "id": "401858310",
+   "start": "2026-11-21T17:00Z",
+   "date": "2026-11-21",
+   "fav": "WAKE",
+   "dog": "GT",
+   "spread": 22.5,
+   "total": 55.5,
+   "status": "post",
+   "favScore": 50,
+   "dogScore": 29,
+   "points": 79,
+   "result": "over"
+  },
+  {
+   "id": "401856749",
+   "start": "2026-11-21T17:00Z",
+   "date": "2026-11-21",
+   "fav": "MISS",
+   "dog": "WOF",
+   "spread": 49.5,
+   "total": 60.5,
+   "status": "post",
+   "favScore": 59,
+   "dogScore": 17,
+   "points": 76,
+   "result": "over"
+  },
+  {
    "id": "401856747",
    "start": "2026-11-21T20:30Z",
    "date": "2026-11-21",
@@ -23,7 +51,7 @@
    "dog": "SAM",
    "spread": 48.5,
    "total": 59.5,
-   "status": "pre"
+   "status": "in"
   },
   {
    "id": "401858532",
@@ -33,7 +61,7 @@
    "dog": "RUTG",
    "spread": 24.5,
    "total": 48.5,
-   "status": "pre"
+   "status": "in"
   },
   {
    "id": "401864543",
