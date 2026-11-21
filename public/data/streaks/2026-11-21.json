@@ -25,7 +25,14 @@
       "teamName": "Kings",
       "sid": "6146392364968706449",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/6146392364968706449",
-      "note": "Over 4.5 in 13 straight games."
+      "note": "Over 4.5 in 13 straight games.",
+      "home": true,
+      "alt": false,
+      "split": {
+        "games": 8,
+        "hits": 8
+      },
+      "avg": 7.92
     },
     {
       "id": "2026-11-21-s-nba-401910028-d-acuff-assists-5.5",
@@ -49,7 +56,14 @@
       "teamName": "Kings",
       "sid": "6632781124724720023",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/6632781124724720023",
-      "note": "Over 5.5 in 9 straight games."
+      "note": "Over 5.5 in 9 straight games.",
+      "home": true,
+      "alt": false,
+      "split": {
+        "games": 8,
+        "hits": 8
+      },
+      "avg": 8
     },
     {
       "id": "2026-11-21-s-nba-401910028-z-lavine-rebounds-2.5",
@@ -73,7 +87,18 @@
       "teamName": "Kings",
       "sid": "2470827333794267549",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/2470827333794267549",
-      "note": "Over 2.5 in 8 straight games."
+      "note": "Over 2.5 in 8 straight games.",
+      "home": true,
+      "alt": false,
+      "h2h": {
+        "games": 4,
+        "hits": 4
+      },
+      "split": {
+        "games": 6,
+        "hits": 6
+      },
+      "avg": 4.25
     },
     {
       "id": "2026-11-21-s-nba-401910026-c-coward-assists-3.5",
@@ -97,7 +122,18 @@
       "teamName": "Grizzlies",
       "sid": "3432258872560189864",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/3432258872560189864",
-      "note": "Over 3.5 in 7 straight games."
+      "note": "Over 3.5 in 7 straight games.",
+      "home": false,
+      "alt": false,
+      "h2h": {
+        "games": 4,
+        "hits": 0
+      },
+      "split": {
+        "games": 5,
+        "hits": 5
+      },
+      "avg": 4.71
     },
     {
       "id": "2026-11-21-s-nba-401910025-k-wagler-threes-0.5",
@@ -121,7 +157,14 @@
       "teamName": "Clippers",
       "sid": "6648399636931412376",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/6648399636931412376",
-      "note": "Over 0.5 in 7 straight games."
+      "note": "Over 0.5 in 7 straight games.",
+      "home": false,
+      "alt": false,
+      "split": {
+        "games": 6,
+        "hits": 5
+      },
+      "avg": 1.86
     },
     {
       "id": "2026-11-21-s-nba-401910026-c-spencer-pra-18.5",
@@ -145,7 +188,18 @@
       "teamName": "Grizzlies",
       "sid": "5757820179709034914",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/5757820179709034914",
-      "note": "Over 18.5 in 6 straight games."
+      "note": "Over 18.5 in 6 straight games.",
+      "home": false,
+      "alt": false,
+      "h2h": {
+        "games": 4,
+        "hits": 1
+      },
+      "split": {
+        "games": 5,
+        "hits": 4
+      },
+      "avg": 25.17
     },
     {
       "id": "2026-11-21-s-nba-401910024-d-clingan-rebounds-9.5",
@@ -169,7 +223,18 @@
       "teamName": "Trail Blazers",
       "sid": "1182229325209010577",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/1182229325209010577",
-      "note": "Over 9.5 in 6 straight games."
+      "note": "Over 9.5 in 6 straight games.",
+      "home": false,
+      "alt": false,
+      "h2h": {
+        "games": 4,
+        "hits": 2
+      },
+      "split": {
+        "games": 7,
+        "hits": 7
+      },
+      "avg": 11.83
     },
     {
       "id": "2026-11-21-s-nba-401910027-j-fears-rebounds-3.5",
@@ -193,7 +258,18 @@
       "teamName": "Pelicans",
       "sid": "7434337694217535909",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/7434337694217535909",
-      "note": "Over 3.5 in 6 straight games."
+      "note": "Over 3.5 in 6 straight games.",
+      "home": false,
+      "alt": false,
+      "h2h": {
+        "games": 4,
+        "hits": 1
+      },
+      "split": {
+        "games": 5,
+        "hits": 4
+      },
+      "avg": 5.67
     },
     {
       "id": "2026-11-21-s-nba-401910028-z-lavine-assists-1.5",
@@ -217,7 +293,18 @@
       "teamName": "Kings",
       "sid": "1799790989316063643",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/1799790989316063643",
-      "note": "Over 1.5 in 6 straight games."
+      "note": "Over 1.5 in 6 straight games.",
+      "home": true,
+      "alt": false,
+      "h2h": {
+        "games": 4,
+        "hits": 3
+      },
+      "split": {
+        "games": 5,
+        "hits": 5
+      },
+      "avg": 3.17
     },
     {
       "id": "2026-11-21-s-nba-401910025-c-martin-assists-1.5",
@@ -241,7 +328,18 @@
       "teamName": "Mavericks",
       "sid": "8659083972348871062",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/8659083972348871062",
-      "note": "Over 1.5 in 6 straight games."
+      "note": "Over 1.5 in 6 straight games.",
+      "home": true,
+      "alt": false,
+      "h2h": {
+        "games": 6,
+        "hits": 4
+      },
+      "split": {
+        "games": 20,
+        "hits": 11
+      },
+      "avg": 3.83
     },
     {
       "id": "2026-11-21-s-nba-401910024-j-brunson-threes-2.5",
@@ -265,7 +363,18 @@
       "teamName": "Knicks",
       "sid": "7853752538919731604",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/7853752538919731604",
-      "note": "Over 2.5 in 5 straight games."
+      "note": "Over 2.5 in 5 straight games.",
+      "home": true,
+      "alt": false,
+      "h2h": {
+        "games": 2,
+        "hits": 2
+      },
+      "split": {
+        "games": 4,
+        "hits": 3
+      },
+      "avg": 3.6
     },
     {
       "id": "2026-11-21-s-nba-401910024-d-avdija-threes-1.5",
@@ -289,7 +398,18 @@
       "teamName": "Trail Blazers",
       "sid": "4519831076442603933",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/4519831076442603933",
-      "note": "Over 1.5 in 5 straight games."
+      "note": "Over 1.5 in 5 straight games.",
+      "home": false,
+      "alt": false,
+      "h2h": {
+        "games": 4,
+        "hits": 2
+      },
+      "split": {
+        "games": 20,
+        "hits": 10
+      },
+      "avg": 2.8
     },
     {
       "id": "2026-11-21-s-nba-401910023-v-edgecombe-assists-3.5",
@@ -313,7 +433,18 @@
       "teamName": "76ers",
       "sid": "8491405820593045918",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/8491405820593045918",
-      "note": "Over 3.5 in 5 straight games."
+      "note": "Over 3.5 in 5 straight games.",
+      "home": true,
+      "alt": false,
+      "h2h": {
+        "games": 5,
+        "hits": 2
+      },
+      "split": {
+        "games": 4,
+        "hits": 4
+      },
+      "avg": 5.8
     },
     {
       "id": "2026-11-21-s-nba-401910024-j-brunson-assists-4.5",
@@ -337,7 +468,18 @@
       "teamName": "Knicks",
       "sid": "786720613147476382",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/786720613147476382",
-      "note": "Over 4.5 in 5 straight games."
+      "note": "Over 4.5 in 5 straight games.",
+      "home": true,
+      "alt": false,
+      "h2h": {
+        "games": 2,
+        "hits": 1
+      },
+      "split": {
+        "games": 20,
+        "hits": 14
+      },
+      "avg": 7.4
     },
     {
       "id": "2026-11-21-s-nhl-2026020363-r-leonard-sog-1.5",
@@ -361,7 +503,18 @@
       "teamName": "Capitals",
       "sid": "1329776905118941587",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/1329776905118941587",
-      "note": "Over 1.5 in 13 straight games."
+      "note": "Over 1.5 in 13 straight games.",
+      "home": false,
+      "alt": false,
+      "h2h": {
+        "games": 4,
+        "hits": 1
+      },
+      "split": {
+        "games": 14,
+        "hits": 14
+      },
+      "avg": 2.85
     },
     {
       "id": "2026-11-21-s-nhl-2026020371-b-boeser-points-0.5",
@@ -385,7 +538,18 @@
       "teamName": "Canucks",
       "sid": "648239314062410151",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/648239314062410151",
-      "note": "Over 0.5 in 9 straight games."
+      "note": "Over 0.5 in 9 straight games.",
+      "home": true,
+      "alt": false,
+      "h2h": {
+        "games": 5,
+        "hits": 1
+      },
+      "split": {
+        "games": 5,
+        "hits": 5
+      },
+      "avg": 1.33
     },
     {
       "id": "2026-11-21-s-nhl-2026020368-j-bratt-points-0.5",
@@ -409,7 +573,18 @@
       "teamName": "Devils",
       "sid": "3522019944908849568",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/3522019944908849568",
-      "note": "Over 0.5 in 9 straight games."
+      "note": "Over 0.5 in 9 straight games.",
+      "home": false,
+      "alt": false,
+      "h2h": {
+        "games": 4,
+        "hits": 3
+      },
+      "split": {
+        "games": 5,
+        "hits": 5
+      },
+      "avg": 1.22
     },
     {
       "id": "2026-11-21-s-nhl-2026020361-m-tkachuk-points-0.5",
@@ -433,7 +608,18 @@
       "teamName": "Panthers",
       "sid": "7749286412303860120",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/7749286412303860120",
-      "note": "Over 0.5 in 9 straight games."
+      "note": "Over 0.5 in 9 straight games.",
+      "home": true,
+      "alt": false,
+      "h2h": {
+        "games": 4,
+        "hits": 3
+      },
+      "split": {
+        "games": 4,
+        "hits": 4
+      },
+      "avg": 1.33
     },
     {
       "id": "2026-11-21-s-nhl-2026020368-t-meier-sog-2.5",
@@ -457,7 +643,18 @@
       "teamName": "Devils",
       "sid": "4367095785924460960",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/4367095785924460960",
-      "note": "Over 2.5 in 7 straight games."
+      "note": "Over 2.5 in 7 straight games.",
+      "home": false,
+      "alt": false,
+      "h2h": {
+        "games": 4,
+        "hits": 3
+      },
+      "split": {
+        "games": 4,
+        "hits": 4
+      },
+      "avg": 4.57
     },
     {
       "id": "2026-11-21-s-nhl-2026020364-j-roslovic-sog-1.5",
@@ -481,7 +678,18 @@
       "teamName": "Maple Leafs",
       "sid": "3655240235473830289",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/3655240235473830289",
-      "note": "Over 1.5 in 7 straight games."
+      "note": "Over 1.5 in 7 straight games.",
+      "home": true,
+      "alt": false,
+      "h2h": {
+        "games": 5,
+        "hits": 4
+      },
+      "split": {
+        "games": 7,
+        "hits": 7
+      },
+      "avg": 3.14
     },
     {
       "id": "2026-11-21-s-nhl-2026020363-a-protas-points-0.5",
@@ -505,7 +713,18 @@
       "teamName": "Capitals",
       "sid": "2815040092872245651",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/2815040092872245651",
-      "note": "Over 0.5 in 6 straight games."
+      "note": "Over 0.5 in 6 straight games.",
+      "home": false,
+      "alt": false,
+      "h2h": {
+        "games": 5,
+        "hits": 4
+      },
+      "split": {
+        "games": 4,
+        "hits": 4
+      },
+      "avg": 1.17
     },
     {
       "id": "2026-11-21-s-nhl-2026020367-s-holmstrom-points-0.5",
@@ -529,7 +748,18 @@
       "teamName": "Islanders",
       "sid": "8462047133554573718",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/8462047133554573718",
-      "note": "Over 0.5 in 6 straight games."
+      "note": "Over 0.5 in 6 straight games.",
+      "home": false,
+      "alt": false,
+      "h2h": {
+        "games": 4,
+        "hits": 1
+      },
+      "split": {
+        "games": 6,
+        "hits": 6
+      },
+      "avg": 1.67
     },
     {
       "id": "2026-11-21-s-nhl-2026020363-c-hutson-sog-1.5",
@@ -553,7 +783,14 @@
       "teamName": "Capitals",
       "sid": "8536018994516328860",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/8536018994516328860",
-      "note": "Over 1.5 in 6 straight games."
+      "note": "Over 1.5 in 6 straight games.",
+      "home": false,
+      "alt": false,
+      "split": {
+        "games": 4,
+        "hits": 4
+      },
+      "avg": 2.83
     },
     {
       "id": "2026-11-21-s-nhl-2026020364-c-coyle-sog-1.5",
@@ -577,7 +814,18 @@
       "teamName": "Blue Jackets",
       "sid": "3117328360840233361",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/3117328360840233361",
-      "note": "Over 1.5 in 6 straight games."
+      "note": "Over 1.5 in 6 straight games.",
+      "home": false,
+      "alt": false,
+      "h2h": {
+        "games": 10,
+        "hits": 5
+      },
+      "split": {
+        "games": 5,
+        "hits": 5
+      },
+      "avg": 3.33
     },
     {
       "id": "2026-11-21-s-nhl-2026020363-c-hutson-sog-2.5",
@@ -601,7 +849,10 @@
       "teamName": "Capitals",
       "sid": "5324188299619860886",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/5324188299619860886",
-      "note": "Over 2.5 in 5 straight games."
+      "note": "Over 2.5 in 5 straight games.",
+      "home": false,
+      "alt": false,
+      "avg": 3
     },
     {
       "id": "2026-11-21-s-nhl-2026020371-b-boeser-assists-0.5",
@@ -625,7 +876,18 @@
       "teamName": "Canucks",
       "sid": "8865479046664946085",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/8865479046664946085",
-      "note": "Over 0.5 in 5 straight games."
+      "note": "Over 0.5 in 5 straight games.",
+      "home": true,
+      "alt": false,
+      "h2h": {
+        "games": 5,
+        "hits": 0
+      },
+      "split": {
+        "games": 20,
+        "hits": 11
+      },
+      "avg": 1.4
     },
     {
       "id": "2026-11-21-s-nhl-2026020369-d-mercer-sog-1.5",
@@ -649,7 +911,18 @@
       "teamName": "Jets",
       "sid": "7558336295934755236",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/7558336295934755236",
-      "note": "Over 1.5 in 5 straight games."
+      "note": "Over 1.5 in 5 straight games.",
+      "home": true,
+      "alt": false,
+      "h2h": {
+        "games": 4,
+        "hits": 3
+      },
+      "split": {
+        "games": 20,
+        "hits": 13
+      },
+      "avg": 2.8
     },
     {
       "id": "2026-11-21-s-nhl-2026020364-m-knies-sog-1.5",
@@ -673,7 +946,18 @@
       "teamName": "Blue Jackets",
       "sid": "6904024416668221852",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/6904024416668221852",
-      "note": "Over 1.5 in 5 straight games."
+      "note": "Over 1.5 in 5 straight games.",
+      "home": false,
+      "alt": false,
+      "h2h": {
+        "games": 1,
+        "hits": 1
+      },
+      "split": {
+        "games": 10,
+        "hits": 2
+      },
+      "avg": 2.8
     },
     {
       "id": "2026-11-21-s-nhl-2026020369-t-connelly-sog-1.5",
@@ -697,7 +981,49 @@
       "teamName": "Golden Knights",
       "sid": "4796785299426509223",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/4796785299426509223",
-      "note": "Over 1.5 in 5 straight games."
+      "note": "Over 1.5 in 5 straight games.",
+      "home": false,
+      "alt": false,
+      "split": {
+        "games": 10,
+        "hits": 4
+      },
+      "avg": 3.8
+    },
+    {
+      "id": "2026-11-21-s-nba-401910026-c-spencer-assists-4.5",
+      "createdAt": "2026-11-21T16:22:44.148Z",
+      "gameStart": "2026-11-22T01:00Z",
+      "gameId": 401910026,
+      "sport": "nba",
+      "kind": "streak",
+      "player": "Cam Spencer",
+      "team": "MEM",
+      "opponent": "MIN",
+      "market": "assists",
+      "line": 4.5,
+      "side": "over",
+      "modelProb": 0.6226415094339623,
+      "limitOdds": -165,
+      "mean": 4.5,
+      "price": -165,
+      "book": "Hard Rock",
+      "streak": 5,
+      "home": false,
+      "alt": false,
+      "h2h": {
+        "games": 4,
+        "hits": 2
+      },
+      "split": {
+        "games": 6,
+        "hits": 5
+      },
+      "avg": 8,
+      "teamName": "Grizzlies",
+      "sid": "7620702320965321125",
+      "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/7620702320965321125",
+      "note": "Over 4.5 in 5 straight games."
     }
   ],
   "tickets": [],
