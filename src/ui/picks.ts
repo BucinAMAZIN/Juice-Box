@@ -33,6 +33,7 @@ export const liveSource: PicksSource = {
 const SPORT: Record<string, string> = { nba: "NBA", nfl: "NFL", nhl: "NHL", mlb: "MLB" };
 const WHAT: Record<string, string> = {
   sog: "shots on goal", points: "points", goals: "goals", assists: "assists", rebounds: "rebounds", threes: "threes made",
+  passYds: "passing yards", rushYds: "rushing yards", recYds: "receiving yards", receptions: "receptions", rushRecYds: "rushing + receiving yards",
   pr: "points + rebounds", pa: "points + assists", ra: "rebounds + assists", pra: "points + rebounds + assists",
 };
 const odds = (n: number): string => (n > 0 ? `+${n}` : String(n));

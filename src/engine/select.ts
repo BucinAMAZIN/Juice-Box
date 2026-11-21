@@ -20,6 +20,11 @@ export const THRESHOLDS: Record<PickMarket, number[]> = {
   pa: [],
   ra: [],
   pra: [],
+  passYds: [],
+  rushYds: [],
+  recYds: [],
+  receptions: [],
+  rushRecYds: [],
 };
 
 /** Play of the day: win probability in this band, so the shortest acceptable price lands near -110 to -135. */
@@ -82,6 +87,11 @@ const WHAT: Record<PickMarket, string> = {
   pa: "points + assists",
   ra: "rebounds + assists",
   pra: "points + rebounds + assists",
+  passYds: "passing yards",
+  rushYds: "rushing yards",
+  recYds: "receiving yards",
+  receptions: "receptions",
+  rushRecYds: "rushing + receiving yards",
 };
 
 export function describe(c: Candidate): string {

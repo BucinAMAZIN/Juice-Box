@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import { loadOffers, type LmSport } from "../src/data/linemate";
 import { buildLinks } from "../src/engine/links";
 import { NBA_MARKETS_LM } from "../src/engine/nbaRun";
+import { NFL_MARKETS_LM } from "../src/engine/nflDaily";
 import type { DayFile } from "../src/engine/types";
 
 const DATA = "public/data";
@@ -13,6 +14,7 @@ const days = files.map((f) => JSON.parse(readFileSync(`${dir}/${f}`, "utf8")) as
 
 const MARKETS: Record<string, string[]> = {
   nba: NBA_MARKETS_LM,
+  nfl: NFL_MARKETS_LM,
   nhl: ["SHOTS_ON_GOAL", "POINTS", "ASSISTS", "ANYTIME_GOAL_SCORER"],
 };
 const sports = [...new Set(days.flatMap((d) => d.picks.map((p) => p.sport)))].filter((s): s is LmSport => s in MARKETS);

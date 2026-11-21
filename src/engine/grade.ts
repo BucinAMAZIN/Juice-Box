@@ -4,8 +4,10 @@ import { findPlayer, type Boxscore } from "../data/nhl";
 import type { Market } from "../core/types";
 import type { NbaBox } from "../data/espn";
 import { boxNameKey } from "../data/linemate";
+import type { NflBox } from "../data/espn";
 import { statOf } from "./nba";
-import type { NbaMarket } from "./types";
+import { statOf as nflStat } from "./nfl";
+import type { NbaMarket, NflMarket } from "./types";
 import type { DayFile, DayGrades, GradedPick } from "./types";
 
 export interface GradeOutcome {
@@ -20,10 +22,25 @@ export function gradeDay(
   boxes: Map<number, Boxscore | null>,
   already: Set<string> = new Set(),
   nbaBoxes: Map<number, NbaBox | null> = new Map(),
+  nflBoxes: Map<number, NflBox | null> = new Map(),
 ): GradeOutcome {
   const out: GradeOutcome = { grades: [], open: [] };
   for (const pick of day.picks) {
     if (already.has(pick.id)) continue;
+    if (pick.sport === "nfl") {
+      const nfl = nflBoxes.get(pick.gameId);
+      if (!nfl) out.open.push({ pickId: pick.id, reason: "No box score" });
+      else if (!nfl.final) out.open.push({ pickId: pick.id, reason: "Game not final" });
+      else {
+        const key = boxNameKey(pick.player);
+        const line = nfl.players.find((p) => p.key === key);
+        // A player with no line in the box score had no stats in that category, which grades as zero.
+        const actual = line ? nflStat(line, pick.market as NflMarket) : 0;
+        const outcome = gradeSide(pick.side, pick.line, actual);
+        out.grades.push({ pickId: pick.id, actual, outcome, profitAtLimit: profitUnits(outcome, pick.price ?? pick.limitOdds, 1) });
+      }
+      continue;
+    }
     if (pick.sport === "nba") {
       const nba = nbaBoxes.get(pick.gameId);
       if (!nba) out.open.push({ pickId: pick.id, reason: "No box score" });

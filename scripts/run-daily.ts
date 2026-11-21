@@ -1,11 +1,12 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { loadOffers } from "../src/data/linemate";
 import { loadBoxscore, loadClubSchedule, loadLeaders, loadSchedule } from "../src/data/nhl";
-import { loadNbaBox, loadNbaScoreboard, loadNbaSeasonAverages } from "../src/data/espn";
+import { loadNbaBox, loadNbaScoreboard, loadNbaSeasonAverages, loadNflBox, loadNflSeasonAverages, loadNflWeek } from "../src/data/espn";
 import { generateDay } from "../src/engine/daily";
 import type { DayFile } from "../src/engine/types";
 import { appendNew, mergeDays } from "../src/engine/merge";
 import { NBA_MARKETS_LM, generateNbaDayOrNote } from "../src/engine/nbaRun";
+import { NFL_MARKETS_LM, generateNflDayOrNote } from "../src/engine/nflDaily";
 import { shortOdds } from "../src/engine/select";
 
 const DATA = "public/data";
@@ -24,11 +25,17 @@ const { day: nbaDay, log: nbaLog } = await generateNbaDayOrNote(
   now,
   opts,
 );
-const log = [...nhlLog, ...nbaLog];
+const { day: nflDay, log: nflLog } = await generateNflDayOrNote(
+  { loadWeek: loadNflWeek, loadBox: loadNflBox, loadAverages: loadNflSeasonAverages, loadOffers: () => loadOffers("nfl", NFL_MARKETS_LM) },
+  now,
+  opts,
+);
+const log = [...nhlLog, ...nbaLog, ...nflLog];
 const label = (tag: string, notes: string[]) => notes.map((n) => (n.startsWith(`${tag}:`) ? n : `${tag}: ${n}`));
 nhlDay.notes = label("NHL", nhlDay.notes);
 nbaDay.notes = label("NBA", nbaDay.notes);
-const day = mergeDays([nhlDay, nbaDay]);
+nflDay.notes = label("NFL", nflDay.notes);
+const day = mergeDays([nhlDay, nbaDay, nflDay]);
 for (const line of log) console.log(line);
 
 console.log(`\nPicks for ${day.date} (${day.modelVersion}):`);

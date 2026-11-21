@@ -4,7 +4,9 @@ export type PickKind = "potd" | "lean" | "alt" | "ticket";
 export type NhlMarket = "sog" | "points" | "goals" | "assists";
 /** Basketball markets. "pra" is points + rebounds + assists, "pr" points + rebounds, and so on. */
 export type NbaMarket = "points" | "rebounds" | "assists" | "threes" | "pr" | "pa" | "ra" | "pra";
-export type PickMarket = NhlMarket | NbaMarket;
+/** Football markets. "rushRecYds" is rushing plus receiving yards. */
+export type NflMarket = "passYds" | "rushYds" | "recYds" | "receptions" | "rushRecYds";
+export type PickMarket = NhlMarket | NbaMarket | NflMarket;
 export type PickOutcome = "win" | "loss" | "push";
 
 /** A pick the engine hands out. Frozen when written to the day file. */

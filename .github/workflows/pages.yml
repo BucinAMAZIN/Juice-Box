@@ -4,7 +4,8 @@ on:
   push:
     branches: [main]
   schedule:
-    # 19:00 UTC is 2pm Eastern in winter, 3pm in summer. Picks go out before the evening games.
+    # 14:00 UTC (10am Eastern in winter) catches Sunday NFL games before kickoff; the 19:00 UTC run only adds new picks.
+    - cron: "0 14 * * *"
     - cron: "0 19 * * *"
     # 12:00 UTC is 7am Eastern in winter. Grades the previous night's picks.
     - cron: "0 12 * * *"
@@ -48,7 +49,7 @@ jobs:
           INPUT_TASK: ${{ inputs.task }}
         run: |
           if [ "$EVENT" = "schedule" ]; then
-            if [ "$SCHEDULE" = "0 19 * * *" ]; then echo "task=picks" >> "$GITHUB_OUTPUT"; else echo "task=grade" >> "$GITHUB_OUTPUT"; fi
+            if [ "$SCHEDULE" = "0 19 * * *" ] || [ "$SCHEDULE" = "0 14 * * *" ]; then echo "task=picks" >> "$GITHUB_OUTPUT"; else echo "task=grade" >> "$GITHUB_OUTPUT"; fi
           elif [ "$EVENT" = "workflow_dispatch" ]; then
             echo "task=$INPUT_TASK" >> "$GITHUB_OUTPUT"
           else

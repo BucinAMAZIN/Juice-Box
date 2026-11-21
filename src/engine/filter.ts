@@ -16,6 +16,11 @@ export const FAMILY: Record<PickMarket, string> = {
   pa: "Pts+Ast",
   ra: "Reb+Ast",
   pra: "PRA",
+  passYds: "Pass yds",
+  rushYds: "Rushing yds",
+  recYds: "Receiving yds",
+  receptions: "Receptions",
+  rushRecYds: "Rush+Rec yds",
 };
 
 /** A model probability at or above this would be priced about -233 or worse, where ParlayBOT's history lost money. */

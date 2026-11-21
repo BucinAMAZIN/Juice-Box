@@ -14,6 +14,11 @@ export const LM_NAMES: Record<PickMarket, string[]> = {
   pa: ["POINTS_PLUS_ASSISTS"],
   ra: ["ASSISTS_PLUS_REBOUNDS"],
   pra: ["POINTS_PLUS_ASSISTS_PLUS_REBOUNDS"],
+  passYds: ["PASSING_YARDS"],
+  rushYds: ["RUSHING_YARDS"],
+  recYds: ["RECEIVING_YARDS"],
+  receptions: ["RECEPTIONS"],
+  rushRecYds: ["RUSHING_PLUS_RECEIVING_YARDS"],
 };
 
 /** Attach Linemate's best price to each candidate. A candidate Linemate has no matching price for is dropped. */

@@ -1,5 +1,5 @@
 import { easternDate } from "../data/autograde";
-import type { NbaBox } from "../data/espn";
+import type { NbaBox, NflBox } from "../data/espn";
 import type { Offer } from "../data/linemate";
 import type { Boxscore, ClubGame, Leaders, ScheduledGame } from "../data/nhl";
 import { attachPrices } from "./pricing";
@@ -23,6 +23,7 @@ export interface Fetchers {
   loadOffers?(): Promise<Offer[]>;
   /** NBA box scores, for grading NBA picks. */
   loadNbaBox?(gameId: number): Promise<NbaBox | null>;
+  loadNflBox?(gameId: number): Promise<NflBox | null>;
 }
 
 const FINAL = new Set(["FINAL", "OFF"]);
@@ -178,7 +179,7 @@ export async function gradePending(
     const pending = day.picks.filter((p) => !done.has(p.id) && Date.parse(p.gameStart) < lastStart);
     if (pending.length === 0) continue;
 
-    const ids = [...new Set(pending.filter((p) => p.sport !== "nba").map((p) => p.gameId))];
+    const ids = [...new Set(pending.filter((p) => p.sport !== "nba" && p.sport !== "nfl").map((p) => p.gameId))];
     const boxes = new Map<number, Boxscore | null>();
     await mapLimit(ids, 4, async (id) => {
       try {
@@ -197,7 +198,17 @@ export async function gradePending(
       }
     });
 
-    const { grades, open } = gradeDay({ ...day, picks: pending }, boxes, new Set(), nbaBoxes);
+    const nflIds = [...new Set(pending.filter((p) => p.sport === "nfl").map((p) => p.gameId))];
+    const nflBoxes = new Map<number, NflBox | null>();
+    await mapLimit(nflIds, 4, async (id) => {
+      try {
+        nflBoxes.set(id, f.loadNflBox ? await retry(() => f.loadNflBox!(id)) : null);
+      } catch {
+        nflBoxes.set(id, null);
+      }
+    });
+
+    const { grades, open } = gradeDay({ ...day, picks: pending }, boxes, new Set(), nbaBoxes, nflBoxes);
     log.push(`${day.date}: graded ${grades.length}, left ${open.length} open`);
     if (grades.length > 0) updated.set(day.date, mergeGrades(existing.get(day.date) ?? null, day.date, grades, now));
   }

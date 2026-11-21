@@ -186,3 +186,142 @@ export async function loadNbaSeasonAverages(date: string, pages = 2): Promise<Se
   }
   return [...byKey.values()];
 }
+
+// ---------------------------------------------------------------- NFL
+
+export const NFL_SITE = "https://site.api.espn.com/apis/site/v2/sports/football/nfl";
+export const NFL_COMMON = "https://site.api.espn.com/apis/common/v3/sports/football/nfl";
+
+export interface NflLine {
+  name: string;
+  key: string;
+  team: string;
+  opponent: string;
+  passYds: number;
+  rushYds: number;
+  recYds: number;
+  receptions: number;
+}
+
+export interface NflBox {
+  gameId: number;
+  final: boolean;
+  players: NflLine[];
+}
+
+export function parseNflBox(json: unknown, gameId: number): NflBox | null {
+  if (!isObj(json) || !isObj(json.boxscore)) return null;
+  const header = isObj(json.header) ? arr(json.header.competitions)[0] : null;
+  const status = isObj(header) && isObj(header.status) && isObj(header.status.type) ? header.status.type : null;
+  const final = status ? status.completed === true : false;
+  const blocks = arr(json.boxscore.players).filter(isObj);
+  const codes = blocks.map((b) => (isObj(b.team) ? str(b.team.abbreviation) : ""));
+  const WANT: Record<string, Array<[string, keyof Pick<NflLine, "passYds" | "rushYds" | "recYds" | "receptions">]>> = {
+    passing: [["passingYards", "passYds"]],
+    rushing: [["rushingYards", "rushYds"]],
+    receiving: [["receivingYards", "recYds"], ["receptions", "receptions"]],
+  };
+  const players = new Map<string, NflLine>();
+  blocks.forEach((block, i) => {
+    for (const stat of arr(block.statistics).filter(isObj)) {
+      const wanted = WANT[str(stat.name)];
+      if (!wanted) continue;
+      const keys = arr(stat.keys).map(str);
+      for (const a of arr(stat.athletes)) {
+        if (!isObj(a) || !isObj(a.athlete)) continue;
+        const name = str(a.athlete.displayName);
+        const id = `${i}|${name}`;
+        let line = players.get(id);
+        if (!line) {
+          line = { name, key: boxNameKey(name), team: codes[i] ?? "", opponent: codes[1 - i] ?? "", passYds: 0, rushYds: 0, recYds: 0, receptions: 0 };
+          players.set(id, line);
+        }
+        const s = arr(a.stats);
+        for (const [key, field] of wanted) {
+          const at = keys.indexOf(key);
+          if (at >= 0) line[field] = toNum(s[at]);
+        }
+      }
+    }
+  });
+  return players.size > 0 ? { gameId, final, players: [...players.values()] } : null;
+}
+
+export interface NflAvg {
+  name: string;
+  key: string;
+  games: number;
+  passYds: number;
+  rushYds: number;
+  recYds: number;
+  receptions: number;
+}
+
+/** Per-game averages from a byathlete page. Receptions come as a season total and are divided by games played. */
+export function parseNflByAthlete(json: unknown): NflAvg[] {
+  if (!isObj(json)) throw new Error("Unexpected byathlete response");
+  const cats = arr(json.categories).filter(isObj);
+  const index = (cat: string, name: string) => {
+    const c = cats.find((x) => x.name === cat);
+    return c ? arr(c.names).map(str).indexOf(name) : -1;
+  };
+  const iGp = index("general", "gamesPlayed");
+  const iPass = index("passing", "passingYardsPerGame");
+  const iRush = index("rushing", "rushingYardsPerGame");
+  const iRec = index("receiving", "receivingYardsPerGame");
+  const iCatch = index("receiving", "receptions");
+  if ([iGp, iPass, iRush, iRec, iCatch].some((i) => i < 0)) throw new Error("NFL byathlete columns changed");
+  const out: NflAvg[] = [];
+  for (const row of arr(json.athletes)) {
+    if (!isObj(row) || !isObj(row.athlete)) continue;
+    const byCat = new Map<string, number[]>();
+    for (const c of arr(row.categories)) if (isObj(c)) byCat.set(str(c.name), arr(c.values).map((v) => (typeof v === "number" ? v : 0)));
+    const gp = byCat.get("general")?.[iGp] ?? 0;
+    if (gp <= 0) continue;
+    const name = str(row.athlete.displayName);
+    out.push({
+      name,
+      key: boxNameKey(name),
+      games: gp,
+      passYds: byCat.get("passing")?.[iPass] ?? 0,
+      rushYds: byCat.get("rushing")?.[iRush] ?? 0,
+      recYds: byCat.get("receiving")?.[iRec] ?? 0,
+      receptions: (byCat.get("receiving")?.[iCatch] ?? 0) / gp,
+    });
+  }
+  return out;
+}
+
+export interface WeekInfo {
+  week: number;
+  games: NbaGame[];
+}
+
+/** The scoreboard for a week, or the current week when none is given. */
+export async function loadNflWeek(week?: number): Promise<WeekInfo> {
+  const json = await getJson(`${NFL_SITE}/scoreboard${week ? `?seasontype=2&week=${week}` : ""}`);
+  const number = isObj(json) && isObj(json.week) ? Number(json.week.number) : week ?? 0;
+  return { week: Number.isFinite(number) ? number : 0, games: parseScoreboard(json) };
+}
+
+export async function loadNflBox(gameId: number): Promise<NflBox | null> {
+  return parseNflBox(await getJson(`${NFL_SITE}/summary?event=${gameId}`), gameId);
+}
+
+export function nflSeason(date: string): number {
+  const y = Number(date.slice(0, 4));
+  return Number(date.slice(5, 7)) >= 8 ? y : y - 1;
+}
+
+export async function loadNflSeasonAverages(date: string, pages = 2): Promise<NflAvg[]> {
+  const season = nflSeason(date);
+  const sorts = ["passing.passingYards", "rushing.rushingYards", "receiving.receivingYards", "receiving.receptions"];
+  const byKey = new Map<string, NflAvg>();
+  for (const sort of sorts) {
+    for (let page = 1; page <= pages; page++) {
+      const url = `${NFL_COMMON}/statistics/byathlete?season=${season}&seasontype=2&limit=50&page=${page}&sort=${encodeURIComponent(sort + ":desc")}`;
+      for (const a of parseNflByAthlete(await getJson(url))) byKey.set(`${a.key}|${a.name}`, a);
+    }
+  }
+  return [...byKey.values()];
+}
