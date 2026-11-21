@@ -141,13 +141,13 @@ export async function generateDay(f: Fetchers, now: Date, opts: { date?: string 
       offers = await retry(() => f.loadOffers!());
     } catch (err) {
       log.push(`Could not read Linemate (${(err as Error).message}), so no picks were made`);
-      const none = selectDay(date, [], now);
+      const none = selectDay(date, [], now, undefined, { priced: true });
       none.notes.push("Linemate could not be read, so no picks were made.");
       return { day: none, log };
     }
     log.push(`Linemate: ${offers.length} NHL offers`);
     if (offers.length === 0) {
-      const none = selectDay(date, [], now);
+      const none = selectDay(date, [], now, undefined, { priced: true });
       none.notes.push("Linemate has no NHL data yet, so no picks were made.");
       return { day: none, log };
     }
