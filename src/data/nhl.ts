@@ -165,16 +165,54 @@ export async function loadClubSchedule(team: string): Promise<ClubGame[]> {
   return parseClubSchedule(await getJson(`${NHL_BASE}/club-schedule-season/${team}/now`));
 }
 
-async function getJson(url: string, timeoutMs = 10_000): Promise<unknown> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, { signal: controller.signal });
-    if (!res.ok) throw new Error(`NHL API ${res.status} for ${url}`);
-    return await res.json();
-  } finally {
-    clearTimeout(timer);
+/** Minimum gap between requests to the NHL API. It rate-limits (HTTP 429) when hit with bursts. */
+export const MIN_GAP_MS = 300;
+const BACKOFF_MS = [2_000, 5_000, 10_000, 20_000];
+
+const realSleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+let gate: Promise<void> = Promise.resolve();
+
+/** Space request starts apart, whatever the caller's concurrency. */
+function throttle(sleep: (ms: number) => Promise<void>): Promise<void> {
+  const turn = gate.then(() => sleep(MIN_GAP_MS));
+  gate = turn;
+  return turn;
+}
+
+export interface FetchDeps {
+  fetchFn: typeof fetch;
+  sleep: (ms: number) => Promise<void>;
+  timeoutMs: number;
+}
+
+/**
+ * GET and parse JSON, paced, retrying on rate limits (429) and server errors with backoff.
+ * Honors a Retry-After header when the API sends one. Other errors fail immediately.
+ */
+export async function fetchJsonWithRetry(url: string, deps: Partial<FetchDeps> = {}): Promise<unknown> {
+  const fetchFn = deps.fetchFn ?? fetch;
+  const sleep = deps.sleep ?? realSleep;
+  const timeoutMs = deps.timeoutMs ?? 10_000;
+
+  for (let attempt = 0; ; attempt++) {
+    await throttle(sleep);
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetchFn(url, { signal: controller.signal });
+      if (res.ok) return await res.json();
+      const retryable = res.status === 429 || res.status >= 500;
+      if (!retryable || attempt >= BACKOFF_MS.length) throw new Error(`NHL API ${res.status} for ${url}`);
+      const header = Number(res.headers.get("retry-after"));
+      await sleep(Number.isFinite(header) && header > 0 ? Math.min(header * 1000, 30_000) : BACKOFF_MS[attempt]!);
+    } finally {
+      clearTimeout(timer);
+    }
   }
+}
+
+function getJson(url: string, timeoutMs = 10_000): Promise<unknown> {
+  return fetchJsonWithRetry(url, { timeoutMs });
 }
 
 export async function loadSchedule(date: string): Promise<ScheduledGame[]> {

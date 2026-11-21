@@ -63,7 +63,16 @@ export async function generateDay(f: Fetchers, now: Date, opts: { date?: string 
   }
 
   const teams = [...new Set(slate.flatMap((g) => [g.away, g.home]))];
-  const clubs = await mapLimit(teams, 4, (t) => retry(() => f.loadClubSchedule(t)));
+  const failedTeams: string[] = [];
+  const clubs = await mapLimit(teams, 3, async (t) => {
+    try {
+      return await retry(() => f.loadClubSchedule(t));
+    } catch {
+      failedTeams.push(t);
+      return [] as ClubGame[];
+    }
+  });
+  if (failedTeams.length) log.push(`Could not read the schedule for ${failedTeams.join(", ")}, so those teams get no picks`);
   const recent = new Map<number, string>();
   clubs.forEach((games) => {
     games
@@ -76,7 +85,7 @@ export async function generateDay(f: Fetchers, now: Date, opts: { date?: string 
 
   const boxes: DatedBox[] = [];
   let failed = 0;
-  await mapLimit([...recent], 4, async ([id, boxDate]) => {
+  await mapLimit([...recent], 3, async ([id, boxDate]) => {
     try {
       const box = await retry(() => f.loadBoxscore(id));
       if (box && box.final && box.players.length > 0) boxes.push({ date: boxDate, box });
