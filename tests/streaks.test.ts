@@ -52,3 +52,40 @@ describe("streak list", () => {
     expect(again.day.picks[0]!.price).toBe(-400);
   });
 });
+
+import { defaultFilters, passes } from "../src/ui/filters";
+describe("streak filters", () => {
+  const base = { id: "a", createdAt: "", gameStart: "", gameId: 1, sport: "nba" as const, kind: "streak" as const, player: "P", team: "LAL", opponent: "DEN", market: "points" as const, line: 9.5, side: "over" as const, modelProb: 0.8, limitOdds: -300, mean: 9.5, price: -300, streak: 8, h2h: { games: 4, hits: 4 }, split: { games: 6, hits: 4 }, avg: 14, note: "" };
+  it("filters by signals, price, line type and bet type", () => {
+    const f = defaultFilters();
+    expect(passes(base, f)).toBe(true);
+    expect(passes(base, { ...f, h2h: 1 })).toBe(true);
+    expect(passes(base, { ...f, split: 0.75 })).toBe(false);
+    expect(passes(base, { ...f, cushion: 0.25 })).toBe(true);
+    expect(passes(base, { ...f, cushion: 0.6 })).toBe(false);
+    expect(passes(base, { ...f, maxJuice: -200 })).toBe(false);
+    expect(passes(base, { ...f, minStreak: 10 })).toBe(false);
+    expect(passes({ ...base, alt: true }, { ...f, line: "main" })).toBe(false);
+    expect(passes(base, { ...f, off: new Set(["points"]) })).toBe(false);
+    expect(passes({ ...base, h2h: undefined }, { ...f, h2h: 0.75 })).toBe(false);
+  });
+});
+
+describe("signals on streak rows", () => {
+  it("captures head-to-head, venue split, average and line type, and backfills saved rows without touching the price", () => {
+    const row = raw({ home: true, alternate: true, signals: [
+      { type: "RECENT_FORM", hitRecord: { games: 8, hits: 8, average: 14.5 } },
+      { type: "HEAD_TO_HEAD", hitRecord: { games: 3, hits: 3 } },
+      { type: "HOME_SPLIT", hitRecord: { games: 6, hits: 5 } },
+      { type: "AWAY_SPLIT", hitRecord: { games: 4, hits: 1 } },
+    ] });
+    const { picks } = buildStreakPicks("nba", offers(row), [game], NOW, DATE);
+    expect(picks[0]).toMatchObject({ home: true, alt: true, h2h: { games: 3, hits: 3 }, split: { games: 6, hits: 5 }, avg: 14.5 });
+    const old = { ...picks[0]!, price: -250 } as typeof picks[0];
+    delete (old as Partial<typeof old>).h2h;
+    delete (old as Partial<typeof old>).split;
+    const saved = { date: DATE, generatedAt: "", modelVersion: "x", picks: [old], tickets: [], notes: [] };
+    const r = appendStreaks(saved, DATE, picks, [], NOW);
+    expect(r.day.picks[0]).toMatchObject({ price: -250, h2h: { games: 3, hits: 3 }, split: { games: 6, hits: 5 } });
+  });
+});

@@ -44,7 +44,7 @@ mkdirSync(`${DATA}/streaks`, { recursive: true });
 const file = `${DATA}/streaks/${date}.json`;
 const saved = existsSync(file) ? (JSON.parse(readFileSync(file, "utf8")) as DayFile) : null;
 const { day, added } = appendStreaks(saved, date, picks, notes, now);
-if (added > 0 || !saved) writeFileSync(file, JSON.stringify(day, null, 2) + "\n");
+if (added > 0 || !saved || JSON.stringify(saved) !== JSON.stringify(day)) writeFileSync(file, JSON.stringify(day, null, 2) + "\n");
 console.log(`${file}: ${added} new streak(s) added.`);
 const dates = readdirSync(`${DATA}/streaks`).filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f)).map((f) => f.replace(".json", "")).sort();
 writeFileSync(`${DATA}/streaks/index.json`, JSON.stringify({ dates, updatedAt: now.toISOString() }, null, 2) + "\n");

@@ -40,6 +40,12 @@ export interface HandedPick {
   teamName?: string;
   url?: string;
   sid?: string;
+  /** Streak picks: at home, alternate line, head-to-head and home/away records, and the average over the streak. */
+  home?: boolean;
+  alt?: boolean;
+  h2h?: { games: number; hits: number };
+  split?: { games: number; hits: number };
+  avg?: number;
   note: string;
 }
 

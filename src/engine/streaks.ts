@@ -99,6 +99,11 @@ export function buildStreakPicks(sport: LmSport, offers: Offer[], games: GameRef
       price: rung.american,
       book: "Hard Rock",
       streak: o.recent.games,
+      ...(o.home != null ? { home: o.home } : {}),
+      ...(o.alternate != null ? { alt: o.alternate } : {}),
+      ...(o.h2h ? { h2h: o.h2h } : {}),
+      ...(o.split ? { split: o.split } : {}),
+      ...(o.avg != null ? { avg: Math.round(o.avg * 100) / 100 } : {}),
       ...(o.teamName ? { teamName: o.teamName } : {}),
       ...(rung.sid ? { sid: rung.sid, url: hardRockUrl([rung.sid]) } : {}),
       note: `Over ${o.line} in ${o.recent.games} straight games.`,
@@ -114,5 +119,14 @@ export function appendStreaks(saved: DayFile | null, date: string, fresh: Handed
   const base: DayFile = saved ?? { date, generatedAt: now.toISOString(), modelVersion: "streaks-v1", picks: [], tickets: [], notes: [] };
   const have = new Set(base.picks.map((p) => p.id));
   const add = fresh.filter((p) => !have.has(p.id));
-  return { day: { ...base, picks: [...base.picks, ...add], notes: saved ? base.notes : notes }, added: add.length };
+  // A saved row keeps its line, price and link for good. Only context fields it lacks (signals) may be filled in.
+  const freshById = new Map(fresh.map((p) => [p.id, p]));
+  const filled = base.picks.map((p) => {
+    const f = freshById.get(p.id);
+    if (!f) return p;
+    const extra: Partial<HandedPick> = {};
+    for (const k of ["home", "alt", "h2h", "split", "avg"] as const) if (p[k] === undefined && f[k] !== undefined) Object.assign(extra, { [k]: f[k] });
+    return Object.keys(extra).length ? { ...p, ...extra } : p;
+  });
+  return { day: { ...base, picks: [...filled, ...add], notes: saved ? base.notes : notes }, added: add.length };
 }

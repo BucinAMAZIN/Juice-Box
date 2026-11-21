@@ -1,4 +1,5 @@
 import { clear, h } from "./dom";
+import { cushionOf } from "./filters";
 import { pct } from "./format";
 import type { PicksSource } from "./picks";
 import { loadHistory, type DayResult } from "./results";
@@ -19,14 +20,25 @@ export interface Records {
   byStreak: Map<string, Tally>;
   byPrice: Map<string, Tally>;
   byMarket: Map<string, Tally>;
+  byH2h: Map<string, Tally>;
+  bySplit: Map<string, Tally>;
+  byCushion: Map<string, Tally>;
+  byLine: Map<string, Tally>;
 }
 
 export const streakBucket = (n: number): string => (n >= 10 ? "10+ straight" : n >= 7 ? "7 to 9 straight" : "5 to 6 straight");
 export const priceBucket = (p: number): string => (p <= -300 ? "-300 or shorter" : p <= -200 ? "-299 to -200" : p <= -150 ? "-199 to -150" : "-149 or longer");
 
+export const rateBucket = (r?: { games: number; hits: number }): string => {
+  if (!r || r.games === 0) return "No record";
+  const x = r.hits / r.games;
+  return x >= 1 ? "100%" : x >= 0.75 ? "75% to 99%" : "Under 75%";
+};
+export const cushionBucket = (c: number | null): string => (c == null ? "No average" : c >= 0.25 ? "+25% or more" : c >= 0.1 ? "+10% to +25%" : "Under +10%");
+
 /** Tally every graded streak prop overall and by sport, streak length, price and market. */
 export function summarizeRecords(history: DayResult[]): Records {
-  const r: Records = { overall: empty(), bySport: new Map(), byStreak: new Map(), byPrice: new Map(), byMarket: new Map() };
+  const r: Records = { overall: empty(), bySport: new Map(), byStreak: new Map(), byPrice: new Map(), byMarket: new Map(), byH2h: new Map(), bySplit: new Map(), byCushion: new Map(), byLine: new Map() };
   const add = (m: Map<string, Tally>, k: string, outcome: string, units: number) => {
     const t = m.get(k) ?? empty();
     bump(t, outcome, units);
@@ -42,6 +54,10 @@ export function summarizeRecords(history: DayResult[]): Records {
       add(r.byStreak, streakBucket(p.streak ?? 0), g.outcome, g.profitAtLimit);
       add(r.byPrice, priceBucket(p.price ?? p.limitOdds), g.outcome, g.profitAtLimit);
       add(r.byMarket, p.market, g.outcome, g.profitAtLimit);
+      add(r.byH2h, rateBucket(p.h2h), g.outcome, g.profitAtLimit);
+      add(r.bySplit, rateBucket(p.split), g.outcome, g.profitAtLimit);
+      add(r.byCushion, cushionBucket(cushionOf(p)), g.outcome, g.profitAtLimit);
+      add(r.byLine, p.alt ? "Alternate line" : "Main line", g.outcome, g.profitAtLimit);
     }
   }
   return r;
@@ -100,5 +116,9 @@ export async function renderRecords(root: HTMLElement, _ledger?: unknown, source
     table("By streak length", r.byStreak, (k) => k),
     table("By price", r.byPrice, (k) => k),
     table("By market", r.byMarket, (k) => MARKET_LABEL[k] ?? k),
+    table("By head to head", r.byH2h, (k) => k),
+    table("By home/away split", r.bySplit, (k) => k),
+    table("By cushion over the line", r.byCushion, (k) => k),
+    table("By line type", r.byLine, (k) => k),
   );
 }

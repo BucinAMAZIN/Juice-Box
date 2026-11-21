@@ -58,6 +58,12 @@ export interface Offer {
   /** The line this row's hit record is for, and the team's display name. */
   line?: number;
   teamName?: string;
+  /** Whether the player's team is at home, whether the line is an alternate, and Linemate's other hit records. */
+  home?: boolean;
+  alternate?: boolean;
+  h2h?: { games: number; hits: number };
+  split?: { games: number; hits: number };
+  avg?: number;
 }
 
 type Obj = Record<string, unknown>;
@@ -114,13 +120,21 @@ export function parseOffer(raw: unknown, sport: LmSport): Offer | null {
   }
   if (best.size === 0) return null;
   let recent: Offer["recent"];
+  let h2h: Offer["h2h"];
+  let split: Offer["split"];
+  let avg: number | undefined;
+  const atHome = raw.home === true;
   if (Array.isArray(raw.signals)) {
     for (const s of raw.signals) {
-      if (isObj(s) && s.type === "RECENT_FORM" && isObj(s.hitRecord)) {
-        const games = num(s.hitRecord.games);
-        const hits = num(s.hitRecord.hits);
-        if (games != null && hits != null) recent = { games, hits };
-      }
+      if (!isObj(s) || !isObj(s.hitRecord)) continue;
+      const games = num(s.hitRecord.games);
+      const hits = num(s.hitRecord.hits);
+      if (games == null || hits == null) continue;
+      if (s.type === "RECENT_FORM") {
+        recent = { games, hits };
+        avg = num(s.hitRecord.average) ?? undefined;
+      } else if (s.type === "HEAD_TO_HEAD") h2h = { games, hits };
+      else if (s.type === (atHome ? "HOME_SPLIT" : "AWAY_SPLIT")) split = { games, hits };
     }
   }
   const out: Offer = {
@@ -137,6 +151,11 @@ export function parseOffer(raw: unknown, sport: LmSport): Offer | null {
     hr: [...hrBest.values()].sort((a, b) => a.value - b.value),
   };
   if (recent) out.recent = recent;
+  if (h2h) out.h2h = h2h;
+  if (split) out.split = split;
+  if (avg != null) out.avg = avg;
+  if (typeof raw.home === "boolean") out.home = raw.home;
+  if (typeof raw.alternate === "boolean") out.alternate = raw.alternate;
   const rowLine = num(raw.line);
   if (rowLine != null) out.line = rowLine;
   if (isObj(raw.team) && str(raw.team.name)) out.teamName = str(raw.team.name);

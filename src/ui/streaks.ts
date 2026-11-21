@@ -2,6 +2,7 @@ import { americanToDecimal, decimalToAmerican } from "../core/odds";
 import { hardRockUrl } from "../data/hardrock";
 import type { DayFile, DayGrades, HandedPick } from "../engine/types";
 import { clear, h } from "./dom";
+import { activeCount, cushionOf, defaultFilters, gameKey, loadFilters, passes, saveFilters, type Filters } from "./filters";
 import { getJson, pullToRefresh, type PicksSource } from "./picks";
 
 
@@ -31,6 +32,17 @@ const startTime = (iso: string): string => new Date(iso).toLocaleTimeString([], 
 export interface StreakState {
   chosen: Map<string, { label: string; price: number }>;
   tab: string;
+  filters: Filters;
+}
+
+function signalLine(p: HandedPick): HTMLElement | null {
+  const bits: string[] = [];
+  if (p.h2h) bits.push(`vs ${p.opponent} ${p.h2h.hits}/${p.h2h.games}`);
+  if (p.split) bits.push(`${p.home ? "home" : "away"} ${p.split.hits}/${p.split.games}`);
+  const c = cushionOf(p);
+  if (p.avg != null) bits.push(`avg ${p.avg}${c != null ? ` (${c >= 0 ? "+" : ""}${Math.round(c * 100)}%)` : ""}`);
+  if (p.alt) bits.push("alt line");
+  return bits.length ? h("div", { class: "signals" }, bits.join(" · ")) : null;
 }
 
 function row(p: HandedPick, state: StreakState, refresh: () => void): HTMLElement {
@@ -49,7 +61,7 @@ function row(p: HandedPick, state: StreakState, refresh: () => void): HTMLElemen
     "article",
     { class: "streak" },
     pick,
-    h("div", { class: "s-main" }, h("strong", {}, propText(p)), h("div", { class: "muted" }, `${p.teamName ?? p.team} vs ${p.opponent} · ${SPORT[p.sport] ?? p.sport.toUpperCase()} · ${started ? "started" : startTime(p.gameStart)}`)),
+    h("div", { class: "s-main" }, h("strong", {}, propText(p)), h("div", { class: "muted" }, `${p.teamName ?? p.team} vs ${p.opponent} · ${SPORT[p.sport] ?? p.sport.toUpperCase()} · ${started ? "started" : startTime(p.gameStart)}`), signalLine(p)),
     h("div", { class: "s-streak", title: "Straight games over this line" }, h("span", {}, String(p.streak ?? "")), h("small", {}, "streak")),
     p.url && !started ? h("a", { class: "hr s-odds", href: p.url, target: "_blank", rel: "noopener" }, odds(p.price ?? 0)) : h("span", { class: "s-odds off" }, p.price != null ? odds(p.price) : "–"),
   );
@@ -74,11 +86,51 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
       h("button", { type: "button", class: "clear", onclick: () => { state.chosen.clear(); draw(); refreshBar(); } }, "Clear"),
     );
   };
+  const count = h("summary", {}, "Filters");
+  const shownNote = h("span", { class: "muted" });
+  const panel = h("details", { class: "filters" }, count);
+  const group = <T extends string | number>(label: string, options: Array<[string, T]>, get: () => T, set: (v: T) => void): HTMLElement => {
+    const box = h("div", { class: "fgroup", role: "group", "aria-label": label }, h("span", { class: "flabel" }, label));
+    const btns = options.map(([text, value]) => h("button", { type: "button", class: "chip", "aria-pressed": String(get() === value), onclick: () => { set(value); saveFilters(state.filters); for (const [b, v] of pairs) b.setAttribute("aria-pressed", String(get() === v)); draw(); } }, text));
+    const pairs = btns.map((b, i) => [b, options[i]![1]] as const);
+    box.append(...btns);
+    return box;
+  };
+  const f0 = state.filters;
+  const markets = [...new Set(day.picks.map((p) => p.market))];
+  const marketBox = h("div", { class: "fgroup", role: "group", "aria-label": "Bet type" }, h("span", { class: "flabel" }, "Bet type"));
+  for (const m of markets) {
+    const b = h("button", { type: "button", class: "chip", "aria-pressed": String(!f0.off.has(m)), onclick: () => {
+      if (state.filters.off.has(m)) state.filters.off.delete(m); else state.filters.off.add(m);
+      b.setAttribute("aria-pressed", String(!state.filters.off.has(m)));
+      saveFilters(state.filters);
+      draw();
+    } }, MARKET_LABEL[m] ?? m);
+    marketBox.append(b);
+  }
+  const games = [...new Map(day.picks.map((p) => [gameKey(p), `${p.opponent} @ ${p.team} ${startTime(p.gameStart)}`])).entries()];
+  const gameSel = h("select", { "aria-label": "Game", onchange: () => { state.filters.game = gameSel.value; draw(); } }, h("option", { value: "all" }, "All games"), ...games.map(([k, label]) => h("option", { value: k }, label)));
+  gameSel.value = f0.game;
+  panel.append(
+    marketBox,
+    group("Line", [["All", "all"], ["Main", "main"], ["Alt", "alt"]] as Array<[string, Filters["line"]]>, () => state.filters.line, (v) => (state.filters.line = v)),
+    group("Streak", [["Any", 0], ["7+", 7], ["10+", 10]] as Array<[string, number]>, () => state.filters.minStreak, (v) => (state.filters.minStreak = v)),
+    group("Price", [["Any", 0], ["-200", -200], ["-300", -300], ["-400", -400]] as Array<[string, number]>, () => state.filters.maxJuice, (v) => (state.filters.maxJuice = v)),
+    group("Head to head", [["Any", 0], ["75%+", 0.75], ["100%", 1]] as Array<[string, number]>, () => state.filters.h2h, (v) => (state.filters.h2h = v)),
+    group("Home/away", [["Any", 0], ["75%+", 0.75], ["100%", 1]] as Array<[string, number]>, () => state.filters.split, (v) => (state.filters.split = v)),
+    group("Cushion", [["Any", 0], ["+10%", 0.1], ["+25%", 0.25]] as Array<[string, number]>, () => state.filters.cushion, (v) => (state.filters.cushion = v)),
+    h("div", { class: "fgroup" }, h("span", { class: "flabel" }, "Game"), gameSel),
+    h("button", { type: "button", class: "ghost", onclick: () => { state.filters = defaultFilters(); saveFilters(state.filters); clear(view); renderStreakDay(view, day, state); } }, "Reset filters"),
+  );
   const draw = () => {
     clear(content);
     for (const t of tabs.children) t.setAttribute("aria-selected", String((t as HTMLElement).dataset.tab === state.tab));
-    const list = day.picks.filter((p) => state.tab === "multi" || p.sport === state.tab).sort((a, b) => (b.streak ?? 0) - (a.streak ?? 0) || (b.price ?? 0) - (a.price ?? 0));
-    if (list.length === 0) content.append(h("p", { class: "empty" }, "No streaks of 5+ with a Hard Rock price for this day yet."));
+    const f = state.filters;
+    const inTab = day.picks.filter((p) => state.tab === "multi" || p.sport === state.tab);
+    const list = inTab.filter((p) => passes(p, f)).sort((a, b) => (b.streak ?? 0) - (a.streak ?? 0) || (b.price ?? 0) - (a.price ?? 0));
+    count.textContent = activeCount(f) ? `Filters (${activeCount(f)})` : "Filters";
+    shownNote.textContent = activeCount(f) ? `Showing ${list.length} of ${inTab.length}` : "";
+    if (list.length === 0) content.append(h("p", { class: "empty" }, inTab.length ? "Nothing matches these filters." : "No streaks of 5+ with a Hard Rock price for this day yet."));
     for (const p of list) content.append(row(p, state, refreshBar));
   };
   if (sports.length > 1) {
@@ -87,7 +139,7 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
     }
     view.append(tabs);
   }
-  view.append(bar, content);
+  view.append(panel, shownNote, bar, content);
   draw();
   refreshBar();
 }
@@ -105,10 +157,10 @@ export async function renderStreaks(view: HTMLElement, _ledger?: unknown, source
     return;
   }
   const body = h("div", {});
-  let state: StreakState = { chosen: new Map(), tab: "multi" };
+  let state: StreakState = { chosen: new Map(), tab: "multi", filters: loadFilters() };
   let shown = dates[dates.length - 1]!;
   const load = async (date: string) => {
-    if (date !== shown) state = { chosen: new Map(), tab: state.tab };
+    if (date !== shown) state = { chosen: new Map(), tab: state.tab, filters: state.filters };
     shown = date;
     try {
       const day = await source.loadDay(date);
