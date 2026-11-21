@@ -273,3 +273,12 @@ describe("multi-sport tab and refresh", () => {
     expect(view.textContent).not.toContain("P b");
   });
 });
+
+describe("jersey", () => {
+  it("draws a team-colored jersey with the team code", async () => {
+    const { jerseySvg } = await import("../src/ui/jersey");
+    expect(jerseySvg("nba", "LAL")).toContain("#552583");
+    expect(jerseySvg("nba", "LAL")).toContain(">LAL<");
+    expect(jerseySvg("nba", "<b>")).not.toContain("<b>");
+  });
+});

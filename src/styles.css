@@ -174,3 +174,4 @@ summary { color: var(--text); font-weight: 700; }
 .add { font-weight: 700; }
 .add input { width: 26px; height: 26px; min-height: 0; accent-color: #3ddc84; }
 .caution { background: var(--sun); border: 2px solid var(--text); }
+.who { display: flex; gap: 10px; align-items: center; } .jersey { flex: none; line-height: 0; }

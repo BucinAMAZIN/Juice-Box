@@ -2,6 +2,7 @@ import type { DayLinks } from "../engine/links";
 import type { DayFile, DayGrades, HandedPick } from "../engine/types";
 import { hardRockUrl } from "../data/hardrock";
 import { clear, h } from "./dom";
+import { jersey } from "./jersey";
 import { pct } from "./format";
 
 export interface PicksSource {
@@ -72,7 +73,7 @@ function card(p: HandedPick, grade: DayGrades["grades"][number] | undefined, lin
   return h(
     "article",
     { class: "pick" },
-    h("div", { class: "pick-top" }, h("strong", {}, pickTitle(p)), badge),
+    h("div", { class: "pick-top" }, h("div", { class: "who" }, jersey(p.sport, p.team), h("strong", {}, pickTitle(p))), badge),
     h("div", { class: "muted" }, `${p.team} vs ${p.opponent}`),
     h("div", {}, pickPrice(p)),
     h("div", { class: "muted" }, `Our chance ${pct(p.modelProb, 0)}${p.edge != null ? ` · edge ${pct(p.edge, 1)}` : ""}`),
