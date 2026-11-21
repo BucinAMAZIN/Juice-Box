@@ -72,8 +72,8 @@ function row(p: HandedPick, state: StreakState, refresh: () => void): HTMLElemen
     { class: "streak" },
     pick,
     h("div", { class: "s-main" }, h("strong", {}, propText(p)), h("div", { class: "muted" }, `${p.teamName ?? p.team} vs ${p.opponent} · ${SPORT[p.sport] ?? p.sport.toUpperCase()} · ${started ? "started" : startTime(p.gameStart)}`), signalLine(p)),
-    h("div", { class: "s-streak", title: "Straight games over this line" }, h("span", {}, String(p.streak ?? "")), h("small", {}, "streak")),
     p.url && !started ? h("a", { class: "hr s-odds", href: p.url, target: "_blank", rel: "noopener" }, odds(p.price ?? 0)) : h("span", { class: "s-odds off", title: `Linemate has no Hard Rock price for this line, so this is ${p.book ?? "another book"}'s price. Hard Rock may still offer it: check the Hard Rock app.` }, p.price != null ? odds(p.price) : "–", h("small", {}, p.book && p.book !== "Hard Rock" ? `${p.book} · check HR` : "started")),
+    h("div", { class: "s-streak", title: "Straight games over this line" }, h("span", {}, String(p.streak ?? "")), h("small", {}, "streak")),
   );
 }
 
