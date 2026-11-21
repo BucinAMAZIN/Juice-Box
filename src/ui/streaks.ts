@@ -94,8 +94,6 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
 
 export async function renderStreaks(view: HTMLElement, _ledger?: unknown, source: PicksSource = streakSource): Promise<void> {
   clear(view);
-  view.append(h("h2", {}, "Streaks"));
-  view.append(h("p", { class: "muted" }, "Props that have gone over their line five or more straight games, with the Hard Rock price. Tick the ones you like and send them to Hard Rock as one ticket."));
   let dates: string[];
   try {
     dates = (await source.loadIndex()).dates;
@@ -128,7 +126,7 @@ export async function renderStreaks(view: HTMLElement, _ledger?: unknown, source
     await load(select.value);
     status.textContent = `Updated ${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
   };
-  view.append(h("label", {}, "Day ", select), " ", h("button", { type: "button", class: "refresh", onclick: () => void refresh() }, "Refresh"), " ", status, body);
+  view.append(h("div", { class: "controls" }, select, h("button", { type: "button", class: "refresh", onclick: () => void refresh() }, "Refresh")), status, body);
   pullToRefresh(view, refresh);
   await load(shown);
 }

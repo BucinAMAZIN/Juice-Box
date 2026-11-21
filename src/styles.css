@@ -188,3 +188,28 @@ body { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
 .s-odds { margin-top: 0; min-width: 64px; text-align: center; font-family: var(--font-head); padding: 10px 8px; }
 .s-odds.off { opacity: .5; font-family: var(--font-head); }
 .s-pick .add { padding: 0; }
+
+/* Tighter layout */
+body { padding-bottom: calc(56px + env(safe-area-inset-bottom)); }
+.bar { padding: 10px 16px 2px; gap: 8px; }
+.bar h1 { font-size: 22px; }
+.bar h1::before { width: 22px; height: 22px; margin-right: 8px; vertical-align: -4px; border-width: 2px; box-shadow: 2px 2px 0 var(--text); }
+.tag { display: none; }
+.ver { top: 10px; right: 16px; font-size: 10px; padding: 1px 7px; border-width: 2px; }
+.view { padding: 6px 16px 16px; gap: 8px; }
+.controls { display: flex; gap: 8px; align-items: center; }
+.controls select { flex: 1; min-height: 40px; padding: 6px 10px; }
+.controls button { margin-top: 0; min-height: 40px; padding: 0 14px; box-shadow: 2px 2px 0 var(--text); }
+.view > .muted { margin: 0; font-size: 12px; }
+.chips { margin: 4px 0 2px; gap: 6px; }
+.chip { min-height: 34px; padding: 0 10px; font-size: 14px; border-width: 2px; }
+.chip[aria-selected="true"] { box-shadow: 2px 2px 0 var(--text); }
+.streak { gap: 8px; padding: 8px 10px; margin: 8px 0; border-width: 2px; border-radius: 12px; box-shadow: 3px 3px 0 var(--text); }
+.s-main strong { font-size: 15px; line-height: 1.2; } .s-main .muted { font-size: 12px; margin: 2px 0 0; }
+.s-streak span { font-size: 22px; } .s-streak small { font-size: 9px; }
+.s-odds { min-width: 58px; padding: 8px 6px; border-width: 2px; border-radius: 10px; box-shadow: 2px 2px 0 var(--text); font-size: 15px; }
+.s-pick .add input { width: 22px; height: 22px; }
+.tabs { border-top-width: 2px; }
+.tab { padding: 10px 0 calc(4px + env(safe-area-inset-bottom)); font-size: 14px; }
+.slipbar { padding: 8px 10px; margin: 4px 0; border-width: 2px; box-shadow: 3px 3px 0 var(--text); }
+.slipbar ul { margin: 4px 0; font-size: 13px; }
