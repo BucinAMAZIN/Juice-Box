@@ -4,11 +4,16 @@ on:
   push:
     branches: [main]
   schedule:
-    # 14:00 UTC (10am Eastern in winter) catches Sunday NFL games before kickoff; the 19:00 UTC run only adds new picks.
-    - cron: "0 14 * * *"
-    - cron: "0 19 * * *"
-    # 08:00 UTC is 3am Eastern in winter (4am in summer). Grades the previous night's picks.
-    - cron: "0 8 * * *"
+    # GitHub drops or delays jobs scheduled on the hour, so these use odd minutes and each job has a backup.
+    # Every task is safe to repeat: picks are append-only and grading skips anything already graded.
+    # Picks: 13:47 and 14:37 UTC (about 9am Eastern, before Sunday NFL kickoffs), 18:43 UTC for later slates.
+    - cron: "47 13 * * *"
+    - cron: "37 14 * * *"
+    - cron: "43 18 * * *"
+    # Grades: 08:17 UTC (about 3am Eastern in winter) with backups at 09:11 and 10:29.
+    - cron: "17 8 * * *"
+    - cron: "11 9 * * *"
+    - cron: "29 10 * * *"
   workflow_dispatch:
     inputs:
       task:
@@ -49,7 +54,7 @@ jobs:
           INPUT_TASK: ${{ inputs.task }}
         run: |
           if [ "$EVENT" = "schedule" ]; then
-            if [ "$SCHEDULE" = "0 19 * * *" ] || [ "$SCHEDULE" = "0 14 * * *" ]; then echo "task=picks" >> "$GITHUB_OUTPUT"; else echo "task=grade" >> "$GITHUB_OUTPUT"; fi
+            if [ "$SCHEDULE" = "47 13 * * *" ] || [ "$SCHEDULE" = "37 14 * * *" ] || [ "$SCHEDULE" = "43 18 * * *" ]; then echo "task=picks" >> "$GITHUB_OUTPUT"; else echo "task=grade" >> "$GITHUB_OUTPUT"; fi
           elif [ "$EVENT" = "workflow_dispatch" ]; then
             echo "task=$INPUT_TASK" >> "$GITHUB_OUTPUT"
           else
