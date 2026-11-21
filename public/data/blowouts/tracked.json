@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-21T20:40:52.617Z",
+ "updatedAt": "2026-11-21T23:36:36.862Z",
  "games": [
   {
    "id": "401864545",
@@ -44,6 +44,48 @@
    "result": "over"
   },
   {
+   "id": "401856750",
+   "start": "2026-11-21T18:00Z",
+   "date": "2026-11-21",
+   "fav": "MSST",
+   "dog": "TNTC",
+   "spread": 28.5,
+   "total": 57.5,
+   "status": "post",
+   "favScore": 34,
+   "dogScore": 16,
+   "points": 50,
+   "result": "under"
+  },
+  {
+   "id": "401856746",
+   "start": "2026-11-21T19:00Z",
+   "date": "2026-11-21",
+   "fav": "ALA",
+   "dog": "UTC",
+   "spread": 46.5,
+   "total": 55.5,
+   "status": "post",
+   "favScore": 47,
+   "dogScore": 0,
+   "points": 47,
+   "result": "under"
+  },
+  {
+   "id": "401862832",
+   "start": "2026-11-21T19:00Z",
+   "date": "2026-11-21",
+   "fav": "TLSA",
+   "dog": "CLT",
+   "spread": 22.5,
+   "total": 51.5,
+   "status": "post",
+   "favScore": 42,
+   "dogScore": 14,
+   "points": 56,
+   "result": "over"
+  },
+  {
    "id": "401856747",
    "start": "2026-11-21T20:30Z",
    "date": "2026-11-21",
@@ -71,7 +113,7 @@
    "dog": "NIU",
    "spread": 25.5,
    "total": 46.5,
-   "status": "pre"
+   "status": "in"
   },
   {
    "id": "401858302",
@@ -79,7 +121,7 @@
    "date": "2026-11-21",
    "fav": "MIA",
    "dog": "VT",
-   "spread": 20.5,
+   "spread": 21,
    "total": 61.5,
    "status": "pre"
   },
@@ -100,7 +142,7 @@
    "fav": "FRES",
    "dog": "CSU",
    "spread": 20.5,
-   "total": 66.5,
+   "total": 67.5,
    "status": "pre"
   },
   {
