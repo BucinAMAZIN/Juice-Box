@@ -33,7 +33,7 @@ if (mode === "track") {
   const now = new Date();
   const open = [...have.values()].filter((g) => g.status !== "post").map((g) => g.date.replaceAll("-", ""));
   const from = [ymd(addDays(now, -2)), ...open].sort()[0]!;
-  const board = await loadBoard(`${from}-${ymd(addDays(now, 8))}`);
+  const board = await loadBoard(from, ymd(addDays(now, 8)));
   let added = 0, graded = 0;
   for (const g of board) {
     const prior = have.get(g.id);
@@ -53,11 +53,8 @@ if (mode === "track") {
   const seasons = [2021, 2022, 2023, 2024, 2025];
   const all: BlowoutGame[] = [];
   for (const y of seasons) {
-    const windows: string[] = [];
-    for (let d = new Date(Date.UTC(y, 7, 20)); d < new Date(Date.UTC(y + 1, 0, 14)); d = addDays(d, 7)) windows.push(`${ymd(d)}-${ymd(addDays(d, 6))}`);
-    const boards = await pool(windows, 4, async (w) => { try { return await loadBoard(w); } catch { console.log("window failed", w); return []; } });
-    const finals = boards.flat().filter((g) => g.state === "post");
-    const unique = [...new Map(finals.map((g) => [g.id, g])).values()];
+    const finals = (await loadBoard(`${y}0820`, `${y + 1}0114`, 8)).filter((g) => g.state === "post");
+    const unique = finals;
     const lines = await pool(unique, 8, (g) => loadClosingLine(g.id));
     let withLine = 0;
     unique.forEach((g, i) => {

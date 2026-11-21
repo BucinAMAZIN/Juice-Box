@@ -76,11 +76,23 @@ async function getJson(url: string): Promise<unknown> {
   return res.json();
 }
 
-/** Every FBS game in a date range, written as YYYYMMDD or YYYYMMDD-YYYYMMDD. */
-export async function loadBoard(range: string): Promise<NcaaGame[]> {
-  const json = await getJson(`${NCAA_SITE}/scoreboard?dates=${range}&groups=80&limit=400`);
+/** Every FBS game on one day, written YYYYMMDD. ESPN refuses date ranges, so a span is read a day at a time. */
+export async function loadDay(day: string): Promise<NcaaGame[]> {
+  const json = await getJson(`${NCAA_SITE}/scoreboard?dates=${day}&groups=80&limit=400`);
   const events = isObj(json) && Array.isArray(json.events) ? json.events : [];
   return events.map(parseGame).filter((g): g is NcaaGame => g !== null);
+}
+
+/** Every FBS game from one day to another (YYYYMMDD each, inclusive). A day that fails is skipped. */
+export async function loadBoard(from: string, to: string, size = 6): Promise<NcaaGame[]> {
+  const days: string[] = [];
+  for (let t = Date.UTC(+from.slice(0, 4), +from.slice(4, 6) - 1, +from.slice(6, 8)); t <= Date.UTC(+to.slice(0, 4), +to.slice(4, 6) - 1, +to.slice(6, 8)); t += 86_400_000) days.push(new Date(t).toISOString().slice(0, 10).replaceAll("-", ""));
+  const out: NcaaGame[][] = [];
+  let next = 0;
+  await Promise.all(Array.from({ length: size }, async () => { while (next < days.length) { const k = next++; out[k] = await loadDay(days[k]!).catch(() => []); } }));
+  const byId = new Map<string, NcaaGame>();
+  for (const g of out.flat()) byId.set(g.id, g);
+  return [...byId.values()];
 }
 
 export async function loadClosingLine(id: string): Promise<NcaaLine | null> {
