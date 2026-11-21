@@ -1,0 +1,36 @@
+{
+  "date": "2026-11-20",
+  "gradedAt": "2026-11-21T13:35:24.338Z",
+  "grades": [
+    {
+      "pickId": "2026-11-20-nba-1",
+      "actual": 16,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-20-nba-2",
+      "actual": 2,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-20-nba-2-r3",
+      "actual": 25,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-20-nba-3-r3",
+      "actual": 49,
+      "outcome": "win",
+      "profitAtLimit": 0.30395136778115495
+    },
+    {
+      "pickId": "2026-11-20-nba-4-r3",
+      "actual": 6,
+      "outcome": "win",
+      "profitAtLimit": 0.37037037037037024
+    }
+  ]
+}

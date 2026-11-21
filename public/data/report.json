@@ -1,0 +1,118 @@
+{
+  "generatedAt": "2026-11-21T13:35:24.338Z",
+  "modelVersion": "nhl-v0.1+nba-v0.1",
+  "totalPicks": 5,
+  "graded": 5,
+  "overall": {
+    "picks": 5,
+    "wins": 2,
+    "losses": 3,
+    "pushes": 0,
+    "hitRate": 0.4,
+    "avgModelProb": 0.6566023369388476,
+    "profitAtLimit": -2.325678261848475
+  },
+  "byMarket": {
+    "pr": {
+      "picks": 1,
+      "wins": 0,
+      "losses": 1,
+      "pushes": 0,
+      "hitRate": 0,
+      "avgModelProb": 0.6145993076743266,
+      "profitAtLimit": -1
+    },
+    "threes": {
+      "picks": 1,
+      "wins": 0,
+      "losses": 1,
+      "pushes": 0,
+      "hitRate": 0,
+      "avgModelProb": 0.5044118935613475,
+      "profitAtLimit": -1
+    },
+    "points": {
+      "picks": 1,
+      "wins": 0,
+      "losses": 1,
+      "pushes": 0,
+      "hitRate": 0,
+      "avgModelProb": 0.7198196992775227,
+      "profitAtLimit": -1
+    },
+    "pra": {
+      "picks": 1,
+      "wins": 1,
+      "losses": 0,
+      "pushes": 0,
+      "hitRate": 1,
+      "avgModelProb": 0.740708657585072,
+      "profitAtLimit": 0.30395136778115495
+    },
+    "assists": {
+      "picks": 1,
+      "wins": 1,
+      "losses": 0,
+      "pushes": 0,
+      "hitRate": 1,
+      "avgModelProb": 0.7034721265959695,
+      "profitAtLimit": 0.37037037037037024
+    }
+  },
+  "byKind": {
+    "potd": {
+      "picks": 1,
+      "wins": 0,
+      "losses": 1,
+      "pushes": 0,
+      "hitRate": 0,
+      "avgModelProb": 0.6145993076743266,
+      "profitAtLimit": -1
+    },
+    "lean": {
+      "picks": 1,
+      "wins": 0,
+      "losses": 1,
+      "pushes": 0,
+      "hitRate": 0,
+      "avgModelProb": 0.5044118935613475,
+      "profitAtLimit": -1
+    },
+    "alt": {
+      "picks": 3,
+      "wins": 2,
+      "losses": 1,
+      "pushes": 0,
+      "hitRate": 0.6666666666666666,
+      "avgModelProb": 0.721333494486188,
+      "profitAtLimit": -0.3256782618484748
+    }
+  },
+  "tickets": {
+    "total": 0,
+    "settled": 0,
+    "won": 0
+  },
+  "brier": 0.2610929693569482,
+  "logLoss": 0.7159357472489356,
+  "calibration": [
+    {
+      "lo": 0.4,
+      "hi": 0.6,
+      "n": 1,
+      "predicted": 0.5044118935613475,
+      "actual": 0
+    },
+    {
+      "lo": 0.6,
+      "hi": 0.8,
+      "n": 4,
+      "predicted": 0.6946499477832226,
+      "actual": 0.5
+    }
+  ],
+  "findings": [
+    "Only 5 graded picks. Under 200, a hot or cold stretch is mostly luck, so no changes to the model are recommended yet.",
+    "Picks hit 40.0% against an average model probability of 65.7%, which is below what the model expected."
+  ]
+}
