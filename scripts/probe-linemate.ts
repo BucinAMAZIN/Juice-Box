@@ -1,36 +1,19 @@
 export {};
-/** Reads Linemate's public JSON feed (no login) and prints its shape. Read only. */
-const API = "https://api.linemate.io/api";
-
-async function get(url: string): Promise<unknown> {
-  const res = await fetch(url, { headers: { "user-agent": "Mozilla/5.0", accept: "application/json", origin: "https://linemate.io", referer: "https://linemate.io/" } });
-  console.log(`GET ${url} -> ${res.status}`);
-  return res.ok ? res.json() : null;
+/** Looks at what Linemate gives for Hard Rock (selection ids). Read only. */
+const url = "https://api.linemate.io/api/nba/v1/trends/straights?limit=50&offset=0&markets=POINTS";
+const res = await fetch(url, { headers: { "user-agent": "Mozilla/5.0", accept: "application/json", origin: "https://linemate.io", referer: "https://linemate.io/" } });
+const rows = (await res.json()) as Array<any>;
+console.log("rows", rows.length);
+let shown = 0;
+const bookNames = new Set<string>();
+for (const r of rows) {
+  for (const b of Object.keys(r.market?.books ?? {})) bookNames.add(b);
 }
-
-function prune(v: unknown, depth = 0): unknown {
-  if (Array.isArray(v)) return v.slice(0, 2).map((x) => prune(x, depth + 1));
-  if (v && typeof v === "object") {
-    const o: Record<string, unknown> = {};
-    for (const [k, x] of Object.entries(v).slice(0, 40)) {
-      if (k === "player" || k === "team" || k === "opposingTeam") { o[k] = "…"; continue; }
-      o[k] = depth > 7 ? "…" : prune(x, depth + 1);
-    }
-    return o;
-  }
-  return v;
+console.log("books:", [...bookNames].join(","));
+for (const r of rows) {
+  const hr = r.market?.books?.hardrock;
+  if (!hr || shown >= 2) continue;
+  shown++;
+  console.log("HR entry for", r.player?.fullName, JSON.stringify(hr).slice(0, 1600));
 }
-
-type Row = { market?: { name?: string }; gameId?: string };
-const base = `${API}/nba/v1/trends/straights`;
-for (const q of ["limit=100", "limit=50", "limit=20&offset=20", "limit=20&page=2", "markets=POINTS", "market=POINTS&limit=50", "gameId=20261120-IND-CLE", "sortBy=hitRate&limit=50", "minHitRate=0.8"]) {
-  const rows = (await get(`${base}?${q}`)) as Row[] | null;
-  if (Array.isArray(rows)) console.log(`  ${q}: ${rows.length} rows, first=${rows[0]?.gameId}/${rows[0]?.market?.name}, last=${rows.at(-1)?.gameId}/${rows.at(-1)?.market?.name}`);
-}
-const rows = (await get(base)) as Array<Record<string, unknown>> | null;
-if (rows?.[0]) {
-  console.log("TOP-LEVEL KEYS:", Object.keys(rows[0]).join(","));
-  console.log("SAMPLE ROW:", JSON.stringify(prune(rows[0])).slice(0, 6500));
-}
-const games = (await get(`${API}/nba/v3/games/current`)) as Array<Record<string, unknown>> | null;
-if (games?.[0]) console.log("GAME KEYS:", Object.keys(games[0]).join(","));
+console.log("featuredProvider samples:", JSON.stringify(rows.slice(0, 5).map((r) => r.featuredProvider)).slice(0, 600));
