@@ -24,6 +24,10 @@ export const MARKET_LABEL: Record<string, string> = {
   points: "Points", rebounds: "Rebounds", assists: "Assists", threes: "Three Pointers", pr: "Points + Rebounds", pa: "Points + Assists", ra: "Rebounds + Assists", pra: "Points + Rebounds + Assists",
   passYds: "Passing Yards", rushYds: "Rushing Yards", recYds: "Receiving Yards", receptions: "Receptions", rushRecYds: "Rush + Rec Yards", sog: "Shots on Goal", goals: "Goals",
 };
+export const SHORT_LABEL: Record<string, string> = {
+  points: "Points", rebounds: "Rebounds", assists: "Assists", threes: "Threes", pr: "Pts+Reb", pa: "Pts+Ast", ra: "Reb+Ast", pra: "PRA",
+  passYds: "Pass Yds", rushYds: "Rush Yds", recYds: "Rec Yds", receptions: "Receptions", rushRecYds: "Rush+Rec", sog: "Shots", goals: "Goals",
+};
 export const odds = (n: number): string => (n > 0 ? `+${n}` : String(n));
 export const propText = (p: HandedPick): string => `${p.player} ${p.line + 0.5}+ ${MARKET_LABEL[p.market] ?? p.market}`;
 
@@ -32,6 +36,8 @@ const startTime = (iso: string): string => new Date(iso).toLocaleTimeString([], 
 export interface StreakState {
   chosen: Map<string, { label: string; price: number }>;
   tab: string;
+  /** One prop category to show (a market id), or "all". */
+  category?: string;
   filters: Filters;
 }
 
@@ -88,6 +94,7 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
   };
   const count = h("summary", {}, "Filters");
   const shownNote = h("span", { class: "muted" });
+  const cats = h("div", { class: "chips cats", role: "group", "aria-label": "Prop category" });
   const panel = h("details", { class: "filters" }, count);
   const group = <T extends string | number | boolean>(label: string, options: Array<[string, T]>, get: () => T, set: (v: T) => void): HTMLElement => {
     const box = h("div", { class: "fgroup", role: "group", "aria-label": label }, h("span", { class: "flabel" }, label));
@@ -128,9 +135,18 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
     for (const t of tabs.children) t.setAttribute("aria-selected", String((t as HTMLElement).dataset.tab === state.tab));
     const f = state.filters;
     const inTab = day.picks.filter((p) => state.tab === "multi" || p.sport === state.tab);
-    const list = inTab.filter((p) => passes(p, f)).sort((a, b) => (b.streak ?? 0) - (a.streak ?? 0) || (b.price ?? 0) - (a.price ?? 0));
+    const counts = new Map<string, number>();
+    for (const p of inTab.filter((q) => passes(q, f))) counts.set(p.market, (counts.get(p.market) ?? 0) + 1);
+    if (state.category && state.category !== "all" && !counts.has(state.category)) state.category = "all";
+    const cat = state.category ?? "all";
+    clear(cats);
+    const total = [...counts.values()].reduce((a, b) => a + b, 0);
+    for (const [id, label, n] of [["all", "All", total], ...[...counts.entries()].sort((a, b) => b[1] - a[1]).map(([m, n]) => [m, SHORT_LABEL[m] ?? MARKET_LABEL[m] ?? m, n] as const)] as Array<[string, string, number]>) {
+      cats.append(h("button", { type: "button", class: "chip", "data-cat": id, "aria-selected": String(cat === id), onclick: () => { state.category = id; draw(); } }, `${label} ${n}`));
+    }
+    const list = inTab.filter((p) => passes(p, f) && (cat === "all" || p.market === cat)).sort((a, b) => (b.streak ?? 0) - (a.streak ?? 0) || (b.price ?? 0) - (a.price ?? 0));
     count.textContent = activeCount(f) ? `Filters (${activeCount(f)})` : "Filters";
-    shownNote.textContent = activeCount(f) ? `Showing ${list.length} of ${inTab.length}` : "";
+    shownNote.textContent = activeCount(f) || cat !== "all" ? `Showing ${list.length} of ${inTab.length}` : "";
     if (list.length === 0) content.append(h("p", { class: "empty" }, inTab.length ? "Nothing matches these filters." : "No streaks of 5+ with a Hard Rock price for this day yet."));
     for (const p of list) content.append(row(p, state, refreshBar));
   };
@@ -140,7 +156,7 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
     }
     view.append(tabs);
   }
-  view.append(panel, shownNote, bar, content);
+  view.append(cats, panel, shownNote, bar, content);
   draw();
   refreshBar();
 }
@@ -161,7 +177,7 @@ export async function renderStreaks(view: HTMLElement, _ledger?: unknown, source
   let state: StreakState = { chosen: new Map(), tab: "multi", filters: loadFilters() };
   let shown = dates[dates.length - 1]!;
   const load = async (date: string) => {
-    if (date !== shown) state = { chosen: new Map(), tab: state.tab, filters: state.filters };
+    if (date !== shown) state = { chosen: new Map(), tab: state.tab, category: state.category, filters: state.filters };
     shown = date;
     try {
       const day = await source.loadDay(date);

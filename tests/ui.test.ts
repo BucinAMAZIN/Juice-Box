@@ -159,6 +159,22 @@ describe("Streaks, Results and Records screens", () => {
     expect(send.textContent).toBe("Send 2-leg ticket to Hard Rock");
     expect(send.href).toBe("https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/112,106");
   });
+  it("sorts the streak list by prop category", async () => {
+    const root = document.createElement("div");
+    document.body.append(root);
+    const src: PicksSource = {
+      loadIndex: async () => ({ dates: ["2026-11-21"] }),
+      loadDay: async (d) => ({ date: d, generatedAt: "", modelVersion: "x", tickets: [], notes: [], picks: [mk("p1", 9, -200), { ...mk("r1", 7, -200), market: "rebounds" as const }, { ...mk("r2", 6, -200), market: "rebounds" as const }] }),
+      loadGrades: async () => null,
+    };
+    await renderStreaks(root, undefined, src);
+    const cats = [...root.querySelectorAll<HTMLButtonElement>(".cats .chip")].map((b) => b.textContent);
+    expect(cats).toEqual(["All 3", "Rebounds 2", "Points 1"]);
+    root.querySelector<HTMLButtonElement>('.cats [data-cat="rebounds"]')!.click();
+    expect([...root.querySelectorAll(".streak strong")].map((e) => e.textContent)).toEqual(["P r1 19+ Rebounds", "P r2 19+ Rebounds"]);
+    root.querySelector<HTMLButtonElement>('.cats [data-cat="all"]')!.click();
+    expect(root.querySelectorAll(".streak").length).toBe(3);
+  });
   it("lists graded props by day with a running record", async () => {
     const root = document.createElement("div");
     await renderResults(root, undefined, source(true));
