@@ -79,6 +79,7 @@ jobs:
         run: |
           npm run streaks -- --dry-run
           npm run grade-streaks -- --dry-run
+          npx tsx scripts/probe-ncaa.ts
 
       - name: Commit data
         if: steps.task.outputs.task == 'picks' || steps.task.outputs.task == 'grade'
