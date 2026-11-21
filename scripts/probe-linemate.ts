@@ -1,20 +1,20 @@
-/** Loads Linemate's public pages in a headless browser (logged out) and logs where the data comes from. Read only. */
+/** Loads Linemate's public NBA page logged out and prints the data calls it makes, with sample bodies. Read only. */
 import { chromium } from "playwright";
 
 const browser = await chromium.launch();
-for (const sport of ["nba", "nfl", "nhl"]) {
-  const page = await browser.newPage();
-  const seen: string[] = [];
-  page.on("response", (r) => {
-    const t = r.request().resourceType();
-    if (t === "xhr" || t === "fetch") seen.push(`${r.status()} ${r.request().method()} ${r.url().slice(0, 160)} ${r.headers()["content-type"] ?? ""}`);
-  });
-  await page.goto(`https://linemate.io/${sport}`, { waitUntil: "networkidle", timeout: 60_000 });
-  await page.waitForTimeout(3000);
-  const text = await page.evaluate(() => document.body.innerText);
-  console.log(`\n=== ${sport}: ${text.length} chars of text, ${seen.length} data requests ===`);
-  seen.slice(0, 25).forEach((s) => console.log("  " + s));
-  console.log(text.slice(0, 1200).replace(/\n+/g, " | "));
-  await page.close();
-}
+const page = await browser.newPage();
+const seen = new Map<string, string>();
+page.on("response", async (r) => {
+  const u = r.url();
+  if (!u.startsWith("https://api.linemate.io/api/nba/") || r.request().method() !== "GET") return;
+  const key = u.split("?")[0]! + (u.includes("limit=") ? "" : "");
+  if (seen.size > 14 && !seen.has(key)) return;
+  try {
+    const body = await r.text();
+    if (!seen.has(key) || body.length > (seen.get(key)?.length ?? 0)) seen.set(key, `${u}\n    ${body.length} bytes: ${body.slice(0, 1400)}`);
+  } catch {}
+});
+await page.goto("https://linemate.io/nba", { waitUntil: "networkidle", timeout: 60_000 });
+await page.waitForTimeout(3000);
+for (const [k, v] of seen) console.log(`\n## ${k}\n  ${v}`);
 await browser.close();
