@@ -50,13 +50,14 @@ export interface Generated {
 }
 
 /** Fetch today's slate and recent box scores, project every regular, and select the day's picks. */
-export async function generateDay(f: Fetchers, now: Date): Promise<Generated> {
+export async function generateDay(f: Fetchers, now: Date, opts: { date?: string } = {}): Promise<Generated> {
   const log: string[] = [];
-  const date = easternDate(now.toISOString());
+  const date = opts.date ?? easternDate(now.toISOString());
   const cutoff = now.getTime() + MIN_LEAD_MINUTES * 60_000;
 
-  const slate = (await retry(() => f.loadSchedule(date))).filter((g) => Date.parse(g.startUtc) > cutoff);
-  log.push(`${date}: ${slate.length} games still open for picks`);
+  const all = await retry(() => f.loadSchedule(date));
+  const slate = all.filter((g) => Date.parse(g.startUtc) > cutoff);
+  log.push(`${date}: ${all.length} games on the schedule, ${slate.length} games still open for picks`);
   if (slate.length === 0) {
     return { day: selectDay(date, [], now), log: [...log, "No upcoming games, so nothing to pick."] };
   }

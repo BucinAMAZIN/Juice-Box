@@ -6,8 +6,14 @@ import { shortOdds } from "../src/engine/select";
 const DATA = "public/data";
 const dry = process.argv.includes("--dry-run");
 
+// --date=YYYY-MM-DD previews another day's slate. It is dry-run only, so a wrong date can never be written.
+const dateArg = process.argv.find((a) => a.startsWith("--date="))?.slice("--date=".length);
+if (dateArg && !/^\d{4}-\d{2}-\d{2}$/.test(dateArg)) throw new Error(`Bad --date: ${dateArg}`);
+if (dateArg && !dry) throw new Error("--date only works with --dry-run.");
+
 const now = new Date();
-const { day, log } = await generateDay({ loadSchedule, loadClubSchedule, loadBoxscore }, now);
+const opts = dateArg ? { date: dateArg } : {};
+const { day, log } = await generateDay({ loadSchedule, loadClubSchedule, loadBoxscore }, now, opts);
 for (const line of log) console.log(line);
 
 console.log(`\nPicks for ${day.date} (${day.modelVersion}):`);
