@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "picks": "tsx scripts/run-daily.ts",
-    "grade": "tsx scripts/run-grade.ts"
+    "grade": "tsx scripts/run-grade.ts",
+    "links": "tsx scripts/run-links.ts"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",

@@ -135,12 +135,12 @@ export function nbaCandidates(projections: Projection[], offers: Offer[], minPro
     for (const name of LM_NAMES[p.market]) {
       const offer = index.find("nba", key, p.team, name);
       if (!offer) continue;
-      for (const rung of offer.ladder) {
+      for (const rung of offer.hr) {
         if (Math.abs((rung.value % 1) - 0.5) > 1e-9) continue;
         const threshold = rung.value + 0.5;
         const prob = atLeast(p.dist, threshold);
         if (prob < minProb || prob > maxProb) continue;
-        out.push({ projection: p, threshold, line: rung.value, prob, price: { american: rung.american, book: rung.book } });
+        out.push({ projection: p, threshold, line: rung.value, prob, price: { american: rung.american, book: "Hard Rock" } });
       }
       break;
     }

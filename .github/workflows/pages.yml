@@ -59,7 +59,9 @@ jobs:
 
       - name: Make picks
         if: steps.task.outputs.task == 'picks'
-        run: npm run picks
+        run: |
+          npm run picks
+          npm run links
 
       - name: Grade picks and write the report
         if: steps.task.outputs.task == 'grade'

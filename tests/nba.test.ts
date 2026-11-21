@@ -68,14 +68,14 @@ describe("leaders and projections", () => {
       {
         type: "player", gameId: "g", timestamp: "t", outcome: "over",
         player: { firstName: "Luka", lastName: "Doncic", fullName: "Luka Doncic" }, team: { code: "LAL" }, opposingTeam: { code: "DEN" },
-        market: { name: "POINTS", books: { dk: { over: { current: { value: 29.5, odds: { american: -115 } }, alternates: { "24.5": { value: 24.5, odds: { american: -260 } }, "34.5": { value: 34.5, odds: { american: 300 } }, "10.5": { value: 10.5, odds: { american: -5000 } } } } } } },
+        market: { name: "POINTS", books: { hardrock: { over: { current: { value: 29.5, odds: { american: -115 } }, alternates: { "24.5": { value: 24.5, odds: { american: -260 } }, "34.5": { value: 34.5, odds: { american: 300 } }, "10.5": { value: 10.5, odds: { american: -5000 } } } } } } },
       },
       "nba",
     )!;
     const cands = nbaCandidates(proj, [offer]);
     const rungs = cands.map((c) => c.line).sort((a, b) => a - b);
     expect(rungs).toEqual([24.5, 29.5]); // 10.5 is near-certain, 34.5 is too unlikely
-    expect(cands.find((c) => c.line === 29.5)!.price).toEqual({ american: -115, book: "dk" });
+    expect(cands.find((c) => c.line === 29.5)!.price).toEqual({ american: -115, book: "Hard Rock" });
   });
 
   it("makes no projection for a player who missed his team's recent games", () => {

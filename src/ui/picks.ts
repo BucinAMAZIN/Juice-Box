@@ -1,3 +1,4 @@
+import type { DayLinks } from "../engine/links";
 import type { DayFile, DayGrades, HandedPick } from "../engine/types";
 import { clear, h } from "./dom";
 import { pct } from "./format";
@@ -6,6 +7,7 @@ export interface PicksSource {
   loadIndex(): Promise<{ dates: string[] }>;
   loadDay(date: string): Promise<DayFile>;
   loadGrades(date: string): Promise<DayGrades | null>;
+  loadLinks?(date: string): Promise<DayLinks | null>;
 }
 
 const base = (): string => (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? "/";
@@ -25,6 +27,7 @@ export const liveSource: PicksSource = {
     return day;
   },
   loadGrades: (date) => getJson<DayGrades>(`grades/${date}.json`),
+  loadLinks: (date) => getJson<DayLinks>(`links/${date}.json`),
 };
 
 const SPORT: Record<string, string> = { nba: "NBA", nfl: "NFL", nhl: "NHL", mlb: "MLB" };
@@ -44,7 +47,13 @@ export function pickPrice(p: HandedPick): string {
     : `Take it at ${odds(p.limitOdds)} or better`;
 }
 
-function card(p: HandedPick, grade: DayGrades["grades"][number] | undefined): HTMLElement {
+function hardRock(link: DayLinks["picks"][string] | undefined, graded: boolean): HTMLElement | null {
+  if (graded) return null;
+  if (!link) return h("div", { class: "muted" }, "Not listed on Hard Rock right now");
+  return h("a", { class: "hr", href: link.url, target: "_blank", rel: "noopener" }, `Open in Hard Rock (${odds(link.american)})`);
+}
+
+function card(p: HandedPick, grade: DayGrades["grades"][number] | undefined, links: DayLinks | null): HTMLElement {
   const badge = grade ? h("span", { class: `badge ${grade.outcome}` }, grade.outcome === "win" ? `Won (${grade.actual})` : grade.outcome === "loss" ? `Lost (${grade.actual})` : "Push") : h("span", { class: "badge open" }, "Open");
   return h(
     "article",
@@ -53,10 +62,11 @@ function card(p: HandedPick, grade: DayGrades["grades"][number] | undefined): HT
     h("div", { class: "muted" }, `${p.team} vs ${p.opponent}`),
     h("div", {}, pickPrice(p)),
     h("div", { class: "muted" }, `Our chance ${pct(p.modelProb, 0)}${p.edge != null ? ` · edge ${pct(p.edge, 1)}` : ""}`),
+    links ? hardRock(links.picks[p.id], grade != null) : null,
   );
 }
 
-export function renderDay(view: HTMLElement, day: DayFile, grades: DayGrades | null): void {
+export function renderDay(view: HTMLElement, day: DayFile, grades: DayGrades | null, links: DayLinks | null = null): void {
   const gradeById = new Map((grades?.grades ?? []).map((g) => [g.pickId, g]));
   const sports = [...new Set(day.picks.map((p) => p.sport))];
   if (sports.length === 0) view.append(h("p", { class: "empty" }, "Nothing met the bar today, so there are no picks."));
@@ -67,14 +77,15 @@ export function renderDay(view: HTMLElement, day: DayFile, grades: DayGrades | n
     const alts = mine.filter((p) => p.kind === "alt");
     const leans = mine.filter((p) => p.kind === "lean");
     const tickets = day.tickets.filter((t) => mine.some((p) => p.ticketId === t.id));
-    if (potd.length) section.append(h("h3", {}, "Play of the day"), ...potd.map((p) => card(p, gradeById.get(p.id))));
-    if (alts.length) section.append(h("h3", {}, "Alt lines"), ...alts.map((p) => card(p, gradeById.get(p.id))));
-    if (leans.length) section.append(h("h3", {}, "Other picks"), ...leans.map((p) => card(p, gradeById.get(p.id))));
+    if (potd.length) section.append(h("h3", {}, "Play of the day"), ...potd.map((p) => card(p, gradeById.get(p.id), links)));
+    if (alts.length) section.append(h("h3", {}, "Alt lines"), ...alts.map((p) => card(p, gradeById.get(p.id), links)));
+    if (leans.length) section.append(h("h3", {}, "Other picks"), ...leans.map((p) => card(p, gradeById.get(p.id), links)));
     for (const t of tickets) {
       const legs = mine.filter((p) => p.ticketId === t.id);
       section.append(
         h("h3", {}, "+100 ticket"),
-        h("div", { class: "ticket" }, ...legs.map((p) => card(p, gradeById.get(p.id))), h("p", { class: "muted" }, `All legs must win. Chance ${pct(t.jointProb, 0)}${t.priced != null ? ` · pays about ${odds(t.priced)}` : ""}. ${t.note}`)),
+        h("div", { class: "ticket" }, ...legs.map((p) => card(p, gradeById.get(p.id), links)), links?.tickets[t.id] ? h("a", { class: "hr", href: links.tickets[t.id]!, target: "_blank", rel: "noopener" }, "Open whole ticket in Hard Rock") : null,
+        h("p", { class: "muted" }, `All legs must win. Chance ${pct(t.jointProb, 0)}${t.priced != null ? ` · pays about ${odds(t.priced)}` : ""}. ${t.note}`)),
       );
     }
     view.append(section);
@@ -101,7 +112,7 @@ export async function renderPicks(view: HTMLElement, _ledger?: unknown, source: 
   const pickDate = async (date: string) => {
     clear(body);
     try {
-      renderDay(body, await source.loadDay(date), await source.loadGrades(date));
+      renderDay(body, await source.loadDay(date), await source.loadGrades(date), source.loadLinks ? await source.loadLinks(date).catch(() => null) : null);
     } catch {
       body.append(h("p", { class: "empty" }, `Could not load picks for ${date}.`));
     }

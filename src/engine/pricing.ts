@@ -1,4 +1,4 @@
-import { boxNameKey, indexOffers, rungAt, type LmSport, type Offer } from "../data/linemate";
+import { boxNameKey, hrRungAt, indexOffers, type LmSport, type Offer } from "../data/linemate";
 import type { Candidate } from "./select";
 import type { PickMarket } from "./types";
 
@@ -26,10 +26,10 @@ export function attachPrices(candidates: Candidate[], offers: Offer[], sport: Lm
     let rung = null;
     for (const name of LM_NAMES[p.market]) {
       const offer = index.find(sport, boxNameKey(p.player), p.team, name);
-      rung = offer ? rungAt(offer, c.line) : null;
+      rung = offer ? hrRungAt(offer, c.line) : null;
       if (rung) break;
     }
-    if (rung) priced.push({ ...c, price: { american: rung.american, book: rung.book } });
+    if (rung) priced.push({ ...c, price: { american: rung.american, book: "Hard Rock" } });
     else dropped++;
   }
   return { priced, dropped };

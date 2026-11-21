@@ -195,3 +195,24 @@ describe("Picks screen", () => {
     expect(view.textContent).toContain("No picks have been made yet");
   });
 });
+
+describe("Hard Rock links on the Picks screen", () => {
+  it("shows an open button for open picks and a plain note when Hard Rock does not list the line", async () => {
+    const day: DayFile = {
+      date: "2026-11-21", generatedAt: "", modelVersion: "x", tickets: [], notes: [],
+      picks: ["a", "b"].map((id) => ({ id, createdAt: "", gameStart: "", gameId: 1, sport: "nba" as const, kind: "lean" as const, player: `P ${id}`, team: "LAL", opponent: "DEN", market: "points" as const, line: 19.5, side: "over" as const, modelProb: 0.6, limitOdds: -150, mean: 20, note: "" })),
+    };
+    const source: PicksSource = {
+      loadIndex: async () => ({ dates: ["2026-11-21"] }),
+      loadDay: async () => day,
+      loadGrades: async () => null,
+      loadLinks: async () => ({ date: "2026-11-21", updatedAt: "", tickets: {}, picks: { a: { american: -300, url: "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/1" } } }),
+    };
+    const view = document.createElement("div");
+    await renderPicks(view, undefined, source);
+    const link = view.querySelector("a.hr") as HTMLAnchorElement;
+    expect(link.href).toContain("share.hardrock.bet");
+    expect(link.textContent).toBe("Open in Hard Rock (-300)");
+    expect(view.textContent).toContain("Not listed on Hard Rock right now");
+  });
+});

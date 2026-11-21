@@ -17,7 +17,7 @@ const row = (over: object = {}) => ({
   market: {
     name: "SHOTS_ON_GOAL",
     books: {
-      draftkings: { over: { current: { value: 3.5, odds: odds(-125) }, alternates: { "2.5": { value: 2.5, odds: odds(-300) } } } },
+      hardrock: { over: { current: { value: 3.5, odds: { ...odds(-125), }, operatorData: { selectionId: "111" } }, alternates: { "2.5": { value: 2.5, odds: odds(-300), operatorData: { selectionId: "222" } } } } },
       fanduel: { over: { current: { value: 3.5, odds: odds(-118) }, alternates: { "4.5": { value: 4.5, odds: odds(240) } } } },
     },
   },
@@ -34,6 +34,20 @@ describe("Linemate offers", () => {
     expect(rungAt(o, 2.5)!.american).toBe(-300);
     expect(rungAt(o, 1.5)).toBeNull();
     expect(o.recent).toEqual({ games: 20, hits: 12 });
+  });
+
+  it("keeps Hard Rock's own price and selection id, and builds links from them", async () => {
+    const o = parseOffer(row(), "nhl")!;
+    expect(o.hr.map((r) => [r.value, r.american, r.sid])).toEqual([[2.5, -300, "222"], [3.5, -125, "111"]]);
+    const { buildLinks } = await import("../src/engine/links");
+    const day = {
+      date: "2026-11-21", generatedAt: "", modelVersion: "x", notes: [], tickets: [{ id: "T", legIds: ["a", "b"], jointProb: 0.5, minAmerican: 100, note: "" }],
+      picks: ["a", "b"].map((id, i) => ({ id, createdAt: "", gameStart: "", gameId: 1, sport: "nhl", kind: "ticket", player: "Kyle Connor", team: "WPG", opponent: "VGK", market: "sog", line: i === 0 ? 2.5 : 3.5, side: "over", modelProb: 0.7, limitOdds: -200, mean: 3, ticketId: "T", note: "" })),
+    } as never;
+    const links = buildLinks(day, [o], new Date("2026-11-21T15:00:00Z"));
+    expect(links.picks.a!.url).toBe("https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/222");
+    expect(links.picks.a!.american).toBe(-300);
+    expect(links.tickets.T).toBe("https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/222,111");
   });
 
   it("skips team markets and rows without prices", () => {
@@ -67,7 +81,7 @@ describe("priced selection", () => {
     const offers = [parseOffer(row(), "nhl")!];
     const { priced, dropped } = attachPrices([cand("K. Connor", "WPG", 4, 0.6), cand("A. Nobody", "WPG", 4, 0.6)], offers, "nhl");
     expect(priced).toHaveLength(1);
-    expect(priced[0]!.price).toEqual({ american: -118, book: "fanduel" });
+    expect(priced[0]!.price).toEqual({ american: -125, book: "Hard Rock" });
     expect(dropped).toBe(1);
   });
 

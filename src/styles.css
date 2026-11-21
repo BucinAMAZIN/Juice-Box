@@ -139,3 +139,5 @@ th, td { text-align: left; padding: 8px 4px; border-bottom: 1px solid var(--line
 .badge { font-size: 12px; padding: 2px 8px; border-radius: 99px; border: 1px solid currentColor; white-space: nowrap; }
 .badge.win { color: #3fb950; } .badge.loss { color: #f85149; } .badge.open { color: #8b949e; }
 .sport h2 { margin-top: 20px; } .notes { margin-top: 16px; }
+
+.hr { display: inline-block; margin-top: 6px; padding: 8px 12px; border-radius: 8px; background: var(--accent, #7aa2ff); color: #0b0e14; font-weight: 600; text-decoration: none; }

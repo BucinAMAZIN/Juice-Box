@@ -30,7 +30,12 @@ export interface Rung {
   value: number;
   american: number;
   book: string;
+  /** The book's own selection id, when Linemate gives one. Hard Rock links are built from it. */
+  sid?: string;
 }
+
+/** The book the picks are priced at and linked to. */
+export const PRICE_BOOK = "hardrock";
 
 export interface Offer {
   sport: LmSport;
@@ -46,6 +51,8 @@ export interface Offer {
   side: "over" | "under";
   /** Best price per line across books, current line and alternates together, lowest line first. */
   ladder: Rung[];
+  /** Hard Rock's own price per line with its selection id, lowest line first. */
+  hr: Rung[];
   /** Linemate's last-N hit record for the featured line, when it gave one. */
   recent?: { games: number; hits: number };
 }
@@ -71,13 +78,14 @@ export function boxNameKey(name: string): string {
   return `${parts[0]!.charAt(0)} ${parts.slice(1).join("")}`;
 }
 
-function addRung(best: Map<number, Rung>, value: unknown, odds: unknown, book: string) {
+function addRung(best: Map<number, Rung>, value: unknown, odds: unknown, book: string, data?: unknown) {
   const v = num(value);
   const american = isObj(odds) ? num(odds.american) : null;
   if (v == null || american == null || american === 0) return;
   const cur = best.get(v);
+  const sid = isObj(data) && (typeof data.selectionId === "string" || typeof data.selectionId === "number") ? String(data.selectionId) : undefined;
   // Higher American price is better for the bettor, across the plus/minus boundary too.
-  if (!cur || american > cur.american) best.set(v, { value: v, american, book });
+  if (!cur || american > cur.american) best.set(v, { value: v, american, book, ...(sid ? { sid } : {}) });
 }
 
 export function parseOffer(raw: unknown, sport: LmSport): Offer | null {
@@ -91,11 +99,15 @@ export function parseOffer(raw: unknown, sport: LmSport): Offer | null {
   const side = raw.outcome === "under" ? "under" : "over";
   const books = isObj(market.books) ? market.books : {};
   const best = new Map<number, Rung>();
+  const hrBest = new Map<number, Rung>();
   for (const [book, entry] of Object.entries(books)) {
     const e = isObj(entry) ? entry[side] : null;
     if (!isObj(e)) continue;
-    if (isObj(e.current)) addRung(best, e.current.value, e.current.odds, book);
-    if (isObj(e.alternates)) for (const alt of Object.values(e.alternates)) if (isObj(alt)) addRung(best, alt.value, alt.odds, book);
+    const into = book === PRICE_BOOK ? [best, hrBest] : [best];
+    for (const target of into) {
+      if (isObj(e.current)) addRung(target, e.current.value, e.current.odds, book, e.current.operatorData);
+      if (isObj(e.alternates)) for (const alt of Object.values(e.alternates)) if (isObj(alt)) addRung(target, alt.value, alt.odds, book, alt.operatorData);
+    }
   }
   if (best.size === 0) return null;
   let recent: Offer["recent"];
@@ -119,6 +131,7 @@ export function parseOffer(raw: unknown, sport: LmSport): Offer | null {
     marketName,
     side,
     ladder: [...best.values()].sort((a, b) => a.value - b.value),
+    hr: [...hrBest.values()].sort((a, b) => a.value - b.value),
   };
   if (recent) out.recent = recent;
   return out;
@@ -165,6 +178,7 @@ export async function loadOffers(sport: LmSport, markets: string[]): Promise<Off
             out.push(o);
           } else {
             prior.ladder = mergeLadders(prior.ladder, o.ladder);
+            prior.hr = mergeLadders(prior.hr, o.hr);
             prior.recent ??= o.recent;
           }
         }
@@ -181,6 +195,11 @@ export async function loadOffers(sport: LmSport, markets: string[]): Promise<Off
 /** The best price for "value or more" at exactly this line, or null when Linemate has no such rung. */
 export function rungAt(offer: Offer, line: number): Rung | null {
   return offer.ladder.find((r) => Math.abs(r.value - line) < 1e-9) ?? null;
+}
+
+/** Hard Rock's price for "over this line", or null when Hard Rock does not list it. */
+export function hrRungAt(offer: Offer, line: number): Rung | null {
+  return offer.hr.find((r) => Math.abs(r.value - line) < 1e-9) ?? null;
 }
 
 export interface OfferIndex {
