@@ -1,0 +1,56 @@
+{
+  "date": "2026-11-20",
+  "generatedAt": "2026-11-21T01:24:29.023Z",
+  "modelVersion": "nhl-v0.1+nba-v0.1",
+  "picks": [
+    {
+      "id": "2026-11-20-nba-1",
+      "createdAt": "2026-11-21T01:24:29.023Z",
+      "gameStart": "2026-11-21T03:00Z",
+      "gameId": 401909312,
+      "sport": "nba",
+      "kind": "potd",
+      "player": "Jamal Murray",
+      "team": "DEN",
+      "opponent": "HOU",
+      "market": "pr",
+      "line": 26.5,
+      "side": "over",
+      "modelProb": 0.6145993076743266,
+      "limitOdds": -152,
+      "mean": 31.368464944530828,
+      "price": -115,
+      "book": "novig",
+      "edge": 0.07971558674409396,
+      "note": "Play of the day: 27+ points + rebounds. Take it at -115 on novig or better. Model 69% cut to 61%: halfway back to the -115 price."
+    },
+    {
+      "id": "2026-11-20-nba-2",
+      "createdAt": "2026-11-21T01:24:29.023Z",
+      "gameStart": "2026-11-21T03:00Z",
+      "gameId": 401909313,
+      "sport": "nba",
+      "kind": "lean",
+      "player": "Luka Doncic",
+      "team": "LAL",
+      "opponent": "SAC",
+      "market": "threes",
+      "line": 4.5,
+      "side": "over",
+      "modelProb": 0.5044118935613475,
+      "limitOdds": 102,
+      "mean": 4.925000927816675,
+      "price": 110,
+      "book": "draftkings",
+      "edge": 0.02822141737087136,
+      "note": "Lean: 5+ threes. Take it at +110 on draftkings or better. Model 54% cut to 50%: NBA 3PM ran 2 pts below price in ParlayBOT's history; halfway back to the +110 price."
+    }
+  ],
+  "tickets": [],
+  "notes": [
+    "NHL: No play of the day: nothing landed in the probability band for a -110 to -135 price.",
+    "NHL: No leans today.",
+    "NHL: No +100 ticket cleared the bar today.",
+    "NBA: No +100 ticket paid +100 or better with an edge."
+  ]
+}
