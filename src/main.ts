@@ -1,6 +1,7 @@
 import "./styles.css";
 import { Ledger } from "./data/ledger";
 import { h } from "./ui/dom";
+import { renderBlowouts } from "./ui/blowouts";
 import { renderRecords } from "./ui/records";
 import { renderResults } from "./ui/results";
 import { renderStreaks } from "./ui/streaks";
@@ -12,6 +13,7 @@ const TABS = [
   ["streaks", "Streaks", renderStreaks],
   ["results", "Results", renderResults],
   ["records", "Records", renderRecords],
+  ["blowouts", "Blowouts", renderBlowouts],
 ] as const;
 
 const view = h("main", { class: "view" });
