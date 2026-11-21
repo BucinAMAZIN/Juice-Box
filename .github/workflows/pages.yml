@@ -7,8 +7,8 @@ on:
     # 14:00 UTC (10am Eastern in winter) catches Sunday NFL games before kickoff; the 19:00 UTC run only adds new picks.
     - cron: "0 14 * * *"
     - cron: "0 19 * * *"
-    # 12:00 UTC is 7am Eastern in winter. Grades the previous night's picks.
-    - cron: "0 12 * * *"
+    # 08:00 UTC is 3am Eastern in winter (4am in summer). Grades the previous night's picks.
+    - cron: "0 8 * * *"
   workflow_dispatch:
     inputs:
       task:
