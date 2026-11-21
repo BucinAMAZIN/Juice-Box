@@ -246,8 +246,8 @@ describe("Hard Rock slip builder", () => {
   });
 });
 
-describe("sport filter and refresh", () => {
-  it("hides a sport with its chip and reloads on a pull down", async () => {
+describe("multi-sport tab and refresh", () => {
+  it("shows every sport's picks together, matches the sport tabs, and reloads on a pull down", async () => {
     const mk = (id: string, sport: "nba" | "nhl") => ({ id, createdAt: "", gameStart: "", gameId: 1, sport, kind: "lean" as const, player: `P ${id}`, team: "A", opponent: "B", market: "points" as const, line: 1.5, side: "over" as const, modelProb: 0.6, limitOdds: -150, mean: 2, note: "" });
     const day: DayFile = { date: "2026-11-21", generatedAt: "", modelVersion: "x", tickets: [], notes: [], picks: [mk("a", "nba"), mk("b", "nhl")] };
     let loads = 0;
@@ -259,14 +259,17 @@ describe("sport filter and refresh", () => {
     const view = document.createElement("div");
     document.body.append(view);
     await renderPicks(view, undefined, source);
-    const chips = [...view.querySelectorAll<HTMLButtonElement>(".chip")];
-    expect(chips).toHaveLength(2);
-    chips[0]!.click();
-    expect([...view.querySelectorAll<HTMLElement>("section.sport")].filter((s) => s.hidden)).toHaveLength(1);
+    const tabs = [...view.querySelectorAll<HTMLButtonElement>(".chip")];
+    expect(tabs.map((b) => b.textContent)).toEqual(["Multi-sport", "NBA", "NHL"]);
+    expect(view.textContent).toContain("P a");
+    expect(view.textContent).toContain("P b");
+    tabs[1]!.click();
+    expect(view.textContent).toContain("P a");
+    expect(view.textContent).not.toContain("P b");
     const ev = (type: string, y: number) => { const e = new Event(type) as Event & Record<string, unknown>; e.touches = [{ clientY: y }]; e.changedTouches = [{ clientY: y }]; window.dispatchEvent(e); };
     ev("touchstart", 10); ev("touchend", 200);
     await new Promise((r) => setTimeout(r, 10));
     expect(loads).toBe(2);
-    expect([...view.querySelectorAll<HTMLElement>("section.sport")].filter((s) => s.hidden)).toHaveLength(1);
+    expect(view.textContent).not.toContain("P b");
   });
 });

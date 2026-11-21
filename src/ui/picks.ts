@@ -83,11 +83,11 @@ function card(p: HandedPick, grade: DayGrades["grades"][number] | undefined, lin
 export interface DayState {
   /** Slip picks by selection id, kept across refreshes of the same day. */
   chosen: Map<string, string>;
-  /** Sports switched off in the filter chips. */
-  off: Set<string>;
+  /** Active tab: "multi" for every sport together, or one sport. */
+  tab: string;
 }
 
-export function renderDay(view: HTMLElement, day: DayFile, grades: DayGrades | null, links: DayLinks | null = null, state: DayState = { chosen: new Map(), off: new Set() }): void {
+export function renderDay(view: HTMLElement, day: DayFile, grades: DayGrades | null, links: DayLinks | null = null, state: DayState = { chosen: new Map(), tab: "multi" }): void {
   const chosen = state.chosen;
   const bar = h("div", { class: "slipbar", hidden: true });
   const refresh = () => {
@@ -112,45 +112,47 @@ export function renderDay(view: HTMLElement, day: DayFile, grades: DayGrades | n
   };
   view.append(bar);
   const sportList = [...new Set(day.picks.map((p) => p.sport))];
-  const sections: Array<[string, HTMLElement]> = [];
-  if (sportList.length > 1) {
-    const chips = h("div", { class: "chips", role: "group", "aria-label": "Sports" });
-    for (const sp of sportList) {
-      const chip = h("button", { type: "button", class: "chip", "aria-pressed": String(!state.off.has(sp)), onclick: () => {
-        if (state.off.has(sp)) state.off.delete(sp); else state.off.add(sp);
-        chip.setAttribute("aria-pressed", String(!state.off.has(sp)));
-        for (const [k, el] of sections) el.hidden = state.off.has(k);
-      } }, SPORT[sp] ?? sp.toUpperCase());
-      chips.append(chip);
-    }
-    view.append(chips);
-  }
   const gradeById = new Map((grades?.grades ?? []).map((g) => [g.pickId, g]));
-  const sports = [...new Set(day.picks.map((p) => p.sport))];
-  if (sports.length === 0) view.append(h("p", { class: "empty" }, "Nothing met the bar today, so there are no picks."));
-  for (const sport of sports) {
-    const mine = day.picks.filter((p) => p.sport === sport);
-    const section = h("section", { class: "sport" }, h("h2", {}, SPORT[sport] ?? sport.toUpperCase()));
-    const potd = mine.filter((p) => p.kind === "potd");
-    const alts = mine.filter((p) => p.kind === "alt");
-    const leans = mine.filter((p) => p.kind === "lean");
+  const MULTI = "multi";
+  const content = h("div", {});
+  const tabs = h("div", { class: "chips", role: "tablist", "aria-label": "Sports" });
+  const cardFor = (p: HandedPick, badge: boolean): HTMLElement => {
+    const c = card(p, gradeById.get(p.id), links, slip);
+    return badge ? h("div", { class: "multi-card" }, h("span", { class: "sport-badge" }, SPORT[p.sport] ?? p.sport.toUpperCase()), c) : c;
+  };
+  // One block of picks. In the multi-sport view it holds every sport's picks, the same ones the sport tabs show.
+  const block = (mine: HandedPick[], title: string, badge: boolean): HTMLElement => {
+    const section = h("section", { class: "sport" }, h("h2", {}, title));
+    const ofKind = (k: string) => mine.filter((p) => p.kind === k);
     const mineIds = new Set(mine.map((p) => p.id));
-    const tickets = day.tickets.filter((t) => t.legIds.some((id) => mineIds.has(id)));
-    if (potd.length) section.append(h("h3", {}, "Play of the day"), ...potd.map((p) => card(p, gradeById.get(p.id), links, slip)));
-    if (alts.length) section.append(h("h3", {}, "Alt lines"), ...alts.map((p) => card(p, gradeById.get(p.id), links, slip)));
-    if (leans.length) section.append(h("h3", {}, "Other picks"), ...leans.map((p) => card(p, gradeById.get(p.id), links, slip)));
-    for (const t of tickets) {
-      const legs = t.legIds.map((id) => mine.find((p) => p.id === id)).filter((p): p is HandedPick => p != null);
+    const groups: Array<[string, HandedPick[]]> = [["Play of the day", ofKind("potd")], ["Alt lines", ofKind("alt")], ["Other picks", ofKind("lean")]];
+    for (const [name, list] of groups) if (list.length) section.append(h("h3", {}, name), ...list.map((p) => cardFor(p, badge)));
+    for (const t of day.tickets.filter((t) => t.legIds.some((id) => mineIds.has(id)))) {
+      const legs = t.legIds.map((id) => day.picks.find((p) => p.id === id)).filter((p): p is HandedPick => p != null);
       section.append(
         h("h3", {}, "+100 ticket"),
-        h("div", { class: "ticket" }, ...legs.map((p) => card(p, gradeById.get(p.id), links, slip)), links?.tickets[t.id] ? h("a", { class: "hr", href: links.tickets[t.id]!, target: "_blank", rel: "noopener" }, "Open whole ticket in Hard Rock") : null,
+        h("div", { class: "ticket" }, ...legs.map((p) => cardFor(p, badge)), links?.tickets[t.id] ? h("a", { class: "hr", href: links.tickets[t.id]!, target: "_blank", rel: "noopener" }, "Open whole ticket in Hard Rock") : null,
         h("p", { class: "muted" }, `All legs must win. Chance ${pct(t.jointProb, 0)}${t.priced != null ? ` · pays about ${odds(t.priced)}` : ""}. ${t.note}`)),
       );
     }
-    section.hidden = state.off.has(sport);
-    sections.push([sport, section]);
-    view.append(section);
-  }
+    return section;
+  };
+  const draw = () => {
+    clear(content);
+    for (const t of tabs.children) t.setAttribute("aria-selected", String((t as HTMLElement).dataset.tab === state.tab));
+    if (day.picks.length === 0) content.append(h("p", { class: "empty" }, "Nothing met the bar today, so there are no picks."));
+    else if (state.tab === MULTI) content.append(block(day.picks, "Multi-sport", true));
+    else content.append(block(day.picks.filter((p) => p.sport === state.tab), SPORT[state.tab] ?? state.tab.toUpperCase(), false));
+  };
+  if (!sportList.includes(state.tab as never)) state.tab = MULTI;
+  if (sportList.length > 1) {
+    for (const [id, label] of [[MULTI, "Multi-sport"], ...sportList.map((sp) => [sp, SPORT[sp] ?? sp.toUpperCase()])] as Array<[string, string]>) {
+      tabs.append(h("button", { type: "button", role: "tab", class: "chip", "data-tab": id, onclick: () => { state.tab = id; draw(); } }, label));
+    }
+    view.append(tabs);
+  } else if (sportList.length === 1) state.tab = sportList[0]!;
+  view.append(content);
+  draw();
   if (day.notes.length) view.append(h("details", { class: "notes" }, h("summary", {}, "Why some sports have no picks"), ...day.notes.map((n) => h("p", { class: "muted" }, n))));
 }
 
@@ -170,10 +172,10 @@ export async function renderPicks(view: HTMLElement, _ledger?: unknown, source: 
   }
   const latest = dates[dates.length - 1]!;
   const body = h("div", {});
-  let state: DayState = { chosen: new Map(), off: new Set() };
+  let state: DayState = { chosen: new Map(), tab: "multi" };
   let shown = latest;
   const pickDate = async (date: string) => {
-    if (date !== shown) state = { chosen: new Map(), off: state.off };
+    if (date !== shown) state = { chosen: new Map(), tab: state.tab };
     shown = date;
     try {
       const [day, grades, links] = [await source.loadDay(date), await source.loadGrades(date), source.loadLinks ? await source.loadLinks(date).catch(() => null) : null];
