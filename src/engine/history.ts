@@ -5,6 +5,8 @@ export interface GameLine {
   date: string;
   sog: number;
   points: number;
+  goals: number;
+  assists: number;
   toi: number;
 }
 
@@ -51,7 +53,7 @@ export function buildHistories(items: DatedBox[]): Histories {
         h = { key, name: p.name, team: p.team, position: p.position, games: [] };
         players.set(key, h);
       }
-      h.games.push({ gameId: box.gameId, date, sog: p.sog, points: p.points, toi: p.toiMinutes });
+      h.games.push({ gameId: box.gameId, date, sog: p.sog, points: p.points, goals: p.goals, assists: p.assists, toi: p.toiMinutes });
     }
     for (const team of teamsHere) {
       const list = teamGames.get(team) ?? [];

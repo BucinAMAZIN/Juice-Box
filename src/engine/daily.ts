@@ -1,5 +1,5 @@
 import { easternDate } from "../data/autograde";
-import type { Boxscore, ClubGame, ScheduledGame } from "../data/nhl";
+import type { Boxscore, ClubGame, Leaders, ScheduledGame } from "../data/nhl";
 import { gradeDay, mergeGrades } from "./grade";
 import { buildHistories, type DatedBox } from "./history";
 import { projectPlayer, type Projection } from "./project";
@@ -11,6 +11,8 @@ export interface Fetchers {
   loadSchedule(date: string): Promise<ScheduledGame[]>;
   loadClubSchedule(team: string): Promise<ClubGame[]>;
   loadBoxscore(gameId: number): Promise<Boxscore | null>;
+  /** Season top-12 skaters per stat. When provided, only those players are priced for that stat. */
+  loadLeaders?(date: string): Promise<Leaders>;
 }
 
 const FINAL = new Set(["FINAL", "OFF"]);
@@ -95,13 +97,27 @@ export async function generateDay(f: Fetchers, now: Date, opts: { date?: string 
   });
   log.push(`${boxes.length} box scores loaded${failed ? `, ${failed} failed` : ""}`);
 
+  let leaders: Leaders | null = null;
+  if (f.loadLeaders) {
+    try {
+      leaders = await retry(() => f.loadLeaders!(date));
+      log.push(`League leaders loaded (${Object.entries(leaders).map(([k, v]) => `${k} ${v.length}`).join(", ")})`);
+    } catch (err) {
+      log.push(`Could not load league leaders (${(err as Error).message}), so no picks were made`);
+      const day = selectDay(date, [], now);
+      day.notes.push("League leaders could not be read, so no picks were made.");
+      return { day, log };
+    }
+  }
+
   const histories = buildHistories(boxes);
   const projections: Projection[] = [];
   for (const g of slate) {
     for (const [team, opponent] of [[g.away, g.home], [g.home, g.away]] as const) {
       for (const player of histories.players.values()) {
         if (player.team !== team) continue;
-        projections.push(...projectPlayer(histories, player, { team, opponent, gameId: g.id, gameStart: g.startUtc }));
+        const all = projectPlayer(histories, player, { team, opponent, gameId: g.id, gameStart: g.startUtc });
+        projections.push(...(leaders ? all.filter((p) => leaders![p.market]?.includes(p.key)) : all));
       }
     }
   }

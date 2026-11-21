@@ -1,15 +1,20 @@
 import { atLeast } from "../core/ladder";
 import { americanToDecimal, decimalToAmerican } from "../core/odds";
 import type { Projection } from "./project";
-import type { DayFile, HandedPick, HandedTicket, PickKind } from "./types";
+import type { DayFile, HandedPick, HandedTicket, PickKind, PickMarket } from "./types";
 
 export const MODEL_VERSION = "nhl-v0.1";
 
 /** Edge the limit price must still leave, so a pick taken at its limit keeps about +2% expected value. */
 export const LIMIT_EDGE = 0.02;
 
-export const SOG_THRESHOLDS = [2, 3, 4, 5];
-export const POINT_THRESHOLDS = [1];
+/** Alt-line rungs per market, as "n+" thresholds. League leaders are the only players priced, so the ladders run high. */
+export const THRESHOLDS: Record<PickMarket, number[]> = {
+  sog: [2, 3, 4, 5, 6],
+  points: [1, 2],
+  goals: [1],
+  assists: [1],
+};
 
 /** Play of the day: win probability in this band, so the shortest acceptable price lands near -110 to -135. */
 export const POTD_BAND: [number, number] = [0.586, 0.65];
@@ -35,8 +40,7 @@ export function limitOdds(prob: number, edge = LIMIT_EDGE): number {
 export function candidatesFrom(projections: Projection[]): Candidate[] {
   const out: Candidate[] = [];
   for (const p of projections) {
-    const thresholds = p.market === "sog" ? SOG_THRESHOLDS : POINT_THRESHOLDS;
-    for (const threshold of thresholds) {
+    for (const threshold of THRESHOLDS[p.market]) {
       out.push({ projection: p, threshold, line: threshold - 0.5, prob: atLeast(p.dist, threshold) });
     }
   }
@@ -45,9 +49,10 @@ export function candidatesFrom(projections: Projection[]): Candidate[] {
 
 const within = (x: number, [lo, hi]: [number, number]) => x >= lo && x <= hi;
 
-function describe(c: Candidate): string {
-  const what = c.projection.market === "sog" ? "shots on goal" : "points";
-  return `${c.threshold}+ ${what}`;
+const WHAT: Record<PickMarket, string> = { sog: "shots on goal", points: "points", goals: "goals", assists: "assists" };
+
+export function describe(c: Candidate): string {
+  return `${c.threshold}+ ${WHAT[c.projection.market]}`;
 }
 
 export function selectDay(

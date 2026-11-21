@@ -9,12 +9,18 @@ import type { PickMarket } from "./types";
  * assumptions to be checked against logged results, not measured constants.
  */
 export const PRIOR_PER_60: Record<"F" | "D", Record<PickMarket, number>> = {
-  F: { sog: 6.7, points: 1.75 },
-  D: { sog: 4.8, points: 1.05 },
+  F: { sog: 6.7, points: 1.75, goals: 0.77, assists: 0.98 },
+  D: { sog: 4.8, points: 1.05, goals: 0.21, assists: 0.84 },
 };
 
-/** Minutes of evidence the prior is worth. Points are noisier than shots, so they lean on the prior more. */
-export const PRIOR_WEIGHT_MIN: Record<PickMarket, number> = { sog: 150, points: 600 };
+/** Minutes of evidence the prior is worth. Scoring stats are noisier than shots, so they lean on the prior more. */
+export const PRIOR_WEIGHT_MIN: Record<PickMarket, number> = { sog: 150, points: 600, goals: 800, assists: 600 };
+
+export const MARKETS: PickMarket[] = ["sog", "points", "goals", "assists"];
+
+function statOf(g: { sog: number; points: number; goals: number; assists: number }, market: PickMarket): number {
+  return g[market];
+}
 
 export const RECENCY = 0.9;
 export const MIN_GAMES = 6;
@@ -78,8 +84,8 @@ export function projectPlayer(h: Histories, player: PlayerHistory, matchup: Matc
   const group = positionGroup(player.position);
   const out: Projection[] = [];
 
-  for (const market of ["sog", "points"] as const) {
-    const total = games.reduce((a, g, i) => a + (market === "sog" ? g.sog : g.points) * w[i]!, 0);
+  for (const market of MARKETS) {
+    const total = games.reduce((a, g, i) => a + statOf(g, market) * w[i]!, 0);
     const minutes = games.reduce((a, g, i) => a + g.toi * w[i]!, 0);
     const observed = minutes > 0 ? (total / minutes) * 60 : 0;
     const rate = shrinkRate(observed, exposure, PRIOR_PER_60[group][market], PRIOR_WEIGHT_MIN[market]);

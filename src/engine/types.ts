@@ -1,7 +1,7 @@
 import type { Sport } from "../core/potd";
 
 export type PickKind = "potd" | "lean" | "ticket";
-export type PickMarket = "sog" | "points";
+export type PickMarket = "sog" | "points" | "goals" | "assists";
 export type PickOutcome = "win" | "loss" | "push";
 
 /** A pick the engine hands out. Frozen when written to the day file. */

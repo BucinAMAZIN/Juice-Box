@@ -73,3 +73,28 @@ describe("generateDay when a team's schedule cannot be read", () => {
     expect(day.picks).toEqual([]);
   });
 });
+
+describe("league leaders", () => {
+  it("reads player ids in order and rejects odd shapes", async () => {
+    const { parseLeaderRows, seasonId } = await import("../src/data/nhl");
+    expect(parseLeaderRows({ data: [{ playerId: 8478402 }, { playerId: 8477934 }] })).toEqual(["8478402", "8477934"]);
+    expect(() => parseLeaderRows({})).toThrow();
+    expect(seasonId("2026-11-20")).toBe("20262027");
+    expect(seasonId("2027-03-01")).toBe("20262027");
+  });
+
+  it("prices only leaders, and makes no picks if leaders cannot be read", async () => {
+    const NOW = new Date("2026-11-20T18:00:00Z");
+    const base: Fetchers = {
+      loadSchedule: async () => [{ id: 9, startUtc: "2026-11-21T00:00:00Z", away: "VAN", home: "DET", state: "FUT" }],
+      loadClubSchedule: async () => [],
+      loadBoxscore: async () => null,
+      loadLeaders: async () => {
+        throw new Error("boom");
+      },
+    };
+    const { day, log } = await generateDay(base, NOW);
+    expect(day.picks).toEqual([]);
+    expect(log.join(" ")).toMatch(/league leaders/i);
+  });
+});

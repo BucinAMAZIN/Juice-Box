@@ -51,7 +51,7 @@ describe("projection", () => {
   it("projects shots and points for a regular", () => {
     const h = buildHistories(tenGames());
     const out = projectPlayer(h, h.players.get("1")!, matchup);
-    expect(out.map((p) => p.market).sort()).toEqual(["points", "sog"]);
+    expect(out.map((p) => p.market).sort()).toEqual(["assists", "goals", "points", "sog"]);
     const sog = out.find((p) => p.market === "sog")!;
     // Observed 4 shots in 19 minutes is about 12.6/60. The prior (6.7/60) pulls it down but not below it.
     expect(sog.mean).toBeGreaterThan(2.6);
@@ -119,8 +119,8 @@ const NOW = new Date("2026-11-20T18:00:00Z");
 describe("pick selection", () => {
   it("builds candidates for every shot and point threshold", () => {
     const c = candidatesFrom([proj("a", 1, "sog"), proj("a", 1, "points")]);
-    expect(c.filter((x) => x.projection.market === "sog")).toHaveLength(4);
-    expect(c.filter((x) => x.projection.market === "points")).toHaveLength(1);
+    expect(c.filter((x) => x.projection.market === "sog")).toHaveLength(5);
+    expect(c.filter((x) => x.projection.market === "points")).toHaveLength(2);
     const probs = c.filter((x) => x.projection.market === "sog").map((x) => x.prob);
     for (let i = 1; i < probs.length; i++) expect(probs[i]!).toBeLessThan(probs[i - 1]!);
   });

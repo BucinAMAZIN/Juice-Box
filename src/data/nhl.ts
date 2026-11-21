@@ -222,3 +222,36 @@ export async function loadSchedule(date: string): Promise<ScheduledGame[]> {
 export async function loadBoxscore(gameId: number): Promise<Boxscore | null> {
   return parseBoxscore(await getJson(`${NHL_BASE}/gamecenter/${gameId}/boxscore`));
 }
+
+export type LeaderMarket = "sog" | "points" | "goals" | "assists";
+export type Leaders = Record<LeaderMarket, string[]>;
+
+/** Regular-season id such as 20262027. The season rolls over in September. */
+export function seasonId(date: string): string {
+  const y = Number(date.slice(0, 4));
+  const m = Number(date.slice(5, 7));
+  const start = m >= 9 ? y : y - 1;
+  return `${start}${start + 1}`;
+}
+
+export const LEADER_COUNT = 12;
+const LEADER_SORT: Record<LeaderMarket, string> = { sog: "shots", points: "points", goals: "goals", assists: "assists" };
+
+/** Pull player ids out of a stats-API skater summary page, keeping the order it came in. */
+export function parseLeaderRows(json: unknown): string[] {
+  const rows = (json as { data?: Array<{ playerId?: number }> } | null)?.data;
+  if (!Array.isArray(rows)) throw new Error("Unexpected leaders response");
+  return rows.filter((r) => typeof r.playerId === "number").map((r) => String(r.playerId));
+}
+
+export async function loadLeaders(date: string): Promise<Leaders> {
+  const season = seasonId(date);
+  const out = {} as Leaders;
+  for (const market of Object.keys(LEADER_SORT) as LeaderMarket[]) {
+    const sort = encodeURIComponent(JSON.stringify([{ property: LEADER_SORT[market], direction: "DESC" }]));
+    const exp = encodeURIComponent(`seasonId=${season} and gameTypeId=2`);
+    const url = `https://api.nhle.com/stats/rest/en/skater/summary?isAggregate=false&isGame=false&sort=${sort}&start=0&limit=${LEADER_COUNT}&cayenneExp=${exp}`;
+    out[market] = parseLeaderRows(await getJson(url)).slice(0, LEADER_COUNT);
+  }
+  return out;
+}
