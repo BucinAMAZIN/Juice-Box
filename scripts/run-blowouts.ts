@@ -38,7 +38,7 @@ if (mode === "track") {
   for (const g of board) {
     const prior = have.get(g.id);
     // Final games lose their line on the scoreboard, so a tracked game keeps the line it had.
-    const line = g.line && g.state === "pre" ? g.line : prior ? { fav: prior.fav, spread: prior.spread, total: prior.total } : g.state === "post" ? await loadClosingLine(g.id) : g.line;
+    const line = g.line && g.state === "pre" ? g.line : prior ? { fav: prior.fav, spread: prior.spread, total: prior.total, favHome: prior.fav === g.home } : g.state === "post" ? await loadClosingLine(g.id) : g.line;
     if (!line || (!prior && line.spread < TRACK_MIN)) continue;
     const next = toBlowout(g, line);
     if (!prior) added++;

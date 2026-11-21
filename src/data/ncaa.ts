@@ -8,6 +8,8 @@ export interface NcaaLine {
   /** Points the favorite gives, as a positive number. */
   spread: number;
   total: number;
+  /** Whether the home team is the favorite, from ESPN's own flags when it gives them. Team codes in the line text do not always match the scoreboard's. */
+  favHome?: boolean;
 }
 
 export interface NcaaGame {
@@ -29,13 +31,20 @@ const numOf = (v: unknown): number | null => {
 };
 
 /** ESPN writes a line as "AUB -48.5". "EVEN" and "OFF" carry no favorite. */
-export function parseLine(details: unknown, overUnder: unknown): NcaaLine | null {
+export function parseLine(details: unknown, overUnder: unknown, odds?: unknown): NcaaLine | null {
   const m = typeof details === "string" ? /^(\S+)\s+([+-]?\d+(?:\.\d+)?)$/.exec(details.trim()) : null;
   const total = numOf(overUnder);
   if (!m || total == null || total <= 0) return null;
   const n = Number(m[2]);
   if (n >= 0) return null;
-  return { fav: m[1]!, spread: -n, total };
+  const line: NcaaLine = { fav: m[1]!, spread: -n, total };
+  if (isObj(odds)) {
+    const home = isObj(odds.homeTeamOdds) ? odds.homeTeamOdds.favorite : undefined;
+    const away = isObj(odds.awayTeamOdds) ? odds.awayTeamOdds.favorite : undefined;
+    if (home === true && away !== true) line.favHome = true;
+    else if (away === true && home !== true) line.favHome = false;
+  }
+  return line;
 }
 
 export function parseGame(raw: unknown): NcaaGame | null {
@@ -59,14 +68,14 @@ export function parseGame(raw: unknown): NcaaGame | null {
     away: code(away),
     homeScore: numOf(home.score),
     awayScore: numOf(away.score),
-    line: odds ? parseLine(odds.details, odds.overUnder) : null,
+    line: odds ? parseLine(odds.details, odds.overUnder, odds) : null,
   };
 }
 
 /** The closing line from the core odds API: the first provider that gives both a favorite and a total. */
 export function pickLine(json: unknown): NcaaLine | null {
   const items = isObj(json) && Array.isArray(json.items) ? json.items : [];
-  const lines = items.filter(isObj).map((i) => ({ id: isObj(i.provider) ? String(i.provider.id) : "", line: parseLine(i.details, i.overUnder) })).filter((x) => x.line);
+  const lines = items.filter(isObj).map((i) => ({ id: isObj(i.provider) ? String(i.provider.id) : "", line: parseLine(i.details, i.overUnder, i) })).filter((x) => x.line);
   return (lines.find((x) => x.id === "58") ?? lines[0])?.line ?? null;
 }
 

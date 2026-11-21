@@ -70,3 +70,11 @@ describe("Blowouts screen", () => {
     expect(root.textContent).toContain("Past-season lines have not been loaded yet.");
   });
 });
+
+describe("favorite flags", () => {
+  it("uses ESPN's favorite flags when the line text names a different code than the scoreboard", () => {
+    const e = event({ competitions: [{ competitors: [{ homeAway: "home", score: "52", team: { abbreviation: "AFA" } }, { homeAway: "away", score: "3", team: { abbreviation: "UNLV" } }], odds: [{ details: "AF -23.5", overUnder: 48.5, homeTeamOdds: { favorite: true }, awayTeamOdds: { favorite: false } }] }] });
+    const g = parseGame(e)!;
+    expect(toBlowout(g, g.line!)).toMatchObject({ fav: "AFA", dog: "UNLV", favScore: 52, dogScore: 3, result: "over" });
+  });
+});

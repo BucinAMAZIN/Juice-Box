@@ -20,10 +20,10 @@ export interface BlowoutGame {
 
 export const etDate = (iso: string): string => new Date(iso).toLocaleDateString("en-CA", { timeZone: "America/New_York" });
 
-export function toBlowout(g: NcaaGame, line: { fav: string; spread: number; total: number }): BlowoutGame {
-  const out: BlowoutGame = { id: g.id, start: g.start, date: etDate(g.start), fav: line.fav, dog: line.fav === g.home ? g.away : g.home, spread: line.spread, total: line.total, status: g.state };
+export function toBlowout(g: NcaaGame, line: { fav: string; spread: number; total: number; favHome?: boolean }): BlowoutGame {
+  const favHome = line.favHome ?? line.fav === g.home;
+  const out: BlowoutGame = { id: g.id, start: g.start, date: etDate(g.start), fav: favHome ? g.home : g.away, dog: favHome ? g.away : g.home, spread: line.spread, total: line.total, status: g.state };
   if (g.state === "post" && g.homeScore != null && g.awayScore != null) {
-    const favHome = line.fav === g.home;
     out.favScore = favHome ? g.homeScore : g.awayScore;
     out.dogScore = favHome ? g.awayScore : g.homeScore;
     out.points = g.homeScore + g.awayScore;
