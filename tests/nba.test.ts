@@ -108,3 +108,17 @@ describe("NBA grading and the Linemate gate", () => {
     expect(day.notes.join(" ")).toMatch(/Linemate has no data/);
   });
 });
+
+import { blendWithMarket } from "../src/engine/filter";
+import type { Candidate } from "../src/engine/select";
+
+describe("market blend", () => {
+  it("moves a priced probability halfway back toward its price and keeps the original", () => {
+    const c = { projection: {}, threshold: 3, line: 2.5, prob: 0.7, price: { american: -100, book: "x" } } as unknown as Candidate;
+    const [out] = blendWithMarket([c]);
+    expect(out!.prob).toBeCloseTo(0.6, 5);
+    expect(out!.rawProb).toBe(0.7);
+    const unpriced = { ...c, price: undefined } as Candidate;
+    expect(blendWithMarket([unpriced])[0]!.prob).toBe(0.7);
+  });
+});

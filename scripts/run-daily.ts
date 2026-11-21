@@ -24,6 +24,9 @@ const { day: nbaDay, log: nbaLog } = await generateNbaDayOrNote(
   opts,
 );
 const log = [...nhlLog, ...nbaLog];
+const label = (tag: string, notes: string[]) => notes.map((n) => (n.startsWith(`${tag}:`) ? n : `${tag}: ${n}`));
+nhlDay.notes = label("NHL", nhlDay.notes);
+nbaDay.notes = label("NBA", nbaDay.notes);
 const day = mergeDays([nhlDay, nbaDay]);
 for (const line of log) console.log(line);
 

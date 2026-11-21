@@ -1,6 +1,7 @@
 import "./styles.css";
 import { Ledger } from "./data/ledger";
 import { h } from "./ui/dom";
+import { renderPicks } from "./ui/picks";
 import { renderResults } from "./ui/results";
 import { renderStats } from "./ui/stats";
 import { renderToday } from "./ui/today";
@@ -9,7 +10,8 @@ const ledger = new Ledger(localStorage);
 const root = document.getElementById("app")!;
 
 const TABS = [
-  ["today", "Today", renderToday],
+  ["picks", "Picks", renderPicks],
+  ["today", "Price a play", renderToday],
   ["results", "Results", renderResults],
   ["stats", "Stats", renderStats],
 ] as const;

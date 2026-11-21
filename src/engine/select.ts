@@ -139,7 +139,7 @@ export function selectDay(
     make(potd, "potd", `Play of the day: ${describe(potd)}. ${priced ? cheap(potd) : `Take it at ${shortOdds(limitOdds(potd.prob))} or better.`}`);
     used.add(potd.projection.key);
   } else {
-    notes.push("No play of the day: nothing landed in the probability band for a -110 to -135 price.");
+    notes.push(priced ? "No play of the day: nothing had a real price from -110 to -135 with an edge." : "No play of the day: nothing landed in the probability band for a -110 to -135 price.");
   }
 
   // Leans: one per player, a couple per game.
@@ -201,7 +201,7 @@ export function selectDay(
     usedLegPlayers.add(a.projection.key);
     usedLegPlayers.add(b.projection.key);
   }
-  if (tickets.length === 0) notes.push("No +100 ticket cleared the bar today.");
+  if (tickets.length === 0) notes.push(priced ? "No +100 ticket paid +100 or better with an edge." : "No +100 ticket cleared the bar today.");
 
   return { date, generatedAt: now.toISOString(), modelVersion: opts.modelVersion ?? MODEL_VERSION, picks, tickets, notes };
 }

@@ -1,3 +1,4 @@
+import { impliedProb } from "../core/odds";
 import type { Candidate } from "./select";
 import { segmentKey, type Priors } from "./priors";
 import type { PickMarket } from "./types";
@@ -47,5 +48,19 @@ export function applyPriors(candidates: Candidate[], sport: Sport, priors: Prior
     const adj = haircutFor(sport, c.projection.market, c.prob, priors);
     if (adj.haircut === 0) return c;
     return { ...c, rawProb: c.prob, prob: Math.max(0.01, c.prob - adj.haircut), adjustment: adj.reason };
+  });
+}
+
+/** How much of the gap between our number and the book's price we trust. The market is usually right more often than a simple model. */
+export const MARKET_TRUST = 0.5;
+
+/** Pull each priced candidate's probability part of the way back to its price, so a large "edge" is not taken at face value. */
+export function blendWithMarket(candidates: Candidate[], weight = MARKET_TRUST): Candidate[] {
+  return candidates.map((c) => {
+    if (!c.price) return c;
+    const implied = impliedProb(c.price.american);
+    const prob = implied + weight * (c.prob - implied);
+    const why = `halfway back to the ${c.price.american > 0 ? "+" : ""}${c.price.american} price`;
+    return { ...c, rawProb: c.rawProb ?? c.prob, prob, adjustment: c.adjustment ? `${c.adjustment}; ${why}` : why };
   });
 }

@@ -6,7 +6,7 @@ import { attachPrices } from "./pricing";
 import { gradeDay, mergeGrades } from "./grade";
 import { buildHistories, type DatedBox } from "./history";
 import { projectPlayer, type Projection } from "./project";
-import { applyPriors } from "./filter";
+import { applyPriors, blendWithMarket } from "./filter";
 import parlaybot from "./priors/parlaybot.json";
 import type { Priors } from "./priors";
 import { candidatesFrom, selectDay } from "./select";
@@ -153,7 +153,7 @@ export async function generateDay(f: Fetchers, now: Date, opts: { date?: string 
     }
     const res = attachPrices(candidates, offers, "nhl");
     log.push(`${res.priced.length} candidates matched a Linemate price, ${res.dropped} had none and were dropped`);
-    candidates = res.priced;
+    candidates = blendWithMarket(res.priced);
     priced = true;
   }
   const day = selectDay(date, candidates, now, undefined, { priced });

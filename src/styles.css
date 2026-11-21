@@ -132,3 +132,10 @@ th, td { text-align: left; padding: 8px 4px; border-bottom: 1px solid var(--line
   .view { max-width: 900px; }
   .stats { grid-template-columns: repeat(3, 1fr); }
 }
+
+.pick { border: 1px solid var(--line, #2a2f3a); border-radius: 10px; padding: 12px; margin: 8px 0; display: grid; gap: 4px; }
+.pick-top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.ticket { border-left: 3px solid var(--accent, #7aa2ff); padding-left: 10px; }
+.badge { font-size: 12px; padding: 2px 8px; border-radius: 99px; border: 1px solid currentColor; white-space: nowrap; }
+.badge.win { color: #3fb950; } .badge.loss { color: #f85149; } .badge.open { color: #8b949e; }
+.sport h2 { margin-top: 20px; } .notes { margin-top: 16px; }

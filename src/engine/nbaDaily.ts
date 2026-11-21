@@ -2,7 +2,7 @@ import { easternDate } from "../data/autograde";
 import type { NbaBox, NbaGame, SeasonAvg } from "../data/espn";
 import type { Offer } from "../data/linemate";
 import { nameKey } from "../data/nhl";
-import { applyPriors } from "./filter";
+import { applyPriors, blendWithMarket } from "./filter";
 import { buildNbaHistories, nbaCandidates, nbaLeaders, NBA_MARKETS, projectNba } from "./nba";
 import type { Priors } from "./priors";
 import parlaybot from "./priors/parlaybot.json";
@@ -129,7 +129,7 @@ export async function generateNbaDay(f: NbaFetchers, now: Date, opts: { date?: s
 
   const raw = nbaCandidates(projections, offers);
   log.push(`${raw.length} alt-line candidates with a Linemate price`);
-  const candidates = applyPriors(raw, "nba", parlaybot as Priors);
+  const candidates = blendWithMarket(applyPriors(raw, "nba", parlaybot as Priors));
   const day = selectDay(date, candidates, now, undefined, { priced: true, idPrefix: "nba-", modelVersion: NBA_MODEL_VERSION });
   if (raw.length === 0) day.notes.push("NBA: no leader had a matching Linemate line, so no picks were made.");
   return { day, log };

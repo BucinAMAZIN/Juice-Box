@@ -164,3 +164,34 @@ describe("Results and Stats screens", () => {
     expect(root.textContent).toContain("Nothing graded yet");
   });
 });
+
+import { pickPrice, pickTitle, renderPicks, type PicksSource } from "../src/ui/picks";
+import type { DayFile } from "../src/engine/types";
+
+describe("Picks screen", () => {
+  const day: DayFile = {
+    date: "2026-11-21", generatedAt: "", modelVersion: "x", tickets: [], notes: ["NHL: Linemate has no NHL data yet, so no picks were made."],
+    picks: [{ id: "a", createdAt: "", gameStart: "", gameId: 1, sport: "nba", kind: "potd", player: "Luka Doncic", team: "LAL", opponent: "DEN", market: "threes", line: 4.5, side: "over", modelProb: 0.53, limitOdds: -110, mean: 4.6, price: 110, book: "draftkings", edge: 0.056, note: "" }],
+  };
+  const source: PicksSource = {
+    loadIndex: async () => ({ dates: ["2026-11-21"] }),
+    loadDay: async () => day,
+    loadGrades: async () => ({ date: "2026-11-21", gradedAt: "", grades: [{ pickId: "a", actual: 5, outcome: "win", profitAtLimit: 1.1 }] }),
+  };
+  it("shows the play of the day with its real price, result and why other sports are empty", async () => {
+    const view = document.createElement("div");
+    await renderPicks(view, undefined, source);
+    expect(view.textContent).toContain("Play of the day");
+    expect(view.textContent).toContain("Luka Doncic · 5+ threes made");
+    expect(view.textContent).toContain("Take it at +110 on draftkings or better");
+    expect(view.textContent).toContain("Won (5)");
+    expect(view.textContent).toContain("Why some sports have no picks");
+    expect(pickTitle(day.picks[0]!)).toBe("Luka Doncic · 5+ threes made");
+    expect(pickPrice({ ...day.picks[0]!, price: undefined })).toBe("Take it at -110 or better");
+  });
+  it("explains itself when there are no picks yet", async () => {
+    const view = document.createElement("div");
+    await renderPicks(view, undefined, { ...source, loadIndex: async () => ({ dates: [] }) });
+    expect(view.textContent).toContain("No picks have been made yet");
+  });
+});
