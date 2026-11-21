@@ -7,10 +7,10 @@ import type { DayFile, HandedPick, PickMarket } from "./types";
 /** Fewest straight games that count as a streak. */
 export const MIN_STREAK = 5;
 /** Hard Rock price window for the list: shorter than this is too expensive to be worth listing. */
-export const PRICE_MIN = -500;
-export const PRICE_MAX = 150;
-/** Streaks listed per sport per run. */
-export const PER_SPORT = 15;
+export const PRICE_MIN = -1000;
+export const PRICE_MAX = 500;
+/** Safety cap on streaks listed per sport per run. It is far above what a day produces, so in practice every 5+ streak is listed. */
+export const PER_SPORT = 200;
 /** Skip games that start within this many minutes: the list is for bets you can still place. */
 export const LEAD_MINUTES = 10;
 
@@ -62,6 +62,7 @@ export function buildStreakPicks(sport: LmSport, offers: Offer[], games: GameRef
   let streaks = 0;
   let unmatched = 0;
   let noPrice = 0;
+  let outOfRange = 0;
   const out: HandedPick[] = [];
   for (const o of offers) {
     const market = markets[o.marketName];
@@ -74,8 +75,12 @@ export function buildStreakPicks(sport: LmSport, offers: Offer[], games: GameRef
       continue;
     }
     const rung = hrRungAt(o, o.line);
-    if (!rung || rung.american < PRICE_MIN || rung.american > PRICE_MAX) {
+    if (!rung) {
       noPrice++;
+      continue;
+    }
+    if (rung.american < PRICE_MIN || rung.american > PRICE_MAX) {
+      outOfRange++;
       continue;
     }
     const gameId = game.id;
@@ -110,7 +115,7 @@ export function buildStreakPicks(sport: LmSport, offers: Offer[], games: GameRef
     });
   }
   out.sort((a, b) => (b.streak ?? 0) - (a.streak ?? 0) || (b.price ?? 0) - (a.price ?? 0));
-  log.push(`${sport.toUpperCase()}: ${offers.length} rows, ${streaks} streaks of ${MIN_STREAK}+, ${unmatched} without an open game, ${noPrice} without a Hard Rock price in range, ${Math.min(limit, out.length)} listed`);
+  log.push(`${sport.toUpperCase()}: ${offers.length} rows, ${streaks} streaks of ${MIN_STREAK}+, ${unmatched} without an open game, ${noPrice} not listed at Hard Rock, ${outOfRange} priced outside ${PRICE_MIN} to +${PRICE_MAX}, ${Math.min(limit, out.length)} listed`);
   return { picks: out.slice(0, limit), log };
 }
 

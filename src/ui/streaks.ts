@@ -115,7 +115,7 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
     marketBox,
     group("Line", [["All", "all"], ["Main", "main"], ["Alt", "alt"]] as Array<[string, Filters["line"]]>, () => state.filters.line, (v) => (state.filters.line = v)),
     group("Streak", [["Any", 0], ["7+", 7], ["10+", 10]] as Array<[string, number]>, () => state.filters.minStreak, (v) => (state.filters.minStreak = v)),
-    group("Price", [["Any", 0], ["-200", -200], ["-300", -300], ["-400", -400]] as Array<[string, number]>, () => state.filters.maxJuice, (v) => (state.filters.maxJuice = v)),
+    group("Price", [["Any", 0], ["-200", -200], ["-300", -300], ["-400", -400], ["-500", -500]] as Array<[string, number]>, () => state.filters.maxJuice, (v) => (state.filters.maxJuice = v)),
     group("Head to head", [["Any", 0], ["75%+", 0.75], ["100%", 1]] as Array<[string, number]>, () => state.filters.h2h, (v) => (state.filters.h2h = v)),
     group("Home/away", [["Any", 0], ["75%+", 0.75], ["100%", 1]] as Array<[string, number]>, () => state.filters.split, (v) => (state.filters.split = v)),
     group("Cushion", [["Any", 0], ["+10%", 0.1], ["+25%", 0.25]] as Array<[string, number]>, () => state.filters.cushion, (v) => (state.filters.cushion = v)),
