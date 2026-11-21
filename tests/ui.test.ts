@@ -2,8 +2,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { Ledger, type KeyValueStore } from "../src/data/ledger";
 import { renderResults } from "../src/ui/results";
-import { renderStats } from "../src/ui/stats";
+import { renderStats, type Report } from "../src/ui/stats";
 import { renderToday } from "../src/ui/today";
+import { pickPrice, pickTitle, renderPicks, type PicksSource } from "../src/ui/picks";
 
 function memoryStore(): KeyValueStore {
   let v: string | null = null;
@@ -131,41 +132,43 @@ describe("Today screen", () => {
     fillForm(root, { player: '<img src=x onerror="window.pwned=1">' });
     submit(root);
     root.querySelector<HTMLButtonElement>(".side.flagged button")!.click();
-    renderResults(root, ledger);
     expect(root.querySelector("img")).toBeNull();
-    expect(root.textContent).toContain("<img src=x");
   });
 });
 
 describe("Results and Stats screens", () => {
-  it("grades by hand and updates the record", () => {
-    renderToday(root, ledger);
-    fillForm(root);
-    submit(root);
-    root.querySelector<HTMLButtonElement>(".side.flagged button")!.click();
-
-    renderResults(root, ledger);
-    expect(root.querySelector(".pick.open")).not.toBeNull();
-    root.querySelector<HTMLInputElement>('input[aria-label="Actual total"]')!.value = "5";
-    root.querySelector<HTMLInputElement>('input[aria-label="Closing odds"]')!.value = "-120";
-    root.querySelector<HTMLButtonElement>(".gradebar button")!.click();
-    expect(root.querySelector(".pick.win")).not.toBeNull();
-
-    renderStats(root, ledger);
-    expect(root.textContent).toContain("1-0");
-    expect(root.textContent).toContain("+1.00u");
-    expect(root.textContent).toContain("Only 1 graded picks");
+  const pick = { id: "a", createdAt: "", gameStart: "", gameId: 1, sport: "nba" as const, kind: "potd" as const, player: "Luka Doncic", team: "LAL", opponent: "DEN", market: "threes" as const, line: 4.5, side: "over" as const, modelProb: 0.6, limitOdds: -120, mean: 5, price: -115, book: "Hard Rock", note: "" };
+  const source = (graded: boolean): PicksSource => ({
+    loadIndex: async () => ({ dates: ["2026-11-20", "2026-11-21"] }),
+    loadDay: async (d) => ({ date: d, generatedAt: "", modelVersion: "x", tickets: [], notes: [], picks: [{ ...pick, id: d }] }),
+    loadGrades: async (d) => (graded && d === "2026-11-20" ? { date: d, gradedAt: "", grades: [{ pickId: d, actual: 6, outcome: "win", profitAtLimit: 0.8 }] } : null),
   });
-
-  it("shows empty states", () => {
-    renderResults(root, ledger);
-    expect(root.textContent).toContain("No picks logged yet");
-    renderStats(root, ledger);
+  it("lists graded picks by day with a running record", async () => {
+    const root = document.createElement("div");
+    await renderResults(root, undefined, source(true));
+    expect(root.textContent).toContain("Record: 1-0");
+    expect(root.textContent).toContain("2026-11-20 · 1-0");
+    expect(root.textContent).toContain("2026-11-21 · not graded yet");
+    expect(root.textContent).toContain("Won (6)");
+  });
+  it("shows empty states", async () => {
+    const root = document.createElement("div");
+    await renderResults(root, undefined, { ...source(false), loadIndex: async () => ({ dates: [] }) });
+    expect(root.textContent).toContain("No picks have been made yet");
+    await renderStats(root, undefined, async () => null);
     expect(root.textContent).toContain("Nothing graded yet");
+  });
+  it("shows the stats report", async () => {
+    const root = document.createElement("div");
+    const bucket = { picks: 5, wins: 2, losses: 3, pushes: 0, hitRate: 0.4, avgModelProb: 0.66, profitAtLimit: -2.3 };
+    const report: Report = { generatedAt: "", totalPicks: 5, graded: 5, overall: bucket, byMarket: { pra: bucket }, byKind: { potd: bucket }, brier: 0.26, logLoss: 0.7, calibration: [{ n: 5, predicted: 0.66, actual: 0.4 }], findings: ["Only 5 graded picks."] };
+    await renderStats(root, undefined, async () => report);
+    expect(root.textContent).toContain("2-3");
+    expect(root.textContent).toContain("-2.30u");
+    expect(root.textContent).toContain("Only 5 graded picks");
   });
 });
 
-import { pickPrice, pickTitle, renderPicks, type PicksSource } from "../src/ui/picks";
 import type { DayFile } from "../src/engine/types";
 
 describe("Picks screen", () => {
