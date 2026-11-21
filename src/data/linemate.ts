@@ -7,7 +7,7 @@ import { nameKey } from "./nhl";
 
 export const LM_BASE = "https://api.linemate.io/api";
 export const LM_PAGE = 50;
-export const LM_MAX_PAGES = 12;
+export const LM_MAX_PAGES = 30;
 
 export type LmSport = "nba" | "nfl" | "nhl" | "mlb";
 
@@ -224,8 +224,9 @@ export async function loadRowOffers(sport: LmSport, markets: string[]): Promise<
   let failures = 0;
   for (const market of markets) {
     try {
+      // Main lines and Linemate's "Alternate Lines" (e.g. Maxey 20+) come from the same feed, selected by lineTypes.
       for (let page = 0; page < LM_MAX_PAGES; page++) {
-        const json = await getJson(`${LM_BASE}/${sport}/v1/trends/straights?limit=${LM_PAGE}&offset=${page * LM_PAGE}&markets=${market}`);
+        const json = await getJson(`${LM_BASE}/${sport}/v1/trends/straights?limit=${LM_PAGE}&offset=${page * LM_PAGE}&markets=${market}&lineTypes=ALTERNATE&lineTypes=MAIN`);
         const rows = Array.isArray(json) ? json : [];
         for (const o of parseOffers(rows, sport)) {
           const id = `${o.gameId}|${o.key}|${o.marketName}|${o.side}|${o.line}`;
