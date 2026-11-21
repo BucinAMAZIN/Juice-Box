@@ -1,3 +1,5 @@
+import { type League, coreUrl, leagueById, siteUrl } from "./leagues";
+
 /** College football lines and scores from ESPN: the scoreboard for games ahead, the core odds API for lines on games already played. */
 export const NCAA_SITE = "https://site.api.espn.com/apis/site/v2/sports/football/college-football";
 export const NCAA_CORE = "https://sports.core.api.espn.com/v2/sports/football/leagues/college-football";
@@ -20,6 +22,9 @@ export interface NcaaGame {
   away: string;
   homeScore: number | null;
   awayScore: number | null;
+  /** Win share of each team's record on the scoreboard, as of the game's feed. */
+  homeWin?: number;
+  awayWin?: number;
   line: NcaaLine | null;
 }
 
@@ -60,7 +65,17 @@ export function parseGame(raw: unknown): NcaaGame | null {
   const type = isObj(raw.status) && isObj(raw.status.type) ? raw.status.type : {};
   const state = type.state === "post" && type.completed !== false ? "post" : type.state === "in" ? "in" : "pre";
   const odds = Array.isArray(comp.odds) && isObj(comp.odds[0]) ? comp.odds[0] : null;
+  const winShare = (c: Obj): number | undefined => {
+    const rec = Array.isArray(c.records) && isObj(c.records[0]) && typeof c.records[0].summary === "string" ? /^(\d+)-(\d+)/.exec(c.records[0].summary) : null;
+    const w = rec ? Number(rec[1]) : 0;
+    const l = rec ? Number(rec[2]) : 0;
+    return rec && w + l > 0 ? w / (w + l) : undefined;
+  };
+  const hw = winShare(home);
+  const aw = winShare(away);
   return {
+    ...(hw != null ? { homeWin: hw } : {}),
+    ...(aw != null ? { awayWin: aw } : {}),
     id: raw.id,
     start: typeof raw.date === "string" ? raw.date : "",
     state,
@@ -79,6 +94,8 @@ export function pickLine(json: unknown): NcaaLine | null {
   return (lines.find((x) => x.id === "58") ?? lines[0])?.line ?? null;
 }
 
+const FBS: League = leagueById("ncaaf")!;
+
 async function getJson(url: string): Promise<unknown> {
   const res = await fetch(url, { headers: { "user-agent": "Mozilla/5.0", accept: "application/json" } });
   if (!res.ok) throw new Error(`ESPN ${res.status} for ${url}`);
@@ -86,27 +103,27 @@ async function getJson(url: string): Promise<unknown> {
 }
 
 /** Every FBS game on one day, written YYYYMMDD. ESPN refuses date ranges, so a span is read a day at a time. */
-export async function loadDay(day: string): Promise<NcaaGame[]> {
-  const json = await getJson(`${NCAA_SITE}/scoreboard?dates=${day}&groups=80&limit=400`);
+export async function loadDay(day: string, league: League = FBS): Promise<NcaaGame[]> {
+  const json = await getJson(`${siteUrl(league)}/scoreboard?dates=${day}${league.groups ? `&groups=${league.groups}` : ""}&limit=400`);
   const events = isObj(json) && Array.isArray(json.events) ? json.events : [];
   return events.map(parseGame).filter((g): g is NcaaGame => g !== null);
 }
 
 /** Every FBS game from one day to another (YYYYMMDD each, inclusive). A day that fails is skipped. */
-export async function loadBoard(from: string, to: string, size = 6): Promise<NcaaGame[]> {
+export async function loadBoard(from: string, to: string, size = 6, league: League = FBS): Promise<NcaaGame[]> {
   const days: string[] = [];
   for (let t = Date.UTC(+from.slice(0, 4), +from.slice(4, 6) - 1, +from.slice(6, 8)); t <= Date.UTC(+to.slice(0, 4), +to.slice(4, 6) - 1, +to.slice(6, 8)); t += 86_400_000) days.push(new Date(t).toISOString().slice(0, 10).replaceAll("-", ""));
   const out: NcaaGame[][] = [];
   let next = 0;
-  await Promise.all(Array.from({ length: size }, async () => { while (next < days.length) { const k = next++; out[k] = await loadDay(days[k]!).catch(() => []); } }));
+  await Promise.all(Array.from({ length: size }, async () => { while (next < days.length) { const k = next++; out[k] = await loadDay(days[k]!, league).catch(() => []); } }));
   const byId = new Map<string, NcaaGame>();
   for (const g of out.flat()) byId.set(g.id, g);
   return [...byId.values()];
 }
 
-export async function loadClosingLine(id: string): Promise<NcaaLine | null> {
+export async function loadClosingLine(id: string, league: League = FBS): Promise<NcaaLine | null> {
   try {
-    return pickLine(await getJson(`${NCAA_CORE}/events/${id}/competitions/${id}/odds`));
+    return pickLine(await getJson(`${coreUrl(league)}/events/${id}/competitions/${id}/odds`));
   } catch {
     return null;
   }

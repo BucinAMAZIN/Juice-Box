@@ -1,7 +1,7 @@
 {
   "name": "juice-box",
   "private": true,
-  "version": "0.7.1",
+  "version": "0.8.0",
   "type": "module",
   "description": "A pick tracker that prices props against the vig, logs every pick before the game, and grades itself honestly.",
   "scripts": {
@@ -15,7 +15,8 @@
     "links": "tsx scripts/run-links.ts",
     "streaks": "tsx scripts/run-streaks.ts",
     "grade-streaks": "tsx scripts/run-grade-streaks.ts",
-    "blowouts": "tsx scripts/run-blowouts.ts"
+    "blowouts": "tsx scripts/run-blowouts.ts",
+    "lines": "tsx scripts/run-lines.ts"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",

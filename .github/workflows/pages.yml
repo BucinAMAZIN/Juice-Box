@@ -24,7 +24,12 @@ on:
           - picks
           - grade
           - backfill
+          - lines-backfill
           - none
+      league:
+        description: "League for lines-backfill (nba, nfl, nhl, ncaaf, ncaab, mlb)"
+        type: string
+        default: nba
 
 permissions:
   contents: write
@@ -78,6 +83,18 @@ jobs:
         continue-on-error: true
         run: npm run blowouts
 
+      # Every game in every league with a line: spread and total now, the final score later.
+      - name: Track lines
+        if: steps.task.outputs.task == 'picks' || steps.task.outputs.task == 'grade'
+        continue-on-error: true
+        run: npm run lines
+
+      - name: Backfill line history
+        if: steps.task.outputs.task == 'lines-backfill'
+        env:
+          LEAGUE: ${{ inputs.league }}
+        run: npm run lines -- --backfill --league="$LEAGUE"
+
       - name: Backfill college blowout history
         if: steps.task.outputs.task == 'backfill'
         run: npm run blowouts -- --backfill
@@ -91,9 +108,10 @@ jobs:
           npm run streaks -- --dry-run
           npm run grade-streaks -- --dry-run
           npm run blowouts -- --dry-run
+          npm run lines -- --dry-run
 
       - name: Commit data
-        if: steps.task.outputs.task == 'picks' || steps.task.outputs.task == 'grade' || steps.task.outputs.task == 'backfill'
+        if: steps.task.outputs.task == 'picks' || steps.task.outputs.task == 'grade' || steps.task.outputs.task == 'backfill' || steps.task.outputs.task == 'lines-backfill'
         env:
           TASK: ${{ steps.task.outputs.task }}
         run: |
