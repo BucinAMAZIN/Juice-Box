@@ -1,26 +1,24 @@
 export {};
-/** Read only: finds the request parameter that makes Linemate return alternate-line rows. */
-const H = { "user-agent": "Mozilla/5.0", accept: "application/json", origin: "https://linemate.io", referer: "https://linemate.io/" };
-const base = "https://api.linemate.io/api/nba/v1/trends/straights?limit=50&offset=0&markets=POINTS";
-const tries = ["", "&alternate=true", "&alternates=true", "&lineType=alternate", "&lineType=ALTERNATE", "&lineTypes=alternate", "&isAlternate=true", "&includeAlternates=true", "&featured=false", "&altLines=true", "&line_type=alternate", "&alt=true"];
-for (const t of tries) {
-  try {
-    const res = await fetch(base + t, { headers: H });
-    const rows: any[] = res.ok ? await res.json() : [];
-    const alt = rows.filter((r) => r.alternate === true).length;
-    const maxey = rows.filter((r) => /Maxey/.test(r.player?.fullName ?? "")).map((r) => `${r.outcome}@${r.line}${r.alternate ? "(alt)" : ""}`);
-    console.log("TRY", JSON.stringify(t), "status", res.status, "rows", rows.length, "alt", alt, "maxey", JSON.stringify(maxey));
-  } catch (e) {
-    console.log("TRY", JSON.stringify(t), "error", String(e));
+/** Read only: looks in Linemate's public site code for the request parameter behind "Alternate Lines". */
+const H = { "user-agent": "Mozilla/5.0", accept: "*/*" };
+const get = async (u: string) => {
+  const r = await fetch(u, { headers: H });
+  return r.ok ? r.text() : "";
+};
+const html = await get("https://linemate.io/");
+console.log("HTML bytes", html.length);
+const srcs = [...html.matchAll(/(?:src|href)="([^"]+\.js[^"]*)"/g)].map((m) => new URL(m[1]!, "https://linemate.io/").href);
+console.log("SCRIPTS", srcs.length);
+const seen = new Set<string>();
+let hits = 0;
+const scan = async (u: string, depth: number) => {
+  if (seen.has(u) || seen.size > 60) return;
+  seen.add(u);
+  const js = await get(u);
+  for (const m of js.matchAll(/.{0,160}(?:alternate|lineType|line_type|isAlt)[A-Za-z_]*.{0,160}/gi)) {
+    if (hits++ < 25) console.log("HIT", u.split("/").pop(), JSON.stringify(m[0]).slice(0, 360));
   }
-}
-// Does paging reach more rows (all pages, no extra param)?
-let total = 0; const lines = new Map<string, number[]>();
-for (let page = 0; page < 40; page++) {
-  const res = await fetch(`${base}`.replace("offset=0", `offset=${page * 50}`), { headers: H });
-  const rows: any[] = res.ok ? await res.json() : [];
-  total += rows.length;
-  for (const r of rows) if (/Maxey/.test(r.player?.fullName ?? "")) lines.set(r.outcome, [...(lines.get(r.outcome) ?? []), r.line]);
-  if (rows.length < 50) break;
-}
-console.log("PAGED total", total, "maxey lines", JSON.stringify([...lines]));
+  if (depth < 1) for (const m of js.matchAll(/["'`]([^"'`\s]{3,80}\.js)["'`]/g)) await scan(new URL(m[1]!, u).href, depth + 1);
+};
+for (const s of srcs) await scan(s, 0);
+console.log("SCANNED", seen.size, "HITS", hits);
