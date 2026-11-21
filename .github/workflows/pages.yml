@@ -77,6 +77,13 @@ jobs:
           npm run picks -- --dry-run --date="$TOMORROW"
           npm run grade -- --dry-run
 
+      - name: Probe Linemate pages
+        if: steps.task.outputs.task == 'dry'
+        continue-on-error: true
+        run: |
+          npx playwright install --with-deps chromium
+          npx tsx scripts/probe-linemate.ts
+
       - name: Probe ESPN feeds
         if: steps.task.outputs.task == 'dry'
         continue-on-error: true
