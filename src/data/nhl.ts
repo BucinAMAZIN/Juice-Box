@@ -135,6 +135,36 @@ export function findPlayer(box: Boxscore, name: string): PlayerLine | undefined 
   return box.players.find((p) => nameKey(p.name) === key);
 }
 
+export interface ClubGame {
+  id: number;
+  date: string;
+  state: string;
+  /** 2 = regular season, 3 = playoffs. */
+  type: number;
+  away: string;
+  home: string;
+}
+
+/** Games from a /club-schedule-season/{team}/now response. */
+export function parseClubSchedule(json: unknown): ClubGame[] {
+  if (!isObj(json) || !Array.isArray(json.games)) return [];
+  const out: ClubGame[] = [];
+  for (const g of json.games) {
+    if (!isObj(g) || !isObj(g.awayTeam) || !isObj(g.homeTeam)) continue;
+    const id = num(g.id);
+    const date = str(g.gameDate);
+    const away = str(g.awayTeam.abbrev);
+    const home = str(g.homeTeam.abbrev);
+    if (!id || !date || !away || !home) continue;
+    out.push({ id, date, state: str(g.gameState), type: num(g.gameType), away, home });
+  }
+  return out;
+}
+
+export async function loadClubSchedule(team: string): Promise<ClubGame[]> {
+  return parseClubSchedule(await getJson(`${NHL_BASE}/club-schedule-season/${team}/now`));
+}
+
 async function getJson(url: string, timeoutMs = 10_000): Promise<unknown> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);

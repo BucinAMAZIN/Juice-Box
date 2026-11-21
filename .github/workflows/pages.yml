@@ -1,18 +1,33 @@
-name: Deploy site
+name: Picks and site
 
 on:
   push:
     branches: [main]
+  schedule:
+    # 19:00 UTC is 2pm Eastern in winter, 3pm in summer. Picks go out before the evening games.
+    - cron: "0 19 * * *"
+    # 12:00 UTC is 7am Eastern in winter. Grades the previous night's picks.
+    - cron: "0 12 * * *"
   workflow_dispatch:
+    inputs:
+      task:
+        description: "What to run"
+        type: choice
+        default: picks
+        options:
+          - picks
+          - grade
+          - none
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
+# Never cancel a run midway: it may be in the middle of committing data.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -24,13 +39,64 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+
+      - name: Decide what to run
+        id: task
+        env:
+          EVENT: ${{ github.event_name }}
+          SCHEDULE: ${{ github.event.schedule }}
+          INPUT_TASK: ${{ inputs.task }}
+        run: |
+          if [ "$EVENT" = "schedule" ]; then
+            if [ "$SCHEDULE" = "0 19 * * *" ]; then echo "task=picks" >> "$GITHUB_OUTPUT"; else echo "task=grade" >> "$GITHUB_OUTPUT"; fi
+          elif [ "$EVENT" = "workflow_dispatch" ]; then
+            echo "task=$INPUT_TASK" >> "$GITHUB_OUTPUT"
+          else
+            echo "task=dry" >> "$GITHUB_OUTPUT"
+          fi
+
       - run: npm test
+
+      - name: Make picks
+        if: steps.task.outputs.task == 'picks'
+        run: npm run picks
+
+      - name: Grade picks and write the report
+        if: steps.task.outputs.task == 'grade'
+        run: npm run grade
+
+      # On a normal push, rehearse the real run without writing anything, so the log shows
+      # whether the NHL feeds are reachable and what the engine would pick.
+      - name: Dry run
+        if: steps.task.outputs.task == 'dry'
+        continue-on-error: true
+        run: |
+          npm run picks -- --dry-run
+          npm run grade -- --dry-run
+
+      - name: Commit data
+        if: steps.task.outputs.task == 'picks' || steps.task.outputs.task == 'grade'
+        env:
+          TASK: ${{ steps.task.outputs.task }}
+        run: |
+          git config user.name "juice-box-bot"
+          git config user.email "juice-box-bot@users.noreply.github.com"
+          git add public/data
+          if git diff --cached --quiet; then
+            echo "No data changes."
+          else
+            git commit -m "data: $TASK $(date -u +%F)"
+            git pull --rebase
+            git push
+          fi
+
       - run: npm run build
         env:
           VITE_BASE: /Juice-Box/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
