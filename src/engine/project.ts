@@ -1,24 +1,25 @@
 import { distributionFor, shrinkRate } from "../core/model";
+import type { Sport } from "../core/potd";
 import type { CountDist } from "../core/dist";
 import type { Histories, PlayerHistory } from "./history";
-import type { PickMarket } from "./types";
+import type { NhlMarket, PickMarket } from "./types";
 
 /**
  * League-average rates per 60 minutes, all situations. Derived from typical NHL totals (about 30
  * shots and 7.5 points per team game spread over forward and defense minutes). These are starting
  * assumptions to be checked against logged results, not measured constants.
  */
-export const PRIOR_PER_60: Record<"F" | "D", Record<PickMarket, number>> = {
+export const PRIOR_PER_60: Record<"F" | "D", Record<NhlMarket, number>> = {
   F: { sog: 6.7, points: 1.75, goals: 0.77, assists: 0.98 },
   D: { sog: 4.8, points: 1.05, goals: 0.21, assists: 0.84 },
 };
 
 /** Minutes of evidence the prior is worth. Scoring stats are noisier than shots, so they lean on the prior more. */
-export const PRIOR_WEIGHT_MIN: Record<PickMarket, number> = { sog: 150, points: 600, goals: 800, assists: 600 };
+export const PRIOR_WEIGHT_MIN: Record<NhlMarket, number> = { sog: 150, points: 600, goals: 800, assists: 600 };
 
-export const MARKETS: PickMarket[] = ["sog", "points", "goals", "assists"];
+export const MARKETS: NhlMarket[] = ["sog", "points", "goals", "assists"];
 
-function statOf(g: { sog: number; points: number; goals: number; assists: number }, market: PickMarket): number {
+function statOf(g: { sog: number; points: number; goals: number; assists: number }, market: NhlMarket): number {
   return g[market];
 }
 
@@ -28,6 +29,8 @@ export const MIN_AVG_TOI = 11;
 
 export interface Projection {
   key: string;
+  /** Defaults to "nhl" when absent. */
+  sport?: Sport;
   player: string;
   team: string;
   opponent: string;

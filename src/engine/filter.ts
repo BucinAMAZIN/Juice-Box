@@ -9,6 +9,12 @@ export const FAMILY: Record<PickMarket, string> = {
   points: "Player points",
   goals: "Goals",
   assists: "Assists",
+  rebounds: "Rebounds",
+  threes: "3PM",
+  pr: "Pts+Reb",
+  pa: "Pts+Ast",
+  ra: "Reb+Ast",
+  pra: "PRA",
 };
 
 /** A model probability at or above this would be priced about -233 or worse, where ParlayBOT's history lost money. */

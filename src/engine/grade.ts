@@ -1,6 +1,11 @@
 import { gradeSide, profitUnits } from "../core/grade";
 import { statFor } from "../data/autograde";
 import { findPlayer, type Boxscore } from "../data/nhl";
+import type { Market } from "../core/types";
+import type { NbaBox } from "../data/espn";
+import { boxNameKey } from "../data/linemate";
+import { statOf } from "./nba";
+import type { NbaMarket } from "./types";
 import type { DayFile, DayGrades, GradedPick } from "./types";
 
 export interface GradeOutcome {
@@ -10,10 +15,31 @@ export interface GradeOutcome {
 }
 
 /** Grade every pick in a day file that has a final box score and a findable player. */
-export function gradeDay(day: DayFile, boxes: Map<number, Boxscore | null>, already: Set<string> = new Set()): GradeOutcome {
+export function gradeDay(
+  day: DayFile,
+  boxes: Map<number, Boxscore | null>,
+  already: Set<string> = new Set(),
+  nbaBoxes: Map<number, NbaBox | null> = new Map(),
+): GradeOutcome {
   const out: GradeOutcome = { grades: [], open: [] };
   for (const pick of day.picks) {
     if (already.has(pick.id)) continue;
+    if (pick.sport === "nba") {
+      const nba = nbaBoxes.get(pick.gameId);
+      if (!nba) out.open.push({ pickId: pick.id, reason: "No box score" });
+      else if (!nba.final) out.open.push({ pickId: pick.id, reason: "Game not final" });
+      else {
+        const key = boxNameKey(pick.player);
+        const line = nba.players.find((p) => p.key === key);
+        if (!line) out.open.push({ pickId: pick.id, reason: "Player not in box score (did not play or renamed)" });
+        else {
+          const actual = statOf(line, pick.market as NbaMarket);
+          const outcome = gradeSide(pick.side, pick.line, actual);
+          out.grades.push({ pickId: pick.id, actual, outcome, profitAtLimit: profitUnits(outcome, pick.price ?? pick.limitOdds, 1) });
+        }
+      }
+      continue;
+    }
     const box = boxes.get(pick.gameId);
     if (!box) {
       out.open.push({ pickId: pick.id, reason: "No box score" });
@@ -28,7 +54,7 @@ export function gradeDay(day: DayFile, boxes: Map<number, Boxscore | null>, alre
       out.open.push({ pickId: pick.id, reason: "Player not in box score (scratched or renamed)" });
       continue;
     }
-    const actual = statFor(player, pick.market);
+    const actual = statFor(player, pick.market as Market);
     if (actual == null) {
       out.open.push({ pickId: pick.id, reason: "Market not gradable" });
       continue;

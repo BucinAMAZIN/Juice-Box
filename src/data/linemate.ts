@@ -21,7 +21,9 @@ export const LM_MARKETS: Record<string, string> = {
 };
 
 /** Linemate team codes that differ from the league's own. */
-export const LM_TEAM_ALIAS: Record<string, string> = { WPJ: "WPG", FLO: "FLA", BRO: "BKN", OKL: "OKC" };
+export const LM_TEAM_ALIAS: Record<string, string> = {
+  WPJ: "WPG", FLO: "FLA", BRO: "BKN", OKL: "OKC", GS: "GSW", NY: "NYK", SA: "SAS", NO: "NOP", UTAH: "UTA", WSH: "WAS",
+};
 
 export interface Rung {
   /** Over this value, for example 2.5 for "3+". */
@@ -198,7 +200,7 @@ export function indexOffers(offers: Offer[]): OfferIndex {
     size: offers.length,
     find(sport, key, team, marketName) {
       const list = byKey.get(`${sport}|${key}|${marketName}`) ?? [];
-      const exact = list.filter((o) => o.team === team);
+      const exact = list.filter((o) => o.team === normalizeTeam(team));
       if (exact.length === 1) return exact[0]!;
       if (exact.length === 0 && list.length === 1) return list[0]!;
       return null;

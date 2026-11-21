@@ -1,7 +1,10 @@
 import type { Sport } from "../core/potd";
 
 export type PickKind = "potd" | "lean" | "ticket";
-export type PickMarket = "sog" | "points" | "goals" | "assists";
+export type NhlMarket = "sog" | "points" | "goals" | "assists";
+/** Basketball markets. "pra" is points + rebounds + assists, "pr" points + rebounds, and so on. */
+export type NbaMarket = "points" | "rebounds" | "assists" | "threes" | "pr" | "pa" | "ra" | "pra";
+export type PickMarket = NhlMarket | NbaMarket;
 export type PickOutcome = "win" | "loss" | "push";
 
 /** A pick the engine hands out. Frozen when written to the day file. */

@@ -1,4 +1,5 @@
 import { easternDate } from "../data/autograde";
+import type { NbaBox } from "../data/espn";
 import type { Offer } from "../data/linemate";
 import type { Boxscore, ClubGame, Leaders, ScheduledGame } from "../data/nhl";
 import { attachPrices } from "./pricing";
@@ -20,6 +21,8 @@ export interface Fetchers {
   loadLeaders?(date: string): Promise<Leaders>;
   /** Linemate offers. When provided, a pick needs a matching Linemate price, and no Linemate data means no picks. */
   loadOffers?(): Promise<Offer[]>;
+  /** NBA box scores, for grading NBA picks. */
+  loadNbaBox?(gameId: number): Promise<NbaBox | null>;
 }
 
 const FINAL = new Set(["FINAL", "OFF"]);
@@ -124,7 +127,7 @@ export async function generateDay(f: Fetchers, now: Date, opts: { date?: string 
       for (const player of histories.players.values()) {
         if (player.team !== team) continue;
         const all = projectPlayer(histories, player, { team, opponent, gameId: g.id, gameStart: g.startUtc });
-        projections.push(...(leaders ? all.filter((p) => leaders![p.market]?.includes(p.key)) : all));
+        projections.push(...(leaders ? all.filter((p) => leaders![p.market as keyof Leaders]?.includes(p.key)) : all));
       }
     }
   }
@@ -175,7 +178,7 @@ export async function gradePending(
     const pending = day.picks.filter((p) => !done.has(p.id) && Date.parse(p.gameStart) < lastStart);
     if (pending.length === 0) continue;
 
-    const ids = [...new Set(pending.map((p) => p.gameId))];
+    const ids = [...new Set(pending.filter((p) => p.sport !== "nba").map((p) => p.gameId))];
     const boxes = new Map<number, Boxscore | null>();
     await mapLimit(ids, 4, async (id) => {
       try {
@@ -184,8 +187,17 @@ export async function gradePending(
         boxes.set(id, null);
       }
     });
+    const nbaIds = [...new Set(pending.filter((p) => p.sport === "nba").map((p) => p.gameId))];
+    const nbaBoxes = new Map<number, NbaBox | null>();
+    await mapLimit(nbaIds, 4, async (id) => {
+      try {
+        nbaBoxes.set(id, f.loadNbaBox ? await retry(() => f.loadNbaBox!(id)) : null);
+      } catch {
+        nbaBoxes.set(id, null);
+      }
+    });
 
-    const { grades, open } = gradeDay({ ...day, picks: pending }, boxes);
+    const { grades, open } = gradeDay({ ...day, picks: pending }, boxes, new Set(), nbaBoxes);
     log.push(`${day.date}: graded ${grades.length}, left ${open.length} open`);
     if (grades.length > 0) updated.set(day.date, mergeGrades(existing.get(day.date) ?? null, day.date, grades, now));
   }

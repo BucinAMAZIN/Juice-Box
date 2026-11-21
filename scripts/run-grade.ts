@@ -1,4 +1,5 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { loadNbaBox } from "../src/data/espn";
 import { loadBoxscore, loadClubSchedule, loadSchedule } from "../src/data/nhl";
 import { gradePending } from "../src/engine/daily";
 import { buildReport } from "../src/engine/report";
@@ -19,7 +20,7 @@ for (const d of days) {
   if (existsSync(path)) existing.set(d.date, read<DayGrades>(path));
 }
 
-const { updated, log } = await gradePending({ loadSchedule, loadClubSchedule, loadBoxscore }, days, existing, now);
+const { updated, log } = await gradePending({ loadSchedule, loadClubSchedule, loadBoxscore, loadNbaBox }, days, existing, now);
 for (const line of log) console.log(line);
 if (log.length === 0) console.log("Nothing to grade yet.");
 

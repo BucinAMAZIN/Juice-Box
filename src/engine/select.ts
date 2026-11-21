@@ -14,6 +14,12 @@ export const THRESHOLDS: Record<PickMarket, number[]> = {
   points: [1, 2],
   goals: [1],
   assists: [1],
+  rebounds: [],
+  threes: [],
+  pr: [],
+  pa: [],
+  ra: [],
+  pra: [],
 };
 
 /** Play of the day: win probability in this band, so the shortest acceptable price lands near -110 to -135. */
@@ -59,7 +65,18 @@ export function candidatesFrom(projections: Projection[]): Candidate[] {
 
 const within = (x: number, [lo, hi]: [number, number]) => x >= lo && x <= hi;
 
-const WHAT: Record<PickMarket, string> = { sog: "shots on goal", points: "points", goals: "goals", assists: "assists" };
+const WHAT: Record<PickMarket, string> = {
+  sog: "shots on goal",
+  points: "points",
+  goals: "goals",
+  assists: "assists",
+  rebounds: "rebounds",
+  threes: "threes",
+  pr: "points + rebounds",
+  pa: "points + assists",
+  ra: "rebounds + assists",
+  pra: "points + rebounds + assists",
+};
 
 export function describe(c: Candidate): string {
   return `${c.threshold}+ ${WHAT[c.projection.market]}`;
@@ -69,10 +86,12 @@ export function selectDay(
   date: string,
   candidates: Candidate[],
   now: Date,
-  newId: (n: number) => string = (n) => `${date}-${n}`,
-  opts: { priced?: boolean } = {},
+  newId?: (n: number) => string,
+  opts: { priced?: boolean; idPrefix?: string; modelVersion?: string } = {},
 ): DayFile {
   const priced = opts.priced === true;
+  const prefix = opts.idPrefix ?? "";
+  const nextId = newId ?? ((n: number) => `${date}-${prefix}${n}`);
   if (priced) candidates = candidates.filter((c) => c.price);
   const edgeOf = (c: Candidate) => c.prob - impliedProb(c.price!.american);
   const cheap = (c: Candidate) => `Take it at ${shortOdds(c.price!.american)} on ${c.price!.book} or better.`
@@ -84,11 +103,11 @@ export function selectDay(
   const make = (c: Candidate, kind: PickKind, note: string, ticketId?: string): HandedPick => {
     const p = c.projection;
     const pick: HandedPick = {
-      id: newId(++counter),
+      id: nextId(++counter),
       createdAt: now.toISOString(),
       gameStart: p.gameStart,
       gameId: p.gameId,
-      sport: "nhl",
+      sport: p.sport ?? "nhl",
       kind,
       player: p.player,
       team: p.team,
@@ -167,7 +186,7 @@ export function selectDay(
   for (const [a, b, joint] of pairs) {
     if (tickets.length >= 2) break;
     if (usedLegPlayers.has(a.projection.key) || usedLegPlayers.has(b.projection.key)) continue;
-    const id = `${date}-T${tickets.length + 1}`;
+    const id = `${date}-${prefix}T${tickets.length + 1}`;
     const legA = make(a, "ticket", `Ticket leg: ${describe(a)}.`, id);
     const legB = make(b, "ticket", `Ticket leg: ${describe(b)}.`, id);
     const jointProb = priced ? a.prob * b.prob : joint;
@@ -184,7 +203,7 @@ export function selectDay(
   }
   if (tickets.length === 0) notes.push("No +100 ticket cleared the bar today.");
 
-  return { date, generatedAt: now.toISOString(), modelVersion: MODEL_VERSION, picks, tickets, notes };
+  return { date, generatedAt: now.toISOString(), modelVersion: opts.modelVersion ?? MODEL_VERSION, picks, tickets, notes };
 }
 
 export function shortOdds(american: number): string {

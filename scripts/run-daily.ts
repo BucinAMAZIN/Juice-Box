@@ -1,7 +1,10 @@
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import { loadOffers } from "../src/data/linemate";
 import { loadBoxscore, loadClubSchedule, loadLeaders, loadSchedule } from "../src/data/nhl";
+import { loadNbaBox, loadNbaScoreboard, loadNbaSeasonAverages } from "../src/data/espn";
 import { generateDay } from "../src/engine/daily";
+import { mergeDays } from "../src/engine/merge";
+import { NBA_MARKETS_LM, generateNbaDayOrNote } from "../src/engine/nbaRun";
 import { shortOdds } from "../src/engine/select";
 
 const DATA = "public/data";
@@ -14,13 +17,20 @@ if (dateArg && !dry) throw new Error("--date only works with --dry-run.");
 
 const now = new Date();
 const opts = dateArg ? { date: dateArg } : {};
-const { day, log } = await generateDay({ loadSchedule, loadClubSchedule, loadBoxscore, loadLeaders, loadOffers: () => loadOffers("nhl", ["SHOTS_ON_GOAL", "POINTS", "ASSISTS", "ANYTIME_GOAL_SCORER"]) }, now, opts);
+const { day: nhlDay, log: nhlLog } = await generateDay({ loadSchedule, loadClubSchedule, loadBoxscore, loadLeaders, loadOffers: () => loadOffers("nhl", ["SHOTS_ON_GOAL", "POINTS", "ASSISTS", "ANYTIME_GOAL_SCORER"]) }, now, opts);
+const { day: nbaDay, log: nbaLog } = await generateNbaDayOrNote(
+  { loadScoreboard: loadNbaScoreboard, loadBox: loadNbaBox, loadAverages: loadNbaSeasonAverages, loadOffers: () => loadOffers("nba", NBA_MARKETS_LM) },
+  now,
+  opts,
+);
+const log = [...nhlLog, ...nbaLog];
+const day = mergeDays([nhlDay, nbaDay]);
 for (const line of log) console.log(line);
 
 console.log(`\nPicks for ${day.date} (${day.modelVersion}):`);
 for (const p of day.picks) {
   console.log(
-    `  [${p.kind}] ${p.player} (${p.team} vs ${p.opponent}) ${p.line + 0.5}+ ${p.market}  model ${(p.modelProb * 100).toFixed(1)}%  ${p.price != null ? `Linemate ${shortOdds(p.price)} (${p.book}) edge ${(p.edge! * 100).toFixed(1)}%` : `take at ${shortOdds(p.limitOdds)} or better`}`,
+    `  [${p.kind}] ${p.player} [${p.sport}] (${p.team} vs ${p.opponent}) ${p.line + 0.5}+ ${p.market}  model ${(p.modelProb * 100).toFixed(1)}%  ${p.price != null ? `Linemate ${shortOdds(p.price)} (${p.book}) edge ${(p.edge! * 100).toFixed(1)}%` : `take at ${shortOdds(p.limitOdds)} or better`}`,
   );
 }
 for (const t of day.tickets) console.log(`  [ticket ${t.id}] joint ${(t.jointProb * 100).toFixed(1)}%  legs ${t.legIds.join(" + ")}  needs +${t.minAmerican} or better`);
