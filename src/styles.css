@@ -147,3 +147,8 @@ th, td { text-align: left; padding: 8px 4px; border-bottom: 1px solid var(--line
 .slipbar { position: sticky; top: 0; z-index: 5; background: var(--bg, #0b0e14); border: 1px solid var(--accent, #7aa2ff); border-radius: 10px; padding: 10px 12px; margin: 8px 0; }
 .slipbar[hidden] { display: none; }
 .slip-title { font-weight: 600; } .slipbar ul { margin: 6px 0; padding-left: 18px; } .slipbar .clear { margin-left: 8px; }
+
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+.chip { border: 1px solid var(--accent, #7aa2ff); background: transparent; color: inherit; border-radius: 999px; padding: 6px 14px; }
+.chip[aria-pressed="true"] { background: var(--accent, #7aa2ff); color: #000; }
+section[hidden] { display: none; }

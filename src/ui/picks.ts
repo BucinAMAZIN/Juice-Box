@@ -80,8 +80,15 @@ function card(p: HandedPick, grade: DayGrades["grades"][number] | undefined, lin
   );
 }
 
-export function renderDay(view: HTMLElement, day: DayFile, grades: DayGrades | null, links: DayLinks | null = null): void {
-  const chosen = new Map<string, string>();
+export interface DayState {
+  /** Slip picks by selection id, kept across refreshes of the same day. */
+  chosen: Map<string, string>;
+  /** Sports switched off in the filter chips. */
+  off: Set<string>;
+}
+
+export function renderDay(view: HTMLElement, day: DayFile, grades: DayGrades | null, links: DayLinks | null = null, state: DayState = { chosen: new Map(), off: new Set() }): void {
+  const chosen = state.chosen;
   const bar = h("div", { class: "slipbar", hidden: true });
   const refresh = () => {
     clear(bar);
@@ -104,6 +111,20 @@ export function renderDay(view: HTMLElement, day: DayFile, grades: DayGrades | n
     },
   };
   view.append(bar);
+  const sportList = [...new Set(day.picks.map((p) => p.sport))];
+  const sections: Array<[string, HTMLElement]> = [];
+  if (sportList.length > 1) {
+    const chips = h("div", { class: "chips", role: "group", "aria-label": "Sports" });
+    for (const sp of sportList) {
+      const chip = h("button", { type: "button", class: "chip", "aria-pressed": String(!state.off.has(sp)), onclick: () => {
+        if (state.off.has(sp)) state.off.delete(sp); else state.off.add(sp);
+        chip.setAttribute("aria-pressed", String(!state.off.has(sp)));
+        for (const [k, el] of sections) el.hidden = state.off.has(k);
+      } }, SPORT[sp] ?? sp.toUpperCase());
+      chips.append(chip);
+    }
+    view.append(chips);
+  }
   const gradeById = new Map((grades?.grades ?? []).map((g) => [g.pickId, g]));
   const sports = [...new Set(day.picks.map((p) => p.sport))];
   if (sports.length === 0) view.append(h("p", { class: "empty" }, "Nothing met the bar today, so there are no picks."));
@@ -126,6 +147,8 @@ export function renderDay(view: HTMLElement, day: DayFile, grades: DayGrades | n
         h("p", { class: "muted" }, `All legs must win. Chance ${pct(t.jointProb, 0)}${t.priced != null ? ` · pays about ${odds(t.priced)}` : ""}. ${t.note}`)),
       );
     }
+    section.hidden = state.off.has(sport);
+    sections.push([sport, section]);
     view.append(section);
   }
   if (day.notes.length) view.append(h("details", { class: "notes" }, h("summary", {}, "Why some sports have no picks"), ...day.notes.map((n) => h("p", { class: "muted" }, n))));
@@ -147,15 +170,54 @@ export async function renderPicks(view: HTMLElement, _ledger?: unknown, source: 
   }
   const latest = dates[dates.length - 1]!;
   const body = h("div", {});
+  let state: DayState = { chosen: new Map(), off: new Set() };
+  let shown = latest;
   const pickDate = async (date: string) => {
-    clear(body);
+    if (date !== shown) state = { chosen: new Map(), off: state.off };
+    shown = date;
     try {
-      renderDay(body, await source.loadDay(date), await source.loadGrades(date), source.loadLinks ? await source.loadLinks(date).catch(() => null) : null);
+      const [day, grades, links] = [await source.loadDay(date), await source.loadGrades(date), source.loadLinks ? await source.loadLinks(date).catch(() => null) : null];
+      clear(body);
+      renderDay(body, day, grades, links, state);
     } catch {
+      clear(body);
       body.append(h("p", { class: "empty" }, `Could not load picks for ${date}.`));
     }
   };
   const select = h("select", { "aria-label": "Pick a day", onchange: () => void pickDate(select.value) }, ...[...dates].reverse().map((d) => h("option", { value: d }, d)));
-  view.append(h("label", {}, "Day ", select), body);
+  const status = h("span", { class: "muted", "aria-live": "polite" });
+  const refresh = async () => {
+    status.textContent = "Refreshing…";
+    await pickDate(select.value);
+    status.textContent = `Updated ${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+  };
+  view.append(h("label", {}, "Day ", select), " ", h("button", { type: "button", class: "refresh", onclick: () => void refresh() }, "Refresh"), " ", status, body);
+  pullToRefresh(view, refresh);
   await pickDate(latest);
+}
+
+let pullOff: (() => void) | null = null;
+
+/** Pull down from the top of the page to run `reload`. Replaces any earlier handler, and stops once the view leaves the page. */
+export function pullToRefresh(view: HTMLElement, reload: () => Promise<void>, threshold = 80): void {
+  pullOff?.();
+  let startY: number | null = null;
+  let busy = false;
+  const start = (e: TouchEvent) => {
+    startY = window.scrollY <= 0 && !busy ? (e.touches[0]?.clientY ?? null) : null;
+  };
+  const end = (e: TouchEvent) => {
+    const y = e.changedTouches[0]?.clientY;
+    const pulled = startY != null && y != null && y - startY >= threshold;
+    startY = null;
+    if (!pulled || !view.isConnected) return;
+    busy = true;
+    void reload().finally(() => (busy = false));
+  };
+  window.addEventListener("touchstart", start, { passive: true });
+  window.addEventListener("touchend", end, { passive: true });
+  pullOff = () => {
+    window.removeEventListener("touchstart", start);
+    window.removeEventListener("touchend", end);
+  };
 }
