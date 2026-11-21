@@ -116,6 +116,8 @@ export function selectDay(
   const tickets: HandedTicket[] = [];
   let counter = 0;
 
+  const betKey = (c: Candidate) => `${c.projection.key}|${c.projection.market}|${c.line}`;
+  const madeBy = new Map<string, HandedPick>();
   const make = (c: Candidate, kind: PickKind, note: string, ticketId?: string): HandedPick => {
     const p = c.projection;
     const pick: HandedPick = {
@@ -139,6 +141,7 @@ export function selectDay(
     };
     if (ticketId) pick.ticketId = ticketId;
     picks.push(pick);
+    madeBy.set(betKey(c), pick);
     return pick;
   };
 
@@ -197,8 +200,7 @@ export function selectDay(
   }
 
   // +100 tickets: two legs from different games, joint probability high enough that +100 still has an edge.
-  // A player already handed out above is not reused as a ticket leg, so no bet is tracked twice.
-  const legs = (priced ? candidates.filter((c) => edgeOf(c) >= 0) : candidates.filter((c) => within(c.prob, TICKET_LEG_BAND))).filter((c) => !used.has(c.projection.key));
+  const legs = priced ? candidates.filter((c) => edgeOf(c) >= 0) : candidates.filter((c) => within(c.prob, TICKET_LEG_BAND));
   const best = new Map<string, Candidate>();
   for (const c of legs) {
     const cur = best.get(c.projection.key);
@@ -224,8 +226,9 @@ export function selectDay(
     if (tickets.length >= 2) break;
     if (usedLegPlayers.has(a.projection.key) || usedLegPlayers.has(b.projection.key)) continue;
     const id = `${date}-${prefix}T${tickets.length + 1}`;
-    const legA = make(a, "ticket", `Ticket leg: ${describe(a)}.`, id);
-    const legB = make(b, "ticket", `Ticket leg: ${describe(b)}.`, id);
+    // A leg that is already a pick is reused, so no bet is saved or graded twice.
+    const legA = madeBy.get(betKey(a)) ?? make(a, "ticket", `Ticket leg: ${describe(a)}.`, id);
+    const legB = madeBy.get(betKey(b)) ?? make(b, "ticket", `Ticket leg: ${describe(b)}.`, id);
     const jointProb = priced ? a.prob * b.prob : joint;
     tickets.push({
       id,

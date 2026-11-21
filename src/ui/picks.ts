@@ -77,12 +77,13 @@ export function renderDay(view: HTMLElement, day: DayFile, grades: DayGrades | n
     const potd = mine.filter((p) => p.kind === "potd");
     const alts = mine.filter((p) => p.kind === "alt");
     const leans = mine.filter((p) => p.kind === "lean");
-    const tickets = day.tickets.filter((t) => mine.some((p) => p.ticketId === t.id));
+    const mineIds = new Set(mine.map((p) => p.id));
+    const tickets = day.tickets.filter((t) => t.legIds.some((id) => mineIds.has(id)));
     if (potd.length) section.append(h("h3", {}, "Play of the day"), ...potd.map((p) => card(p, gradeById.get(p.id), links)));
     if (alts.length) section.append(h("h3", {}, "Alt lines"), ...alts.map((p) => card(p, gradeById.get(p.id), links)));
     if (leans.length) section.append(h("h3", {}, "Other picks"), ...leans.map((p) => card(p, gradeById.get(p.id), links)));
     for (const t of tickets) {
-      const legs = mine.filter((p) => p.ticketId === t.id);
+      const legs = t.legIds.map((id) => mine.find((p) => p.id === id)).filter((p): p is HandedPick => p != null);
       section.append(
         h("h3", {}, "+100 ticket"),
         h("div", { class: "ticket" }, ...legs.map((p) => card(p, gradeById.get(p.id), links)), links?.tickets[t.id] ? h("a", { class: "hr", href: links.tickets[t.id]!, target: "_blank", rel: "noopener" }, "Open whole ticket in Hard Rock") : null,
