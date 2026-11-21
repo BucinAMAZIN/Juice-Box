@@ -234,7 +234,7 @@ export function seasonId(date: string): string {
   return `${start}${start + 1}`;
 }
 
-export const LEADER_COUNT = 12;
+export const LEADER_COUNT = 40;
 const LEADER_SORT: Record<LeaderMarket, string> = { sog: "shots", points: "points", goals: "goals", assists: "assists" };
 
 /** Pull player ids out of a stats-API skater summary page, keeping the order it came in. */
