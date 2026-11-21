@@ -1,4 +1,5 @@
 /** Prints the shape of ESPN's public feeds so the NBA and NFL adapters can be written against real data. Read only. */
+export {};
 const BASE = "https://site.api.espn.com/apis/site/v2/sports";
 const CORE = "https://sports.core.api.espn.com/v2/sports";
 
