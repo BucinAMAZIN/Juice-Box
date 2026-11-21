@@ -2,7 +2,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { Ledger, type KeyValueStore } from "../src/data/ledger";
 import { renderResults } from "../src/ui/results";
-import { renderStats, type Report } from "../src/ui/stats";
+import { renderRecords, summarizeRecords } from "../src/ui/records";
+import { renderStreaks } from "../src/ui/streaks";
 import { renderToday } from "../src/ui/today";
 import { pickPrice, pickTitle, renderPicks, type PicksSource } from "../src/ui/picks";
 
@@ -136,40 +137,56 @@ describe("Today screen", () => {
   });
 });
 
-describe("Results and Stats screens", () => {
-  const pick = { id: "a", createdAt: "", gameStart: "", gameId: 1, sport: "nba" as const, kind: "potd" as const, player: "Luka Doncic", team: "LAL", opponent: "DEN", market: "threes" as const, line: 4.5, side: "over" as const, modelProb: 0.6, limitOdds: -120, mean: 5, price: -115, book: "Hard Rock", note: "" };
+import type { DayFile } from "../src/engine/types";
+
+describe("Streaks, Results and Records screens", () => {
+  const mk = (id: string, streak: number, price: number, sport: "nba" | "nfl" = "nba") => ({ id, createdAt: "", gameStart: "2099-01-01T00:00:00Z", gameId: 1, sport, kind: "streak" as const, player: `P ${id}`, team: "LAL", teamName: "Lakers", opponent: "DEN", market: "points" as const, line: 18.5, side: "over" as const, modelProb: 0.8, limitOdds: price, mean: 18.5, price, book: "Hard Rock", streak, sid: `${100 + streak}`, url: `https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/${100 + streak}`, note: "" });
   const source = (graded: boolean): PicksSource => ({
     loadIndex: async () => ({ dates: ["2026-11-20", "2026-11-21"] }),
-    loadDay: async (d) => ({ date: d, generatedAt: "", modelVersion: "x", tickets: [], notes: [], picks: [{ ...pick, id: d }] }),
-    loadGrades: async (d) => (graded && d === "2026-11-20" ? { date: d, gradedAt: "", grades: [{ pickId: d, actual: 6, outcome: "win", profitAtLimit: 0.8 }] } : null),
+    loadDay: async (d) => ({ date: d, generatedAt: "", modelVersion: "x", tickets: [], notes: [], picks: [mk(`${d}-a`, 12, -300), mk(`${d}-b`, 6, -150, "nfl")] }),
+    loadGrades: async (d) => (graded && d === "2026-11-20" ? { date: d, gradedAt: "", grades: [{ pickId: `${d}-a`, actual: 22, outcome: "win", profitAtLimit: 0.33 }, { pickId: `${d}-b`, actual: 10, outcome: "loss", profitAtLimit: -1 }] } : null),
   });
-  it("lists graded picks by day with a running record", async () => {
+  it("lists streaks longest first and builds one Hard Rock ticket from the ticked ones", async () => {
+    const root = document.createElement("div");
+    document.body.append(root);
+    await renderStreaks(root, undefined, source(false));
+    const rows = [...root.querySelectorAll(".streak strong")].map((e) => e.textContent);
+    expect(rows[0]).toBe("P 2026-11-21-a 19+ Points");
+    const boxes = [...root.querySelectorAll<HTMLInputElement>(".s-pick input")];
+    boxes[0]!.click();
+    boxes[1]!.click();
+    const send = root.querySelector(".slipbar a.hr") as HTMLAnchorElement;
+    expect(send.textContent).toBe("Send 2-leg ticket to Hard Rock");
+    expect(send.href).toBe("https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/112,106");
+  });
+  it("lists graded props by day with a running record", async () => {
     const root = document.createElement("div");
     await renderResults(root, undefined, source(true));
-    expect(root.textContent).toContain("Record: 1-0");
-    expect(root.textContent).toContain("2026-11-20 · 1-0");
+    expect(root.textContent).toContain("Record: 1-1");
+    expect(root.textContent).toContain("2026-11-20 · 1-1");
     expect(root.textContent).toContain("2026-11-21 · not graded yet");
-    expect(root.textContent).toContain("Won (6)");
+    expect(root.textContent).toContain("Won (22)");
+  });
+  it("tallies records by sport, streak length and price", async () => {
+    const { loadHistory } = await import("../src/ui/results");
+    const r = summarizeRecords(await loadHistory(source(true)));
+    expect(r.overall).toMatchObject({ wins: 1, losses: 1 });
+    expect(r.overall.units).toBeCloseTo(-0.67);
+    expect(r.byStreak.get("10+ straight")).toMatchObject({ wins: 1, losses: 0 });
+    expect(r.byStreak.get("5 to 6 straight")).toMatchObject({ wins: 0, losses: 1 });
+    expect(r.byPrice.get("-300 or shorter")).toMatchObject({ wins: 1 });
+    const root = document.createElement("div");
+    await renderRecords(root, undefined, source(true));
+    expect(root.textContent).toContain("By sport");
   });
   it("shows empty states", async () => {
     const root = document.createElement("div");
     await renderResults(root, undefined, { ...source(false), loadIndex: async () => ({ dates: [] }) });
-    expect(root.textContent).toContain("No picks have been made yet");
-    await renderStats(root, undefined, async () => null);
+    expect(root.textContent).toContain("Nothing saved yet");
+    await renderRecords(root, undefined, source(false));
     expect(root.textContent).toContain("Nothing graded yet");
   });
-  it("shows the stats report", async () => {
-    const root = document.createElement("div");
-    const bucket = { picks: 5, wins: 2, losses: 3, pushes: 0, hitRate: 0.4, avgModelProb: 0.66, profitAtLimit: -2.3 };
-    const report: Report = { generatedAt: "", totalPicks: 5, graded: 5, overall: bucket, byMarket: { pra: bucket }, byKind: { potd: bucket }, brier: 0.26, logLoss: 0.7, calibration: [{ n: 5, predicted: 0.66, actual: 0.4 }], findings: ["Only 5 graded picks."] };
-    await renderStats(root, undefined, async () => report);
-    expect(root.textContent).toContain("2-3");
-    expect(root.textContent).toContain("-2.30u");
-    expect(root.textContent).toContain("Only 5 graded picks");
-  });
 });
-
-import type { DayFile } from "../src/engine/types";
 
 describe("Picks screen", () => {
   const day: DayFile = {

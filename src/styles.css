@@ -180,3 +180,11 @@ summary { color: var(--text); font-weight: 700; }
 .tabs { padding-bottom: 0; }
 .tab { padding: 14px 0 calc(14px + env(safe-area-inset-bottom)); }
 body { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+
+/* Streak rows */
+.streak { display: flex; align-items: center; gap: 10px; border: 3px solid var(--text); border-radius: 14px; background: #fff; box-shadow: 4px 4px 0 var(--text); padding: 10px 12px; margin: 10px 0; }
+.s-main { flex: 1; min-width: 0; } .s-main strong { display: block; overflow-wrap: anywhere; }
+.s-streak { text-align: center; line-height: 1; } .s-streak span { display: block; font-family: var(--font-head); font-size: 26px; } .s-streak small { font-size: 10px; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.s-odds { margin-top: 0; min-width: 64px; text-align: center; font-family: var(--font-head); padding: 10px 8px; }
+.s-odds.off { opacity: .5; font-family: var(--font-head); }
+.s-pick .add { padding: 0; }

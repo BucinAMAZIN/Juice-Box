@@ -1,9 +1,7 @@
 import type { DayFile, DayGrades, HandedPick } from "../engine/types";
 import { clear, h } from "./dom";
-import { liveSource, pickTitle, type PicksSource } from "./picks";
-
-const SPORT: Record<string, string> = { nba: "NBA", nfl: "NFL", nhl: "NHL", mlb: "MLB" };
-const odds = (n: number): string => (n > 0 ? `+${n}` : String(n));
+import type { PicksSource } from "./picks";
+import { SPORT, odds, propText, streakSource } from "./streaks";
 
 export interface DayResult {
   date: string;
@@ -27,22 +25,21 @@ export async function loadHistory(source: PicksSource): Promise<DayResult[]> {
 
 function row(p: HandedPick, outcome: string | undefined, actual: number | undefined): HTMLElement {
   const label = outcome === "win" ? `Won (${actual})` : outcome === "loss" ? `Lost (${actual})` : outcome === "push" ? `Push (${actual})` : "Open";
-  const price = p.price != null ? ` · ${odds(p.price)}${p.book ? ` ${p.book}` : ""}` : "";
   return h(
     "article",
     { class: `pick ${outcome ?? "open"}` },
-    h("div", { class: "pick-top" }, h("strong", {}, pickTitle(p)), h("span", { class: `badge ${outcome ?? "open"}` }, label)),
-    h("div", { class: "muted" }, `${SPORT[p.sport] ?? p.sport.toUpperCase()} · ${p.team} vs ${p.opponent} · ${p.kind === "potd" ? "Play of the day" : p.kind === "alt" ? "Alt line" : p.kind === "ticket" ? "Ticket leg" : "Pick"}${price}`),
+    h("div", { class: "pick-top" }, h("strong", {}, propText(p)), h("span", { class: `badge ${outcome ?? "open"}` }, label)),
+    h("div", { class: "muted" }, `${p.teamName ?? p.team} vs ${p.opponent} · ${SPORT[p.sport] ?? p.sport.toUpperCase()} · ${p.streak ?? "?"} straight · ${p.price != null ? odds(p.price) : ""}`),
   );
 }
 
-export async function renderResults(root: HTMLElement, _ledger?: unknown, source: PicksSource = liveSource): Promise<void> {
+export async function renderResults(root: HTMLElement, _ledger?: unknown, source: PicksSource = streakSource): Promise<void> {
   clear(root);
   root.append(h("h2", {}, "Results"));
-  root.append(h("p", { class: "muted" }, "Every pick is graded automatically from the final box score, about 3 AM Eastern. Grades are never changed once written."));
+  root.append(h("p", { class: "muted" }, "Every streak prop is saved before its game and graded automatically from the final box score, about 3 AM Eastern. Grades are never changed once written."));
   const history = await loadHistory(source);
   if (history.length === 0) {
-    root.append(h("p", { class: "empty" }, "No picks have been made yet."));
+    root.append(h("p", { class: "empty" }, "Nothing saved yet."));
     return;
   }
   let wins = 0;
@@ -62,9 +59,9 @@ export async function renderResults(root: HTMLElement, _ledger?: unknown, source
         "section",
         { class: "day" },
         h("h3", {}, `${date} · ${byId.size ? `${w}-${l}` : "not graded yet"}${open > 0 && byId.size ? ` · ${open} open` : ""}`),
-        ...day.picks.map((p) => row(p, byId.get(p.id)?.outcome, byId.get(p.id)?.actual)),
+        ...[...day.picks].sort((a, b) => (b.streak ?? 0) - (a.streak ?? 0)).map((p) => row(p, byId.get(p.id)?.outcome, byId.get(p.id)?.actual)),
       ),
     );
   }
-  root.append(h("div", { class: "card" }, h("strong", {}, `Record: ${wins}-${losses}${pushes ? `-${pushes}` : ""}`), h("div", { class: "muted" }, "All graded picks so far. More detail is on the Stats tab.")), ...sections);
+  root.append(h("div", { class: "card" }, h("strong", {}, `Record: ${wins}-${losses}${pushes ? `-${pushes}` : ""}`), h("div", { class: "muted" }, "All graded streak props so far. Breakdowns are on the Records tab.")), ...sections);
 }

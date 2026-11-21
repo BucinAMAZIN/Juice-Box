@@ -1,17 +1,17 @@
 import "./styles.css";
 import { Ledger } from "./data/ledger";
 import { h } from "./ui/dom";
-import { renderPicks } from "./ui/picks";
+import { renderRecords } from "./ui/records";
 import { renderResults } from "./ui/results";
-import { renderStats } from "./ui/stats";
+import { renderStreaks } from "./ui/streaks";
 
 const ledger = new Ledger(localStorage);
 const root = document.getElementById("app")!;
 
 const TABS = [
-  ["picks", "Picks", renderPicks],
+  ["streaks", "Streaks", renderStreaks],
   ["results", "Results", renderResults],
-  ["stats", "Stats", renderStats],
+  ["records", "Records", renderRecords],
 ] as const;
 
 const view = h("main", { class: "view" });
@@ -32,6 +32,6 @@ function draw(): void {
   active[2](view, ledger);
 }
 
-root.append(h("header", { class: "bar" }, h("h1", {}, "Juice Box"), h("span", { class: "tag" }, "price it before it drops"), h("span", { class: "ver", title: "Site version" }, __APP_VERSION__)), view, nav);
+root.append(h("header", { class: "bar" }, h("h1", {}, "Juice Box"), h("span", { class: "tag" }, "streaks, priced at Hard Rock"), h("span", { class: "ver", title: "Site version" }, __APP_VERSION__)), view, nav);
 window.addEventListener("hashchange", draw);
 draw();

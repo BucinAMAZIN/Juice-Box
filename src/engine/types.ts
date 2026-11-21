@@ -1,6 +1,6 @@
 import type { Sport } from "../core/potd";
 
-export type PickKind = "potd" | "lean" | "alt" | "ticket";
+export type PickKind = "potd" | "lean" | "alt" | "ticket" | "streak";
 export type NhlMarket = "sog" | "points" | "goals" | "assists";
 /** Basketball markets. "pra" is points + rebounds + assists, "pr" points + rebounds, and so on. */
 export type NbaMarket = "points" | "rebounds" | "assists" | "threes" | "pr" | "pa" | "ra" | "pra";
@@ -35,6 +35,11 @@ export interface HandedPick {
   book?: string;
   /** Model probability minus the price's implied probability. */
   edge?: number;
+  /** Streak picks only: straight games the player has gone over this line, the team name, and the Hard Rock link. */
+  streak?: number;
+  teamName?: string;
+  url?: string;
+  sid?: string;
   note: string;
 }
 

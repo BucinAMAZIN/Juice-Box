@@ -63,15 +63,13 @@ jobs:
 
       - run: npm test
 
-      - name: Make picks
+      - name: List today's streaks
         if: steps.task.outputs.task == 'picks'
-        run: |
-          npm run picks
-          npm run links
+        run: npm run streaks
 
-      - name: Grade picks and write the report
+      - name: Grade streaks
         if: steps.task.outputs.task == 'grade'
-        run: npm run grade
+        run: npm run grade-streaks
 
       # On a normal push, rehearse the real run without writing anything, so the log shows
       # whether the NHL feeds are reachable and what the engine would pick.
@@ -79,25 +77,8 @@ jobs:
         if: steps.task.outputs.task == 'dry'
         continue-on-error: true
         run: |
-          TOMORROW=$(TZ=America/New_York date -d tomorrow +%F)
-          npm run picks -- --dry-run
-          echo "---- preview of tomorrow ($TOMORROW) ----"
-          npm run picks -- --dry-run --date="$TOMORROW"
-          AFTER=$(TZ=America/New_York date -d "2 days" +%F)
-          echo "---- preview of $AFTER ----"
-          npm run picks -- --dry-run --date="$AFTER"
-          npm run grade -- --dry-run
-
-      - name: Probe Linemate pages
-        if: steps.task.outputs.task == 'dry'
-        continue-on-error: true
-        run: |
-          npx tsx scripts/probe-linemate.ts
-
-      - name: Probe ESPN feeds
-        if: steps.task.outputs.task == 'dry'
-        continue-on-error: true
-        run: npx tsx scripts/probe-espn.ts
+          npm run streaks -- --dry-run
+          npm run grade-streaks -- --dry-run
 
       - name: Commit data
         if: steps.task.outputs.task == 'picks' || steps.task.outputs.task == 'grade'

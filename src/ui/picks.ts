@@ -13,7 +13,7 @@ export interface PicksSource {
 
 const base = (): string => (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? "/";
 
-async function getJson<T>(path: string): Promise<T | null> {
+export async function getJson<T>(path: string): Promise<T | null> {
   const res = await fetch(`${base()}data/${path}`, { cache: "no-store" });
   return res.ok ? ((await res.json()) as T) : null;
 }

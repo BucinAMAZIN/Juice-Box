@@ -55,6 +55,9 @@ export interface Offer {
   hr: Rung[];
   /** Linemate's last-N hit record for the featured line, when it gave one. */
   recent?: { games: number; hits: number };
+  /** The line this row's hit record is for, and the team's display name. */
+  line?: number;
+  teamName?: string;
 }
 
 type Obj = Record<string, unknown>;
@@ -134,6 +137,9 @@ export function parseOffer(raw: unknown, sport: LmSport): Offer | null {
     hr: [...hrBest.values()].sort((a, b) => a.value - b.value),
   };
   if (recent) out.recent = recent;
+  const rowLine = num(raw.line);
+  if (rowLine != null) out.line = rowLine;
+  if (isObj(raw.team) && str(raw.team.name)) out.teamName = str(raw.team.name);
   return out;
 }
 
@@ -180,6 +186,33 @@ export async function loadOffers(sport: LmSport, markets: string[]): Promise<Off
             prior.ladder = mergeLadders(prior.ladder, o.ladder);
             prior.hr = mergeLadders(prior.hr, o.hr);
             prior.recent ??= o.recent;
+          }
+        }
+        if (rows.length < LM_PAGE) break;
+      }
+    } catch {
+      failures++;
+    }
+  }
+  if (failures === markets.length) throw new Error("every market request failed");
+  return out;
+}
+
+/** Every row Linemate lists for a sport, one offer per row (not merged), so each keeps its own line and hit record. */
+export async function loadRowOffers(sport: LmSport, markets: string[]): Promise<Offer[]> {
+  const out: Offer[] = [];
+  const seen = new Set<string>();
+  let failures = 0;
+  for (const market of markets) {
+    try {
+      for (let page = 0; page < LM_MAX_PAGES; page++) {
+        const json = await getJson(`${LM_BASE}/${sport}/v1/trends/straights?limit=${LM_PAGE}&offset=${page * LM_PAGE}&markets=${market}`);
+        const rows = Array.isArray(json) ? json : [];
+        for (const o of parseOffers(rows, sport)) {
+          const id = `${o.gameId}|${o.key}|${o.marketName}|${o.side}|${o.line}`;
+          if (!seen.has(id)) {
+            seen.add(id);
+            out.push(o);
           }
         }
         if (rows.length < LM_PAGE) break;
