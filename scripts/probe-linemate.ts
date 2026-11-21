@@ -1,26 +1,17 @@
 export {};
-/** Looks at ESPN NFL data shapes. Read only. */
-const SITE = "https://site.api.espn.com/apis/site/v2/sports/football/nfl";
-const COMMON = "https://site.api.espn.com/apis/common/v3/sports/football/nfl";
-const cut = (v: unknown, n = 1500) => JSON.stringify(v).slice(0, n);
-async function get(url: string): Promise<any> {
-  const res = await fetch(url, { headers: { "user-agent": "juice-box" } });
-  console.log(`GET ${url.slice(0, 150)} -> ${res.status}`);
-  return res.ok ? res.json() : null;
+/** Read only: shows where Linemate keeps a streak count for each prop. */
+const H = { "user-agent": "Mozilla/5.0", accept: "application/json", origin: "https://linemate.io", referer: "https://linemate.io/" };
+const cut = (v: unknown, n = 1800) => JSON.stringify(v).slice(0, n);
+const res = await fetch("https://api.linemate.io/api/nba/v1/trends/straights?limit=50&offset=0&markets=POINTS", { headers: H });
+console.log("status", res.status);
+const rows: any[] = res.ok ? await res.json() : [];
+console.log("rows", rows.length, "keys", cut(Object.keys(rows[0] ?? {})));
+const types = new Map<string, number>();
+for (const r of rows) for (const s of r.signals ?? []) types.set(s.type, (types.get(s.type) ?? 0) + 1);
+console.log("signal types", cut([...types]));
+for (const r of rows.slice(0, 3)) {
+  const { market, player, ...rest } = r;
+  console.log("ROW", cut({ outcome: r.outcome, player: player?.fullName, marketName: market?.name, current: market?.books?.hardrock?.over?.current, rest }, 2500));
 }
-const cur = await get(`${SITE}/scoreboard`);
-console.log("current week:", cut(cur?.week), "games:", cur?.events?.length, "first:", cut(cur?.events?.[0] && { date: cur.events[0].date, state: cur.events[0].status?.type?.state, comp: cur.events[0].competitions?.[0]?.competitors?.map((c: any) => [c.team?.abbreviation, c.homeAway]) }));
-const wk = Number(cur?.week?.number ?? 11);
-const prev = await get(`${SITE}/scoreboard?seasontype=2&week=${wk - 1}`);
-console.log("prev week games:", prev?.events?.length, "states:", cut([...new Set(prev?.events?.map((e: any) => e.status?.type?.state))]));
-const fin = prev?.events?.find((e: any) => e.status?.type?.state === "post");
-if (fin) {
-  const box = await get(`${SITE}/summary?event=${fin.id}`);
-  const t = box?.boxscore?.players?.[0];
-  console.log("completed flag:", cut(box?.header?.competitions?.[0]?.status?.type, 300));
-  console.log("stat blocks:", cut(t?.statistics?.map((s: any) => [s.name, s.keys]), 2200));
-  const rec = t?.statistics?.find((s: any) => s.name === "receiving");
-  console.log("receiving athletes sample:", cut(rec?.athletes?.slice(0, 2), 800));
-}
-const by = await get(`${COMMON}/statistics/byathlete?season=2026&seasontype=2&limit=2&sort=receiving.receivingYards%3Adesc`);
-console.log("byathlete categories[receiving] first athlete:", cut(by?.athletes?.[0]?.categories?.map((c: any) => [c.name, c.values]), 900), "athlete keys:", cut(Object.keys(by?.athletes?.[0]?.athlete ?? {})));
+const sig = rows.flatMap((r) => r.signals ?? []).find((s: any) => s.type !== "RECENT_FORM");
+console.log("non-recent-form signal sample", cut(sig));
