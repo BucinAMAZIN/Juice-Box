@@ -77,6 +77,11 @@ jobs:
           npm run picks -- --dry-run --date="$TOMORROW"
           npm run grade -- --dry-run
 
+      - name: Probe ESPN feeds
+        if: steps.task.outputs.task == 'dry'
+        continue-on-error: true
+        run: npx tsx scripts/probe-espn.ts
+
       - name: Commit data
         if: steps.task.outputs.task == 'picks' || steps.task.outputs.task == 'grade'
         env:
