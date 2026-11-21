@@ -1024,6 +1024,76 @@
       "sid": "7620702320965321125",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/7620702320965321125",
       "note": "Over 4.5 in 5 straight games."
+    },
+    {
+      "id": "2026-11-21-s-nhl-2026020363-a-protas-assists-0.5",
+      "createdAt": "2026-11-21T16:26:13.812Z",
+      "gameStart": "2026-11-22T00:00:00Z",
+      "gameId": 2026020363,
+      "sport": "nhl",
+      "kind": "streak",
+      "player": "Aliaksei Protas",
+      "team": "WAS",
+      "opponent": "BOS",
+      "market": "assists",
+      "line": 0.5,
+      "side": "over",
+      "modelProb": 0.30303030303030304,
+      "limitOdds": 230,
+      "mean": 0.5,
+      "price": 230,
+      "book": "Hard Rock",
+      "streak": 6,
+      "home": false,
+      "alt": false,
+      "h2h": {
+        "games": 6,
+        "hits": 2
+      },
+      "split": {
+        "games": 4,
+        "hits": 4
+      },
+      "avg": 1,
+      "teamName": "Capitals",
+      "sid": "1008225829087478166",
+      "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/1008225829087478166",
+      "note": "Over 0.5 in 6 straight games."
+    },
+    {
+      "id": "2026-11-21-s-nhl-2026020367-m-barzal-sog-1.5",
+      "createdAt": "2026-11-21T16:26:13.812Z",
+      "gameStart": "2026-11-22T00:00:00Z",
+      "gameId": 2026020367,
+      "sport": "nhl",
+      "kind": "streak",
+      "player": "Mathew Barzal",
+      "team": "NYI",
+      "opponent": "DET",
+      "market": "sog",
+      "line": 1.5,
+      "side": "over",
+      "modelProb": 0.696969696969697,
+      "limitOdds": -230,
+      "mean": 1.5,
+      "price": -230,
+      "book": "Hard Rock",
+      "streak": 5,
+      "home": false,
+      "alt": false,
+      "h2h": {
+        "games": 4,
+        "hits": 3
+      },
+      "split": {
+        "games": 5,
+        "hits": 5
+      },
+      "avg": 3.4,
+      "teamName": "Islanders",
+      "sid": "3435974424071897490",
+      "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/3435974424071897490",
+      "note": "Over 1.5 in 5 straight games."
     }
   ],
   "tickets": [],
