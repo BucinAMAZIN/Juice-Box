@@ -216,3 +216,32 @@ describe("Hard Rock links on the Picks screen", () => {
     expect(view.textContent).toContain("Not listed on Hard Rock right now");
   });
 });
+
+describe("Hard Rock slip builder", () => {
+  it("builds one multi-leg ticket link from the picks you tick", async () => {
+    const mk = (id: string) => ({ id, createdAt: "", gameStart: "", gameId: 1, sport: "nba" as const, kind: "lean" as const, player: `P ${id}`, team: "LAL", opponent: "DEN", market: "points" as const, line: 19.5, side: "over" as const, modelProb: 0.6, limitOdds: -150, mean: 20, note: "" });
+    const day: DayFile = { date: "2026-11-21", generatedAt: "", modelVersion: "x", tickets: [], notes: [], picks: ["a", "b", "c"].map(mk) };
+    const link = (sid: string) => ({ american: -120, url: `https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/${sid}` });
+    const source: PicksSource = {
+      loadIndex: async () => ({ dates: ["2026-11-21"] }),
+      loadDay: async () => day,
+      loadGrades: async () => null,
+      loadLinks: async () => ({ date: "2026-11-21", updatedAt: "", tickets: {}, picks: { a: link("111"), b: link("222"), c: link("333") } }),
+    };
+    const view = document.createElement("div");
+    document.body.append(view);
+    await renderPicks(view, undefined, source);
+    const boxes = [...view.querySelectorAll<HTMLInputElement>(".add input")];
+    expect(boxes).toHaveLength(3);
+    expect(view.querySelector(".slipbar")!.hasAttribute("hidden")).toBe(true);
+    boxes[0]!.click();
+    boxes[2]!.click();
+    const send = view.querySelector(".slipbar a.hr") as HTMLAnchorElement;
+    expect(send.textContent).toBe("Send 2-leg ticket to Hard Rock");
+    expect(send.href).toBe("https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/111,333");
+    boxes[0]!.click();
+    expect((view.querySelector(".slipbar a.hr") as HTMLAnchorElement).textContent).toBe("Send to Hard Rock");
+    boxes[2]!.click();
+    expect(view.querySelector(".slipbar")!.hasAttribute("hidden")).toBe(true);
+  });
+});
