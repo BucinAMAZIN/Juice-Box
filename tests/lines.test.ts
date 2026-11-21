@@ -63,3 +63,22 @@ describe("Lines screen", () => {
     expect(root.textContent).toContain("No NFL lines yet");
   });
 });
+
+import { strength, withMoneyline } from "../src/engine/lines";
+
+describe("moneyline leagues", () => {
+  it("treats a spread slot of 100 or more as the favorite's moneyline", () => {
+    const row: LineRow = ["1", "2026-05-01T00:00:00Z", "NYY", "BOS", 1, 150, 8.5, 5, 2];
+    const game = fromRow(row);
+    expect(game).toMatchObject({ ml: 150, spread: 1.5 });
+    expect(strength(game)).toBe(150);
+    expect(coverResult(game)).toBe("cover");
+    expect(toRow(game)![5]).toBe(150);
+    expect(withMoneyline({ spread: 7 })).toEqual({ spread: 7 });
+  });
+  it("buckets a moneyline league by price and says so", () => {
+    const games = Array.from({ length: 90 }, (_, i) => fromRow(["m" + i, "2026-05-01T00:00:00Z", "A", "B", 1, 110 + (i % 3) * 50, 8 + (i % 2), 5, 2]));
+    expect(slice(games).ml).toBe(true);
+    expect(slice(games).cells[0]!.label).toContain("favorite");
+  });
+});

@@ -1,7 +1,7 @@
 {
   "name": "juice-box",
   "private": true,
-  "version": "0.8.0",
+  "version": "0.8.1",
   "type": "module",
   "description": "A pick tracker that prices props against the vig, logs every pick before the game, and grades itself honestly.",
   "scripts": {

@@ -1,5 +1,5 @@
 import { LEAGUES } from "../data/leagues";
-import { type Cell, type LineGame, type LineRow, cellFor, coverRate, fromRow, overRate, slice, totalResult, coverResult } from "../engine/lines";
+import { type Cell, type LineGame, type LineRow, cellFor, coverRate, coverResult, fromRow, overRate, slice, totalResult, winRate, withMoneyline } from "../engine/lines";
 import { clear, h } from "./dom";
 import { pct } from "./format";
 import { getJson } from "./picks";
@@ -22,9 +22,13 @@ const rateText = (r: { n: number; pct: number | null }): string => (r.pct == nul
 const when = (iso: string): string => new Date(iso).toLocaleString([], { weekday: "short", hour: "numeric", minute: "2-digit" });
 const PICK_TEXT: Record<NonNullable<Cell["pick"]>, string> = { over: "over", under: "under", favorite: "favorite covers", underdog: "underdog covers" };
 
-function cellLine(c: Cell): HTMLElement {
-  const rate = c.pick === "over" || c.pick === "under" ? c.over : c.cover;
-  return h("div", { class: "streak" }, h("div", { class: "s-main" }, h("strong", {}, c.label), h("div", { class: "signals" }, `${c.pick ? PICK_TEXT[c.pick] : "no clear lean"}: ${rate.pct == null ? "–" : pct(rate.pct, 0)} of ${rate.n} games (range ${pct(rate.lo ?? 0, 0)} to ${pct(rate.hi ?? 0, 0)}) · over ${rateText(c.over)} · favorite covers ${rateText(c.cover)}`)));
+function cellLine(c: Cell, ml: boolean): HTMLElement {
+  const base = c.pick === "over" || c.pick === "under" ? c.over : c.cover;
+  const flip = c.pick === "under" || c.pick === "underdog";
+  const p = base.pct == null ? null : flip ? 1 - base.pct : base.pct;
+  const lo = flip ? 1 - (base.hi ?? 0) : base.lo ?? 0;
+  const hi = flip ? 1 - (base.lo ?? 0) : base.hi ?? 0;
+  return h("div", { class: "streak" }, h("div", { class: "s-main" }, h("strong", {}, c.label), h("div", { class: "signals" }, `${c.pick ? PICK_TEXT[c.pick] : "no clear lean"}: ${p == null ? "–" : pct(p, 0)} of ${base.n} games (range ${pct(lo, 0)} to ${pct(hi, 0)}) · over ${rateText(c.over)} · ${ml ? `favorite wins ${rateText(c.win)}` : `favorite covers ${rateText(c.cover)}`}`)));
 }
 
 export function renderLeague(box: HTMLElement, id: string, all: LineGame[], tracked: LineGame[]): void {
@@ -38,7 +42,8 @@ export function renderLeague(box: HTMLElement, id: string, all: LineGame[], trac
   const s = slice(all);
   const totals = done.map((g) => g.total);
   const avg = totals.length ? totals.reduce((a, b) => a + b, 0) / totals.length : 0;
-  box.append(h("p", { class: "note" }, `${label}: ${done.length} games with lines. Over ${rateText(overRate(done))}, favorite covers ${rateText(coverRate(done))}, average total ${avg.toFixed(1)}.`));
+  if (s.ml) box.append(h("p", { class: "note" }, `${label} lists moneylines, so favorite strength is the price. Only the over and under are flagged, because the favorite's -1.5 line is priced at plus money and has no 50% baseline.`));
+  box.append(h("p", { class: "note" }, `${label}: ${done.length} games with lines. Over ${rateText(overRate(done))}, ${s.ml ? `favorite wins ${rateText(winRate(done))}` : `favorite covers ${rateText(coverRate(done))}`}, average total ${avg.toFixed(1)}.`));
 
   const upcoming = tracked.filter((g) => g.status !== "post").sort((a, b) => a.start.localeCompare(b.start));
   const sec = h("section", {}, h("h3", {}, `On the board (${upcoming.length})`));
@@ -46,14 +51,14 @@ export function renderLeague(box: HTMLElement, id: string, all: LineGame[], trac
   for (const g of upcoming) {
     const c = cellFor(g, s);
     const flag = c?.pick ? ` · sweet spot: ${PICK_TEXT[c.pick]}` : "";
-    sec.append(h("div", { class: "streak" }, h("div", { class: "s-main" }, h("strong", {}, `${g.fav} ${g.spread > 0 ? `-${g.spread}` : "pick'em"} vs ${g.dog}`), h("div", { class: "signals" }, `${when(g.start)} · total ${g.total}${g.favWin != null && g.dogWin != null ? ` · records ${pct(g.favWin, 0)} vs ${pct(g.dogWin, 0)}` : ""}${flag}`))));
+    sec.append(h("div", { class: "streak" }, h("div", { class: "s-main" }, h("strong", {}, `${g.fav} ${g.ml != null ? `-${g.ml}` : g.spread > 0 ? `-${g.spread}` : "pick'em"} vs ${g.dog}`), h("div", { class: "signals" }, `${when(g.start)} · total ${g.total}${g.favWin != null && g.dogWin != null ? ` · records ${pct(g.favWin, 0)} vs ${pct(g.dogWin, 0)}` : ""}${flag}`))));
   }
   box.append(sec);
 
   const spots = s.cells.filter((c) => c.pick).sort((a, b) => b.edge - a.edge);
   const spotSec = h("section", {}, h("h3", {}, `Sweet spots (${spots.length})`));
   if (spots.length === 0) spotSec.append(h("p", { class: "empty" }, "No slice is far enough from 50% with a big enough sample to call."));
-  for (const c of spots) spotSec.append(cellLine(c));
+  for (const c of spots) spotSec.append(cellLine(c, s.ml));
   spotSec.append(h("p", { class: "note" }, "A slice only counts with 30+ games and a 95% range that sits fully on one side of 50%. With nine slices and four rates each, one or two will look special by luck, so the tracked record below is the real test."));
   box.append(spotSec);
 
@@ -66,8 +71,8 @@ export function renderLeague(box: HTMLElement, id: string, all: LineGame[], trac
   const decided = flagged.filter((g) => { const p = cellFor(g, s)!.pick!; return p === "over" || p === "under" ? totalResult(g) !== "push" : coverResult(g) !== "push" && coverResult(g) != null; }).length;
   box.append(h("section", {}, h("h3", {}, "Tracked going forward"), h("p", { class: "note" }, finals.length === 0 ? "No tracked games have finished yet." : `${finals.length} finished since tracking started. Sweet-spot games: ${decided ? `${hit} of ${decided} landed on the lean (${pct(hit / decided, 0)})` : "none yet"}. Over ${rateText(overRate(finals))}, favorite covers ${rateText(coverRate(finals))}.`)));
 
-  const rows = s.cells.map((c) => h("tr", {}, h("th", { scope: "row" }, c.label), h("td", {}, String(c.games.length)), h("td", {}, c.over.pct == null ? "–" : pct(c.over.pct, 0)), h("td", {}, c.cover.pct == null ? "–" : pct(c.cover.pct, 0))));
-  box.append(h("section", { class: "records" }, h("h3", {}, "Every slice"), h("div", { class: "scroll" }, h("table", {}, h("thead", {}, h("tr", {}, h("th", {}, ""), h("th", {}, "Games"), h("th", {}, "Over"), h("th", {}, "Fav covers"))), h("tbody", {}, ...rows)))));
+  const rows = s.cells.map((c) => h("tr", {}, h("th", { scope: "row" }, c.label), h("td", {}, String(c.games.length)), h("td", {}, c.over.pct == null ? "–" : pct(c.over.pct, 0)), h("td", {}, (s.ml ? c.win : c.cover).pct == null ? "–" : pct((s.ml ? c.win : c.cover).pct!, 0))));
+  box.append(h("section", { class: "records" }, h("h3", {}, "Every slice"), h("div", { class: "scroll" }, h("table", {}, h("thead", {}, h("tr", {}, h("th", {}, ""), h("th", {}, "Games"), h("th", {}, "Over"), h("th", {}, s.ml ? "Fav wins" : "Fav covers"))), h("tbody", {}, ...rows)))));
 }
 
 export async function renderLines(view: HTMLElement, _ledger?: unknown, source: LinesSource = linesSource): Promise<void> {
@@ -82,7 +87,7 @@ export async function renderLines(view: HTMLElement, _ledger?: unknown, source: 
     body.append(h("p", { class: "empty" }, "Loading…"));
     const [hist, tracked] = await Promise.all([source.history(id).catch(() => null), source.tracked(id).catch(() => null)]);
     if (current !== id) return;
-    const trackedGames = tracked ?? [];
+    const trackedGames = (tracked ?? []).map(withMoneyline);
     const seen = new Set(trackedGames.filter((g) => g.status === "post").map((g) => g.id));
     const all = [...(hist ?? []).filter((r) => !seen.has(r[0])).map(fromRow), ...trackedGames.filter((g) => g.status === "post")];
     renderLeague(body, id, all, trackedGames);
