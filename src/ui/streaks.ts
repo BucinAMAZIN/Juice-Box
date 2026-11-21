@@ -1,6 +1,8 @@
 import { americanToDecimal, decimalToAmerican } from "../core/odds";
 import { hardRockUrl } from "../data/hardrock";
 import type { DayFile, DayGrades, HandedPick } from "../engine/types";
+import { type BlowoutSource, blowoutSource, renderBlowoutPanel } from "./blowouts";
+import type { BlowoutGame } from "../engine/blowouts";
 import { clear, h } from "./dom";
 import { activeCount, cushionOf, defaultFilters, gameKey, loadFilters, passes, saveFilters, type Filters } from "./filters";
 import { getJson, pullToRefresh, type PicksSource } from "./picks";
@@ -38,6 +40,8 @@ export interface StreakState {
   tab: string;
   /** One prop category to show (a market id), or "all". */
   category?: string;
+  /** College football blowouts, shown on the NCAA tab. */
+  blow?: { tracked: BlowoutGame[] | null; history: BlowoutGame[] | null };
   filters: Filters;
 }
 
@@ -78,7 +82,7 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
   const content = h("div", {});
   const tabs = h("div", { class: "chips", role: "tablist", "aria-label": "Sports" });
   const sports = [...new Set(day.picks.map((p) => p.sport))];
-  if (!["multi", ...sports].includes(state.tab)) state.tab = "multi";
+  if (!["multi", "ncaa", ...sports].includes(state.tab)) state.tab = "multi";
   const refreshBar = () => {
     clear(bar);
     bar.hidden = state.chosen.size === 0;
@@ -132,7 +136,13 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
   );
   const draw = () => {
     clear(content);
+    const ncaa = state.tab === "ncaa";
+    cats.hidden = panel.hidden = shownNote.hidden = ncaa;
     for (const t of tabs.children) t.setAttribute("aria-selected", String((t as HTMLElement).dataset.tab === state.tab));
+    if (ncaa) {
+      renderBlowoutPanel(content, day.date, state.blow?.tracked ?? null, state.blow?.history ?? null);
+      return;
+    }
     const f = state.filters;
     const inTab = day.picks.filter((p) => state.tab === "multi" || p.sport === state.tab);
     const counts = new Map<string, number>();
@@ -150,18 +160,16 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
     if (list.length === 0) content.append(h("p", { class: "empty" }, inTab.length ? "Nothing matches these filters." : "No streaks of 5+ with a Hard Rock price for this day yet."));
     for (const p of list) content.append(row(p, state, refreshBar));
   };
-  if (sports.length > 1) {
-    for (const [id, label] of [["multi", "Multi-sport"], ...sports.map((s) => [s, SPORT[s] ?? s.toUpperCase()])] as Array<[string, string]>) {
-      tabs.append(h("button", { type: "button", role: "tab", class: "chip", "data-tab": id, onclick: () => { state.tab = id; draw(); } }, label));
-    }
-    view.append(tabs);
+  for (const [id, label] of [...(sports.length > 1 ? [["multi", "Multi-sport"]] : []), ...sports.map((s) => [s, SPORT[s] ?? s.toUpperCase()]), ["ncaa", "NCAA"]] as Array<[string, string]>) {
+    tabs.append(h("button", { type: "button", role: "tab", class: "chip", "data-tab": id, onclick: () => { state.tab = id; draw(); } }, label));
   }
+  view.append(tabs);
   view.append(cats, panel, shownNote, bar, content);
   draw();
   refreshBar();
 }
 
-export async function renderStreaks(view: HTMLElement, _ledger?: unknown, source: PicksSource = streakSource): Promise<void> {
+export async function renderStreaks(view: HTMLElement, _ledger?: unknown, source: PicksSource = streakSource, blow: BlowoutSource = blowoutSource): Promise<void> {
   clear(view);
   let dates: string[];
   try {
@@ -174,10 +182,11 @@ export async function renderStreaks(view: HTMLElement, _ledger?: unknown, source
     return;
   }
   const body = h("div", {});
-  let state: StreakState = { chosen: new Map(), tab: "multi", filters: loadFilters() };
+  const loadBlow = async () => ({ tracked: await blow.load("tracked").catch(() => null), history: await blow.load("history").catch(() => null) });
+  let state: StreakState = { chosen: new Map(), tab: "multi", filters: loadFilters(), blow: await loadBlow() };
   let shown = dates[dates.length - 1]!;
   const load = async (date: string) => {
-    if (date !== shown) state = { chosen: new Map(), tab: state.tab, category: state.category, filters: state.filters };
+    if (date !== shown) state = { chosen: new Map(), tab: state.tab, category: state.category, filters: state.filters, ...(state.blow ? { blow: state.blow } : {}) };
     shown = date;
     try {
       const day = await source.loadDay(date);
@@ -192,6 +201,7 @@ export async function renderStreaks(view: HTMLElement, _ledger?: unknown, source
   const status = h("span", { class: "muted", "aria-live": "polite" });
   const refresh = async () => {
     status.textContent = "Refreshing…";
+    state.blow = await loadBlow();
     await load(select.value);
     status.textContent = `Updated ${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
   };

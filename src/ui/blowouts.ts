@@ -33,30 +33,38 @@ export function bandTable(title: string, games: BlowoutGame[]): HTMLElement {
   return h("section", { class: "records" }, h("h3", {}, title), h("div", { class: "scroll" }, h("table", {}, h("thead", {}, head), h("tbody", {}, ...rows))));
 }
 
-function upcoming(games: BlowoutGame[]): HTMLElement {
-  const open = games.filter((g) => g.status !== "post");
-  const sec = h("section", {}, h("h3", {}, "Coming up: favorites of 20 or more"));
-  if (open.length === 0) {
-    sec.append(h("p", { class: "empty" }, "No games with a favorite of 20 or more on the board right now."));
-    return sec;
-  }
-  for (const g of open) {
-    sec.append(h("div", { class: "streak" }, h("div", { class: "s-main" }, h("strong", {}, `${g.fav} -${g.spread} vs ${g.dog}`), h("div", { class: "signals" }, `${when(g.start)} · total ${g.total} (${ratioOf(g).toFixed(2)}x the spread)${isCoreCase(g) ? " · 40+ with a 50 to 52 total" : ""}${g.status === "in" ? " · live" : ""}`))));
-  }
+function gameRow(g: BlowoutGame): HTMLElement {
+  const note = g.status === "post"
+    ? `${g.date} · -${g.spread}, total ${g.total} · ${g.points} points · ${g.result}`
+    : `${when(g.start)} · total ${g.total} (${ratioOf(g).toFixed(2)}x the spread)${isCoreCase(g) ? " · 40+ with a 50 to 52 total" : ""}${g.status === "in" ? " · live" : ""}`;
+  const title = g.status === "post" ? `${g.fav} ${g.favScore}-${g.dogScore} ${g.dog}` : `${g.fav} -${g.spread} vs ${g.dog}`;
+  return h("div", { class: `streak ${g.result === "over" ? "won" : g.result === "under" ? "lost" : ""}` }, h("div", { class: "s-main" }, h("strong", {}, title), h("div", { class: "signals" }, note)));
+}
+
+function dayList(games: BlowoutGame[], date: string): HTMLElement {
+  const today = games.filter((g) => g.date === date).sort((a, b) => b.spread - a.spread);
+  const sec = h("section", {}, h("h3", {}, `Blowouts on ${date}: favorites of 20 or more (${today.length})`));
+  if (today.length === 0) sec.append(h("p", { class: "empty" }, "No games with a favorite of 20 or more on this day."));
+  for (const g of today) sec.append(gameRow(g));
+  return sec;
+}
+
+function comingUp(games: BlowoutGame[], date: string): HTMLElement | null {
+  const later = games.filter((g) => g.date > date && g.status !== "post");
+  if (later.length === 0) return null;
+  const sec = h("section", {}, h("h3", {}, "Later this week"));
+  for (const g of later) sec.append(gameRow(g));
   return sec;
 }
 
 function finished(games: BlowoutGame[]): HTMLElement {
-  const done = games.filter((g) => g.status === "post").sort((a, b) => b.start.localeCompare(a.start));
-  const sec = h("section", {}, h("h3", {}, `Tracked results: ${rateText(done)}`));
+  const done = games.filter((g) => g.status === "post");
+  const sec = h("section", {}, h("h3", {}, `Tracked since the start: ${rateText(done)}`));
   if (done.length === 0) {
     sec.append(h("p", { class: "empty" }, "Nothing has finished since tracking started. Results land here after each game."));
     return sec;
   }
   sec.append(bandTable("Tracked, by favorite size and total", done));
-  for (const g of done) {
-    sec.append(h("div", { class: `streak ${g.result === "over" ? "won" : g.result === "under" ? "lost" : ""}` }, h("div", { class: "s-main" }, h("strong", {}, `${g.fav} ${g.favScore}-${g.dogScore} ${g.dog}`), h("div", { class: "signals" }, `${g.date} · -${g.spread}, total ${g.total} · ${g.points} points · ${g.result}`))));
-  }
   return sec;
 }
 
@@ -78,11 +86,17 @@ function history(games: BlowoutGame[] | null): HTMLElement {
   return sec;
 }
 
-export async function renderBlowouts(view: HTMLElement, _ledger?: unknown, source: BlowoutSource = blowoutSource): Promise<void> {
-  clear(view);
-  view.append(h("p", { class: "empty" }, "Loading college football lines…"));
-  const [tracked, past] = await Promise.all([source.load("tracked").catch(() => null), source.load("history").catch(() => null)]);
-  clear(view);
-  view.append(h("p", { class: "note" }, "College football games with a big favorite, tracked from the line to the final score. Over rate counts games that finished over the total."));
-  view.append(upcoming(tracked ?? []), finished(tracked ?? []), history(past));
+/** The NCAA tab on the Streaks screen: one category, Blowout, for the chosen day, then the running record and past seasons. */
+export function renderBlowoutPanel(box: HTMLElement, date: string, tracked: BlowoutGame[] | null, past: BlowoutGame[] | null): void {
+  clear(box);
+  const games = tracked ?? [];
+  const todayCount = games.filter((g) => g.date === date).length;
+  box.append(
+    h("div", { class: "chips cats", role: "group", "aria-label": "Prop category" }, h("button", { type: "button", class: "chip", "data-cat": "blowout", "aria-selected": "true" }, `Blowout ${todayCount}`)),
+    h("p", { class: "note" }, "College football games with a favorite of 20 or more, tracked from the line to the final score. Over rate counts games that finished over the total."),
+    dayList(games, date),
+  );
+  const next = comingUp(games, date);
+  if (next) box.append(next);
+  box.append(finished(games), history(past));
 }

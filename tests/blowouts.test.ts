@@ -50,24 +50,35 @@ describe("blowout tallies", () => {
   });
 });
 
-import { renderBlowouts } from "../src/ui/blowouts";
+import { renderBlowoutPanel } from "../src/ui/blowouts";
+import { renderStreaks } from "../src/ui/streaks";
 
-describe("Blowouts screen", () => {
-  const g = (id: string, spread: number, total: number, status: "pre" | "post", result?: "over" | "under"): BlowoutGame => ({ id, start: "2099-01-01T17:00:00Z", date: "2099-01-01", fav: "AUB", dog: "SAM", spread, total, status, ...(status === "post" ? { favScore: 55, dogScore: 3, points: 58, result } : {}) });
-  it("lists upcoming big favorites, tracked results and the past-season rate", async () => {
+describe("NCAA blowout tab", () => {
+  const g = (id: string, spread: number, total: number, status: "pre" | "post", result?: "over" | "under", date = "2099-01-01"): BlowoutGame => ({ id, start: `${date}T17:00:00Z`, date, fav: "AUB", dog: "SAM", spread, total, status, ...(status === "post" ? { favScore: 55, dogScore: 3, points: 58, result } : {}) });
+  it("lists the day's big favorites, the running record and the past-season rate", () => {
     const root = document.createElement("div");
-    const src = { load: async (n: "tracked" | "history") => (n === "tracked" ? [g("1", 48.5, 51, "pre"), g("2", 22, 49, "post", "over")] : [g("3", 41, 51, "post", "over"), g("4", 44, 52, "post", "under"), g("5", 42, 51, "post", "over")]) };
-    await renderBlowouts(root, undefined, src);
+    renderBlowoutPanel(root, "2099-01-01", [g("1", 48.5, 51, "pre"), g("2", 22, 49, "post", "over")], [g("3", 41, 51, "post", "over"), g("4", 44, 52, "post", "under"), g("5", 42, 51, "post", "over")]);
+    expect(root.querySelector("[data-cat=blowout]")!.textContent).toBe("Blowout 2");
     expect(root.textContent).toContain("AUB -48.5 vs SAM");
     expect(root.textContent).toContain("40+ with a 50 to 52 total");
     expect(root.textContent).toContain("AUB 55-3 SAM");
     expect(root.textContent).toContain("67% over (2-1)");
   });
-  it("says so when nothing is loaded yet", async () => {
+  it("says so when nothing is loaded yet", () => {
     const root = document.createElement("div");
-    await renderBlowouts(root, undefined, { load: async () => null });
-    expect(root.textContent).toContain("No games with a favorite of 20 or more");
+    renderBlowoutPanel(root, "2099-01-01", null, null);
+    expect(root.textContent).toContain("No games with a favorite of 20 or more on this day.");
     expect(root.textContent).toContain("Past-season lines have not been loaded yet.");
+  });
+  it("shows up as an NCAA tab on the Streaks screen", async () => {
+    const root = document.createElement("div");
+    document.body.append(root);
+    const day = { date: "2099-01-01", generatedAt: "", modelVersion: "x", tickets: [], notes: [], picks: [] };
+    await renderStreaks(root, undefined, { loadIndex: async () => ({ dates: ["2099-01-01"] }), loadDay: async () => day, loadGrades: async () => null }, { load: async (n) => (n === "tracked" ? [g("1", 48.5, 51, "pre")] : null) });
+    root.querySelector<HTMLButtonElement>('[data-tab="ncaa"]')!.click();
+    expect(root.textContent).toContain("Blowout 1");
+    expect(root.textContent).toContain("AUB -48.5 vs SAM");
+    expect(root.querySelector<HTMLElement>(".filters")!.hidden).toBe(true);
   });
 });
 
