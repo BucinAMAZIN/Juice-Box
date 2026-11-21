@@ -1,6 +1,6 @@
 import type { Sport } from "../core/potd";
 
-export type PickKind = "potd" | "lean" | "ticket";
+export type PickKind = "potd" | "lean" | "alt" | "ticket";
 export type NhlMarket = "sog" | "points" | "goals" | "assists";
 /** Basketball markets. "pra" is points + rebounds + assists, "pr" points + rebounds, and so on. */
 export type NbaMarket = "points" | "rebounds" | "assists" | "threes" | "pr" | "pa" | "ra" | "pra";

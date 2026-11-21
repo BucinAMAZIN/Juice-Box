@@ -122,3 +122,35 @@ describe("market blend", () => {
     expect(blendWithMarket([unpriced])[0]!.prob).toBe(0.7);
   });
 });
+
+import { appendNew } from "../src/engine/merge";
+import { selectDay } from "../src/engine/select";
+import { distributionFor } from "../src/core/model";
+
+function alt(player: string, gameId: number, prob: number, american: number): Candidate {
+  return {
+    projection: { key: player, sport: "nba", player, team: "T", opponent: "O", gameId, gameStart: "2026-11-21T03:00:00Z", market: "points", mean: 20, dist: distributionFor("points", 20), games: 10, avgToi: 30 },
+    threshold: 20, line: 19.5, prob, price: { american, book: "fanduel" },
+  };
+}
+
+describe("alt-line picks", () => {
+  const NOW = new Date("2026-11-21T00:00:00Z");
+  it("hands out up to 4 alt lines priced -250 to -375, at most two a game", () => {
+    const day = selectDay("2026-11-20", [alt("A", 1, 0.8, -300), alt("B", 1, 0.79, -330), alt("C", 1, 0.78, -260), alt("D", 2, 0.77, -270), alt("E", 3, 0.76, -280), alt("F", 4, 0.9, -200), alt("G", 5, 0.7, -300)], NOW, undefined, { priced: true, idPrefix: "nba-" });
+    const alts = day.picks.filter((p) => p.kind === "alt");
+    expect(alts.length).toBe(4);
+    expect(alts.every((p) => p.price! <= -250 && p.price! >= -375)).toBe(true);
+    expect(alts.filter((p) => p.gameId === 1).length).toBeLessThanOrEqual(2);
+    expect(alts.some((p) => p.player === "G")).toBe(false); // 70% at -300 is well under fair
+  });
+
+  it("adds new picks to a saved day without changing what was saved", () => {
+    const saved = selectDay("2026-11-20", [alt("A", 1, 0.8, -300)], NOW, undefined, { priced: true, idPrefix: "nba-" });
+    const fresh = selectDay("2026-11-20", [alt("A", 1, 0.8, -300), alt("B", 2, 0.79, -330)], NOW, undefined, { priced: true, idPrefix: "nba-" });
+    const { day, added } = appendNew(saved, fresh);
+    expect(added).toBe(1);
+    expect(day.picks.slice(0, saved.picks.length)).toEqual(saved.picks);
+    expect(new Set(day.picks.map((p) => p.id)).size).toBe(day.picks.length);
+  });
+});

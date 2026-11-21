@@ -1,9 +1,10 @@
-import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { loadOffers } from "../src/data/linemate";
 import { loadBoxscore, loadClubSchedule, loadLeaders, loadSchedule } from "../src/data/nhl";
 import { loadNbaBox, loadNbaScoreboard, loadNbaSeasonAverages } from "../src/data/espn";
 import { generateDay } from "../src/engine/daily";
-import { mergeDays } from "../src/engine/merge";
+import type { DayFile } from "../src/engine/types";
+import { appendNew, mergeDays } from "../src/engine/merge";
 import { NBA_MARKETS_LM, generateNbaDayOrNote } from "../src/engine/nbaRun";
 import { shortOdds } from "../src/engine/select";
 
@@ -47,7 +48,14 @@ if (dry) {
 mkdirSync(`${DATA}/picks`, { recursive: true });
 const file = `${DATA}/picks/${day.date}.json`;
 if (existsSync(file)) {
-  console.log(`\n${file} already exists. Picks are frozen once written, so it was not overwritten.`);
+  const saved = JSON.parse(readFileSync(file, "utf8")) as DayFile;
+  const { day: grown, added } = appendNew(saved, day);
+  if (added > 0) {
+    writeFileSync(file, JSON.stringify(grown, null, 2) + "\n");
+    console.log(`\n${file} already existed. Saved picks were left alone and ${added} new pick(s) were added.`);
+  } else {
+    console.log(`\n${file} already exists and there is nothing new to add.`);
+  }
 } else {
   writeFileSync(file, JSON.stringify(day, null, 2) + "\n");
   console.log(`\nWrote ${file}`);

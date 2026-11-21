@@ -30,6 +30,12 @@ export const POTD_PRICE: [number, number] = [-135, -110];
 export const MIN_EDGE = 0.02;
 /** Leans never cost more than this, since ParlayBOT's heavy favorites ran well below their prices. */
 export const LEAN_MAX_JUICE = -200;
+/** Alt-line picks: heavy favorites on high alt lines, 3 to 4 a day. */
+export const ALT_PRICE: [number, number] = [-375, -250];
+export const ALT_MAX = 4;
+/** Alt picks may sit a little under fair, since the user wants these shorter prices; the edge is shown on every pick. */
+export const ALT_MIN_EDGE = -0.03;
+export const LEAN_MIN_PROB = 0.55;
 export const MAX_LEANS = 6;
 export const MAX_LEANS_PER_GAME = 2;
 
@@ -146,7 +152,7 @@ export function selectDay(
   const perGame = new Map<number, number>();
   let leans = 0;
   const leanPool = priced
-    ? candidates.filter((c) => c.price!.american >= LEAN_MAX_JUICE && edgeOf(c) >= MIN_EDGE).sort((a, b) => edgeOf(b) - edgeOf(a))
+    ? candidates.filter((c) => c.price!.american >= LEAN_MAX_JUICE && edgeOf(c) >= MIN_EDGE && c.prob >= LEAN_MIN_PROB).sort((a, b) => edgeOf(b) - edgeOf(a))
     : candidates.filter((c) => within(c.prob, LEAN_BAND)).sort((a, b) => b.prob - a.prob);
   for (const c of leanPool) {
     if (leans >= MAX_LEANS) break;
@@ -159,6 +165,26 @@ export function selectDay(
     leans++;
   }
   if (leans === 0) notes.push("No leans today.");
+
+  // Alt-line picks at -250 to -375, best edge first, one per player, at most two per game.
+  if (priced) {
+    const altPerGame = new Map<number, number>();
+    const altPool = candidates
+      .filter((c) => c.price!.american >= ALT_PRICE[0] && c.price!.american <= ALT_PRICE[1] && edgeOf(c) >= ALT_MIN_EDGE)
+      .sort((a, b) => edgeOf(b) - edgeOf(a));
+    let alts = 0;
+    for (const c of altPool) {
+      if (alts >= ALT_MAX) break;
+      if (used.has(c.projection.key)) continue;
+      const n = altPerGame.get(c.projection.gameId) ?? 0;
+      if (n >= 2) continue;
+      make(c, "alt", `Alt line: ${describe(c)}. ${cheap(c)}`);
+      used.add(c.projection.key);
+      altPerGame.set(c.projection.gameId, n + 1);
+      alts++;
+    }
+    if (alts === 0) notes.push("No alt lines priced -250 to -375 held up today.");
+  }
 
   // +100 tickets: two legs from different games, joint probability high enough that +100 still has an edge.
   const legs = priced ? candidates.filter((c) => edgeOf(c) >= 0) : candidates.filter((c) => within(c.prob, TICKET_LEG_BAND));

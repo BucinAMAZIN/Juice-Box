@@ -64,9 +64,11 @@ export function renderDay(view: HTMLElement, day: DayFile, grades: DayGrades | n
     const mine = day.picks.filter((p) => p.sport === sport);
     const section = h("section", { class: "sport" }, h("h2", {}, SPORT[sport] ?? sport.toUpperCase()));
     const potd = mine.filter((p) => p.kind === "potd");
+    const alts = mine.filter((p) => p.kind === "alt");
     const leans = mine.filter((p) => p.kind === "lean");
     const tickets = day.tickets.filter((t) => mine.some((p) => p.ticketId === t.id));
     if (potd.length) section.append(h("h3", {}, "Play of the day"), ...potd.map((p) => card(p, gradeById.get(p.id))));
+    if (alts.length) section.append(h("h3", {}, "Alt lines"), ...alts.map((p) => card(p, gradeById.get(p.id))));
     if (leans.length) section.append(h("h3", {}, "Other picks"), ...leans.map((p) => card(p, gradeById.get(p.id))));
     for (const t of tickets) {
       const legs = mine.filter((p) => p.ticketId === t.id);
