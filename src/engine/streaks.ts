@@ -1,5 +1,5 @@
 import { easternDate } from "../data/autograde";
-import { hrRungAt, normalizeTeam, type LmSport, type Offer } from "../data/linemate";
+import { hrRungAt, normalizeTeam, rungAt, type LmSport, type Offer } from "../data/linemate";
 import { impliedProb } from "../core/odds";
 import { hardRockUrl } from "../data/hardrock";
 import type { DayFile, HandedPick, PickMarket } from "./types";
@@ -43,6 +43,7 @@ export interface GameRef {
   state: string;
 }
 
+const bookName = (b: string): string => (b ? b.charAt(0).toUpperCase() + b.slice(1) : "Other book");
 const slug = (s: string): string => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 /** Over streaks with a Hard Rock price, best streak first, matched to a real game that has not started. */
@@ -63,6 +64,7 @@ export function buildStreakPicks(sport: LmSport, offers: Offer[], games: GameRef
   let unmatched = 0;
   let noPrice = 0;
   let outOfRange = 0;
+  let otherBook = 0;
   const out: HandedPick[] = [];
   for (const o of offers) {
     const market = markets[o.marketName];
@@ -74,11 +76,14 @@ export function buildStreakPicks(sport: LmSport, offers: Offer[], games: GameRef
       unmatched++;
       continue;
     }
-    const rung = hrRungAt(o, o.line);
+    const hr = hrRungAt(o, o.line);
+    // Hard Rock does not list every alternate line. Those streaks still show, with the best other book's price and no Hard Rock link.
+    const rung = hr ?? rungAt(o, o.line);
     if (!rung) {
       noPrice++;
       continue;
     }
+    if (!hr) otherBook++;
     if (rung.american < PRICE_MIN || rung.american > PRICE_MAX) {
       outOfRange++;
       continue;
@@ -102,7 +107,7 @@ export function buildStreakPicks(sport: LmSport, offers: Offer[], games: GameRef
       limitOdds: rung.american,
       mean: o.line,
       price: rung.american,
-      book: "Hard Rock",
+      book: hr ? "Hard Rock" : bookName(rung.book),
       streak: o.recent.games,
       ...(o.home != null ? { home: o.home } : {}),
       ...(o.alternate != null ? { alt: o.alternate } : {}),
@@ -110,12 +115,12 @@ export function buildStreakPicks(sport: LmSport, offers: Offer[], games: GameRef
       ...(o.split ? { split: o.split } : {}),
       ...(o.avg != null ? { avg: Math.round(o.avg * 100) / 100 } : {}),
       ...(o.teamName ? { teamName: o.teamName } : {}),
-      ...(rung.sid ? { sid: rung.sid, url: hardRockUrl([rung.sid]) } : {}),
+      ...(hr?.sid ? { sid: hr.sid, url: hardRockUrl([hr.sid]) } : {}),
       note: `Over ${o.line} in ${o.recent.games} straight games.`,
     });
   }
   out.sort((a, b) => (b.streak ?? 0) - (a.streak ?? 0) || (b.price ?? 0) - (a.price ?? 0));
-  log.push(`${sport.toUpperCase()}: ${offers.length} rows, ${streaks} streaks of ${MIN_STREAK}+, ${unmatched} without an open game, ${noPrice} not listed at Hard Rock, ${outOfRange} priced outside ${PRICE_MIN} to +${PRICE_MAX}, ${Math.min(limit, out.length)} listed`);
+  log.push(`${sport.toUpperCase()}: ${offers.length} rows, ${streaks} streaks of ${MIN_STREAK}+, ${unmatched} without an open game, ${otherBook} shown with another book's price (not at Hard Rock), ${noPrice} with no price anywhere, ${outOfRange} priced outside ${PRICE_MIN} to +${PRICE_MAX}, ${Math.min(limit, out.length)} listed`);
   return { picks: out.slice(0, limit), log };
 }
 

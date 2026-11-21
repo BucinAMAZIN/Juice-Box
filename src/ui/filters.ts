@@ -15,9 +15,11 @@ export interface Filters {
   split: number;
   /** Minimum share the streak average sits above the line (0.1 = 10%). */
   cushion: number;
+  /** Only props Hard Rock lists. */
+  hrOnly: boolean;
 }
 
-export const defaultFilters = (): Filters => ({ off: new Set(), line: "all", game: "all", minStreak: 0, maxJuice: 0, h2h: 0, split: 0, cushion: 0 });
+export const defaultFilters = (): Filters => ({ off: new Set(), line: "all", game: "all", minStreak: 0, maxJuice: 0, h2h: 0, split: 0, cushion: 0, hrOnly: false });
 
 const rate = (r?: { games: number; hits: number }): number | null => (r && r.games > 0 ? r.hits / r.games : null);
 /** How far the average over the streak sits above the bet line, as a share of the line. */
@@ -26,6 +28,7 @@ export const gameKey = (p: HandedPick): string => `${p.sport}:${p.gameId}`;
 
 export function passes(p: HandedPick, f: Filters): boolean {
   if (f.off.has(p.market)) return false;
+  if (f.hrOnly && !p.url) return false;
   if (f.line === "main" && p.alt === true) return false;
   if (f.line === "alt" && p.alt !== true) return false;
   if (f.game !== "all" && gameKey(p) !== f.game) return false;
@@ -47,16 +50,17 @@ export function passes(p: HandedPick, f: Filters): boolean {
 }
 
 export function activeCount(f: Filters): number {
-  return f.off.size + (f.line !== "all" ? 1 : 0) + (f.game !== "all" ? 1 : 0) + (f.minStreak ? 1 : 0) + (f.maxJuice ? 1 : 0) + (f.h2h ? 1 : 0) + (f.split ? 1 : 0) + (f.cushion ? 1 : 0);
+  return f.off.size + (f.line !== "all" ? 1 : 0) + (f.game !== "all" ? 1 : 0) + (f.minStreak ? 1 : 0) + (f.maxJuice ? 1 : 0) + (f.h2h ? 1 : 0) + (f.split ? 1 : 0) + (f.cushion ? 1 : 0) + (f.hrOnly ? 1 : 0);
 }
 
 export function loadFilters(): Filters {
   const f = defaultFilters();
   try {
-    const raw = JSON.parse(localStorage.getItem("jb-filters") ?? "null") as Partial<Omit<Filters, "off">> & { off?: string[] } | null;
+    const raw = JSON.parse(localStorage.getItem("jb-filters") ?? "null") as (Partial<Omit<Filters, "off">> & { off?: string[] }) | null;
     if (raw) {
       f.off = new Set(raw.off ?? []);
       if (raw.line === "main" || raw.line === "alt") f.line = raw.line;
+      if (raw.hrOnly === true) f.hrOnly = true;
       for (const k of ["minStreak", "maxJuice", "h2h", "split", "cushion"] as const) if (typeof raw[k] === "number") f[k] = raw[k]!;
     }
   } catch {

@@ -63,7 +63,7 @@ function row(p: HandedPick, state: StreakState, refresh: () => void): HTMLElemen
     pick,
     h("div", { class: "s-main" }, h("strong", {}, propText(p)), h("div", { class: "muted" }, `${p.teamName ?? p.team} vs ${p.opponent} · ${SPORT[p.sport] ?? p.sport.toUpperCase()} · ${started ? "started" : startTime(p.gameStart)}`), signalLine(p)),
     h("div", { class: "s-streak", title: "Straight games over this line" }, h("span", {}, String(p.streak ?? "")), h("small", {}, "streak")),
-    p.url && !started ? h("a", { class: "hr s-odds", href: p.url, target: "_blank", rel: "noopener" }, odds(p.price ?? 0)) : h("span", { class: "s-odds off" }, p.price != null ? odds(p.price) : "–"),
+    p.url && !started ? h("a", { class: "hr s-odds", href: p.url, target: "_blank", rel: "noopener" }, odds(p.price ?? 0)) : h("span", { class: "s-odds off", title: `Not listed at Hard Rock. Best price found: ${p.book ?? "another book"}` }, p.price != null ? odds(p.price) : "–", h("small", {}, p.book && p.book !== "Hard Rock" ? p.book : "started")),
   );
 }
 
@@ -89,7 +89,7 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
   const count = h("summary", {}, "Filters");
   const shownNote = h("span", { class: "muted" });
   const panel = h("details", { class: "filters" }, count);
-  const group = <T extends string | number>(label: string, options: Array<[string, T]>, get: () => T, set: (v: T) => void): HTMLElement => {
+  const group = <T extends string | number | boolean>(label: string, options: Array<[string, T]>, get: () => T, set: (v: T) => void): HTMLElement => {
     const box = h("div", { class: "fgroup", role: "group", "aria-label": label }, h("span", { class: "flabel" }, label));
     const btns = options.map(([text, value]) => h("button", { type: "button", class: "chip", "aria-pressed": String(get() === value), onclick: () => { set(value); saveFilters(state.filters); for (const [b, v] of pairs) b.setAttribute("aria-pressed", String(get() === v)); draw(); } }, text));
     const pairs = btns.map((b, i) => [b, options[i]![1]] as const);
@@ -113,6 +113,7 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
   gameSel.value = f0.game;
   panel.append(
     marketBox,
+    group("Book", [["All", false], ["Hard Rock only", true]] as Array<[string, boolean]>, () => state.filters.hrOnly, (v) => (state.filters.hrOnly = v)),
     group("Line", [["All", "all"], ["Main", "main"], ["Alt", "alt"]] as Array<[string, Filters["line"]]>, () => state.filters.line, (v) => (state.filters.line = v)),
     group("Streak", [["Any", 0], ["7+", 7], ["10+", 10]] as Array<[string, number]>, () => state.filters.minStreak, (v) => (state.filters.minStreak = v)),
     group("Price", [["Any", 0], ["-200", -200], ["-300", -300], ["-400", -400], ["-500", -500]] as Array<[string, number]>, () => state.filters.maxJuice, (v) => (state.filters.maxJuice = v)),

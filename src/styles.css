@@ -220,3 +220,4 @@ body { padding-bottom: calc(56px + env(safe-area-inset-bottom)); }
 .flabel { flex: 0 0 100%; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); }
 .chip[aria-pressed="true"] { background: var(--grape); color: #fff; }
 .signals { font-size: 12px; color: var(--text); margin-top: 2px; font-weight: 500; }
+.s-odds.off { display: flex; flex-direction: column; align-items: center; gap: 0; line-height: 1.1; } .s-odds.off small { font: 600 9px var(--font-body, system-ui); text-transform: uppercase; }

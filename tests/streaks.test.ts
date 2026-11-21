@@ -30,8 +30,8 @@ describe("streak list", () => {
     expect(picks[0]).toMatchObject({ kind: "streak", streak: 8, price: -300, gameId: 77, teamName: "Lakers", sid: "555", market: "points", line: 18.5 });
     expect(picks[0]!.url).toContain("betslip/555");
   });
-  it("skips short streaks, broken streaks, long prices, started games and props with no Hard Rock price", () => {
-    const rows = offers(raw({}, -300, 4, 4), raw({}, -300, 7, 8), raw({}, PRICE_MIN - 100, 9, 9), raw({ player: { fullName: "No Price", firstName: "No", lastName: "Price" }, market: { name: "POINTS", books: { fanduel: { over: { current: { value: 18.5, odds: { american: -200 } } } } } } }));
+  it("skips short streaks, broken streaks, long prices, started games and props priced outside the window", () => {
+    const rows = offers(raw({}, -300, 4, 4), raw({}, -300, 7, 8), raw({}, PRICE_MIN - 100, 9, 9));
     expect(buildStreakPicks("nba", rows, [game], NOW, DATE).picks).toHaveLength(0);
     expect(buildStreakPicks("nba", offers(raw()), [{ ...game, startUtc: "2026-11-21T15:05:00Z" }], NOW, DATE).picks).toHaveLength(0);
     expect(buildStreakPicks("nba", offers(raw()), [{ ...game, state: "in" }], NOW, DATE).picks).toHaveLength(0);
@@ -87,5 +87,16 @@ describe("signals on streak rows", () => {
     const saved = { date: DATE, generatedAt: "", modelVersion: "x", picks: [old], tickets: [], notes: [] };
     const r = appendStreaks(saved, DATE, picks, [], NOW);
     expect(r.day.picks[0]).toMatchObject({ price: -250, h2h: { games: 3, hits: 3 }, split: { games: 6, hits: 5 } });
+  });
+});
+
+describe("props Hard Rock does not list", () => {
+  it("shows them with another book's price and no Hard Rock link", () => {
+    const row = raw({ market: { name: "POINTS", books: { fanduel: { over: { current: { value: 18.5, odds: { american: -220 } } } } } } });
+    const { picks } = buildStreakPicks("nba", offers(row), [game], NOW, DATE);
+    expect(picks).toHaveLength(1);
+    expect(picks[0]).toMatchObject({ price: -220, book: "Fanduel" });
+    expect(picks[0]!.url).toBeUndefined();
+    expect(passes(picks[0]!, { ...defaultFilters(), hrOnly: true })).toBe(false);
   });
 });
