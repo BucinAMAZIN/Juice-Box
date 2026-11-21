@@ -78,6 +78,9 @@ jobs:
           npm run picks -- --dry-run
           echo "---- preview of tomorrow ($TOMORROW) ----"
           npm run picks -- --dry-run --date="$TOMORROW"
+          AFTER=$(TZ=America/New_York date -d "2 days" +%F)
+          echo "---- preview of $AFTER ----"
+          npm run picks -- --dry-run --date="$AFTER"
           npm run grade -- --dry-run
 
       - name: Probe Linemate pages
