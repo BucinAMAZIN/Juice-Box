@@ -51,7 +51,7 @@ export function buildStreakPicks(sport: LmSport, offers: Offer[], games: GameRef
   const log: string[] = [];
   if (!markets) return { picks: [], log };
   const cutoff = now.getTime() + LEAD_MINUTES * 60_000;
-  const open = games.filter((g) => g.state === "pre" && Date.parse(g.startUtc) > cutoff && easternDate(g.startUtc) === date);
+  const open = games.filter((g) => /^(pre|fut)$/i.test(g.state) && Date.parse(g.startUtc) > cutoff && easternDate(g.startUtc) === date);
   const gameFor = (team: string, opp: string): GameRef | undefined =>
     open.find((g) => {
       const a = normalizeTeam(g.away);

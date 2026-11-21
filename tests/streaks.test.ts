@@ -36,6 +36,10 @@ describe("streak list", () => {
     expect(buildStreakPicks("nba", offers(raw()), [{ ...game, startUtc: "2026-11-21T15:05:00Z" }], NOW, DATE).picks).toHaveLength(0);
     expect(buildStreakPicks("nba", offers(raw()), [{ ...game, state: "in" }], NOW, DATE).picks).toHaveLength(0);
   });
+  it("counts an NHL game that has not started (state FUT) as open", () => {
+    expect(buildStreakPicks("nba", offers(raw()), [{ ...game, state: "FUT" }], NOW, DATE).picks).toHaveLength(1);
+    expect(buildStreakPicks("nba", offers(raw()), [{ ...game, state: "LIVE" }], NOW, DATE).picks).toHaveLength(0);
+  });
   it("ranks the longest streak first and never changes a saved row", () => {
     const rows = offers(raw({}, -200, 6, 6), raw({ player: { fullName: "Long Run", firstName: "Long", lastName: "Run" } }, -400, 12, 12));
     const { picks } = buildStreakPicks("nba", rows, [game], NOW, DATE);
