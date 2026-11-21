@@ -126,3 +126,19 @@ describe("NFL grading and the Linemate gate", () => {
     expect(notToday.day.notes.join(" ")).toMatch(/no games left/);
   });
 });
+
+import { selectDay, type Candidate } from "../src/engine/select";
+import { distributionFor } from "../src/core/model";
+
+describe("no player is tracked twice in a day", () => {
+  const c = (player: string, gameId: number, prob: number, american: number): Candidate => ({
+    projection: { key: player, sport: "nfl", player, team: "T", opponent: "O", gameId, gameStart: "2026-11-22T18:00:00Z", market: "recYds", mean: 70, dist: distributionFor("points", 20), games: 6, avgToi: 0 },
+    threshold: 70, line: 69.5, prob, price: { american, book: "Hard Rock" },
+  });
+  it("keeps ticket legs separate from the play of the day and other picks", () => {
+    const day = selectDay("2026-11-22", [c("A", 1, 0.62, -115), c("B", 2, 0.58, -110), c("C", 3, 0.6, 120), c("D", 4, 0.6, 120)], new Date("2026-11-22T14:00:00Z"), undefined, { priced: true, idPrefix: "nfl-" });
+    const players = day.picks.map((p) => p.player);
+    expect(new Set(players).size).toBe(players.length);
+    expect(day.tickets.length).toBeGreaterThanOrEqual(1);
+  });
+});

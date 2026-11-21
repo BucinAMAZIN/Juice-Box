@@ -197,7 +197,8 @@ export function selectDay(
   }
 
   // +100 tickets: two legs from different games, joint probability high enough that +100 still has an edge.
-  const legs = priced ? candidates.filter((c) => edgeOf(c) >= 0) : candidates.filter((c) => within(c.prob, TICKET_LEG_BAND));
+  // A player already handed out above is not reused as a ticket leg, so no bet is tracked twice.
+  const legs = (priced ? candidates.filter((c) => edgeOf(c) >= 0) : candidates.filter((c) => within(c.prob, TICKET_LEG_BAND))).filter((c) => !used.has(c.projection.key));
   const best = new Map<string, Candidate>();
   for (const c of legs) {
     const cur = best.get(c.projection.key);
