@@ -29,6 +29,10 @@ export interface Candidate {
   threshold: number;
   line: number;
   prob: number;
+  /** Model probability before the history haircut, when one was applied. */
+  rawProb?: number;
+  /** Why the haircut was applied, in plain words. */
+  adjustment?: string;
 }
 
 /** Longest American price at which the bet still carries the target edge for this win probability. */
@@ -84,7 +88,7 @@ export function selectDay(
       modelProb: c.prob,
       limitOdds: limitOdds(c.prob),
       mean: p.mean,
-      note,
+      note: c.adjustment ? `${note} Model ${(c.rawProb! * 100).toFixed(0)}% cut to ${(c.prob * 100).toFixed(0)}%: ${c.adjustment}.` : note,
     };
     if (ticketId) pick.ticketId = ticketId;
     picks.push(pick);

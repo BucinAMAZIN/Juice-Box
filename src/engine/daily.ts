@@ -3,6 +3,9 @@ import type { Boxscore, ClubGame, Leaders, ScheduledGame } from "../data/nhl";
 import { gradeDay, mergeGrades } from "./grade";
 import { buildHistories, type DatedBox } from "./history";
 import { projectPlayer, type Projection } from "./project";
+import { applyPriors } from "./filter";
+import parlaybot from "./priors/parlaybot.json";
+import type { Priors } from "./priors";
 import { candidatesFrom, selectDay } from "./select";
 import type { DayFile, DayGrades } from "./types";
 
@@ -123,7 +126,7 @@ export async function generateDay(f: Fetchers, now: Date, opts: { date?: string 
   }
   log.push(`${new Set(projections.map((p) => p.key)).size} players projected`);
 
-  const day = selectDay(date, candidatesFrom(projections), now);
+  const day = selectDay(date, applyPriors(candidatesFrom(projections), "nhl", parlaybot as Priors), now);
   if (boxes.length === 0) day.notes.push("No box score history could be read, so no picks were made.");
   return { day, log };
 }
