@@ -1,5 +1,5 @@
 import { atLeast } from "../core/ladder";
-import { americanToDecimal, decimalToAmerican } from "../core/odds";
+import { americanToDecimal, decimalToAmerican, impliedProb } from "../core/odds";
 import type { Projection } from "./project";
 import type { DayFile, HandedPick, HandedTicket, PickKind, PickMarket } from "./types";
 
@@ -20,6 +20,10 @@ export const THRESHOLDS: Record<PickMarket, number[]> = {
 export const POTD_BAND: [number, number] = [0.586, 0.65];
 export const LEAN_BAND: [number, number] = [0.55, 0.72];
 export const TICKET_LEG_BAND: [number, number] = [0.68, 0.78];
+export const POTD_PRICE: [number, number] = [-135, -110];
+export const MIN_EDGE = 0.02;
+/** Leans never cost more than this, since ParlayBOT's heavy favorites ran well below their prices. */
+export const LEAN_MAX_JUICE = -200;
 export const MAX_LEANS = 6;
 export const MAX_LEANS_PER_GAME = 2;
 
@@ -29,6 +33,8 @@ export interface Candidate {
   threshold: number;
   line: number;
   prob: number;
+  /** Best Linemate price for this exact line. */
+  price?: { american: number; book: string };
   /** Model probability before the history haircut, when one was applied. */
   rawProb?: number;
   /** Why the haircut was applied, in plain words. */
@@ -64,7 +70,12 @@ export function selectDay(
   candidates: Candidate[],
   now: Date,
   newId: (n: number) => string = (n) => `${date}-${n}`,
+  opts: { priced?: boolean } = {},
 ): DayFile {
+  const priced = opts.priced === true;
+  if (priced) candidates = candidates.filter((c) => c.price);
+  const edgeOf = (c: Candidate) => c.prob - impliedProb(c.price!.american);
+  const cheap = (c: Candidate) => `Take it at ${shortOdds(c.price!.american)} on ${c.price!.book} or better.`
   const notes: string[] = [];
   const picks: HandedPick[] = [];
   const tickets: HandedTicket[] = [];
@@ -88,6 +99,7 @@ export function selectDay(
       modelProb: c.prob,
       limitOdds: limitOdds(c.prob),
       mean: p.mean,
+      ...(c.price ? { price: c.price.american, book: c.price.book, edge: c.prob - impliedProb(c.price.american) } : {}),
       note: c.adjustment ? `${note} Model ${(c.rawProb! * 100).toFixed(0)}% cut to ${(c.prob * 100).toFixed(0)}%: ${c.adjustment}.` : note,
     };
     if (ticketId) pick.ticketId = ticketId;
@@ -98,10 +110,14 @@ export function selectDay(
   const used = new Set<string>();
 
   // Play of the day.
-  const potdPool = candidates.filter((c) => within(c.prob, POTD_BAND)).sort((a, b) => b.prob - a.prob);
+  const potdPool = priced
+    ? candidates
+        .filter((c) => c.price!.american >= POTD_PRICE[0] && c.price!.american <= POTD_PRICE[1] && edgeOf(c) >= MIN_EDGE)
+        .sort((a, b) => edgeOf(b) - edgeOf(a))
+    : candidates.filter((c) => within(c.prob, POTD_BAND)).sort((a, b) => b.prob - a.prob);
   const potd = potdPool[0];
   if (potd) {
-    make(potd, "potd", `Play of the day: ${describe(potd)}. Take it at ${shortOdds(limitOdds(potd.prob))} or better.`);
+    make(potd, "potd", `Play of the day: ${describe(potd)}. ${priced ? cheap(potd) : `Take it at ${shortOdds(limitOdds(potd.prob))} or better.`}`);
     used.add(potd.projection.key);
   } else {
     notes.push("No play of the day: nothing landed in the probability band for a -110 to -135 price.");
@@ -110,13 +126,15 @@ export function selectDay(
   // Leans: one per player, a couple per game.
   const perGame = new Map<number, number>();
   let leans = 0;
-  const leanPool = candidates.filter((c) => within(c.prob, LEAN_BAND)).sort((a, b) => b.prob - a.prob);
+  const leanPool = priced
+    ? candidates.filter((c) => c.price!.american >= LEAN_MAX_JUICE && edgeOf(c) >= MIN_EDGE).sort((a, b) => edgeOf(b) - edgeOf(a))
+    : candidates.filter((c) => within(c.prob, LEAN_BAND)).sort((a, b) => b.prob - a.prob);
   for (const c of leanPool) {
     if (leans >= MAX_LEANS) break;
     if (used.has(c.projection.key)) continue;
     const n = perGame.get(c.projection.gameId) ?? 0;
     if (n >= MAX_LEANS_PER_GAME) continue;
-    make(c, "lean", `Lean: ${describe(c)}. Take it at ${shortOdds(limitOdds(c.prob))} or better.`);
+    make(c, "lean", `Lean: ${describe(c)}. ${priced ? cheap(c) : `Take it at ${shortOdds(limitOdds(c.prob))} or better.`}`);
     used.add(c.projection.key);
     perGame.set(c.projection.gameId, n + 1);
     leans++;
@@ -124,7 +142,7 @@ export function selectDay(
   if (leans === 0) notes.push("No leans today.");
 
   // +100 tickets: two legs from different games, joint probability high enough that +100 still has an edge.
-  const legs = candidates.filter((c) => within(c.prob, TICKET_LEG_BAND));
+  const legs = priced ? candidates.filter((c) => edgeOf(c) >= 0) : candidates.filter((c) => within(c.prob, TICKET_LEG_BAND));
   const best = new Map<string, Candidate>();
   for (const c of legs) {
     const cur = best.get(c.projection.key);
@@ -138,7 +156,10 @@ export function selectDay(
       const b = pool[j]!;
       if (a.projection.gameId === b.projection.gameId) continue;
       const joint = a.prob * b.prob;
-      if (joint >= (1 + LIMIT_EDGE) / americanToDecimal(100)) pairs.push([a, b, joint]);
+      if (priced) {
+        const dec = americanToDecimal(a.price!.american) * americanToDecimal(b.price!.american);
+        if (dec >= 2 && joint * dec >= 1 + LIMIT_EDGE) pairs.push([a, b, joint * dec]);
+      } else if (joint >= (1 + LIMIT_EDGE) / americanToDecimal(100)) pairs.push([a, b, joint]);
     }
   }
   pairs.sort((x, y) => y[2] - x[2]);
@@ -149,11 +170,13 @@ export function selectDay(
     const id = `${date}-T${tickets.length + 1}`;
     const legA = make(a, "ticket", `Ticket leg: ${describe(a)}.`, id);
     const legB = make(b, "ticket", `Ticket leg: ${describe(b)}.`, id);
+    const jointProb = priced ? a.prob * b.prob : joint;
     tickets.push({
       id,
       legIds: [legA.id, legB.id],
-      jointProb: joint,
+      jointProb,
       minAmerican: 100,
+      ...(priced ? { priced: decimalToAmerican(americanToDecimal(a.price!.american) * americanToDecimal(b.price!.american)) } : {}),
       note: `Both legs must win. Take the ticket only if the book pays +100 or better.`,
     });
     usedLegPlayers.add(a.projection.key);

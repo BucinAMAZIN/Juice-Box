@@ -25,6 +25,11 @@ export interface HandedPick {
   /** Projected count the probability came from. */
   mean: number;
   ticketId?: string;
+  /** Best price Linemate listed for this exact line when the pick was made, and the book offering it. */
+  price?: number;
+  book?: string;
+  /** Model probability minus the price's implied probability. */
+  edge?: number;
   note: string;
 }
 
@@ -35,6 +40,8 @@ export interface HandedTicket {
   jointProb: number;
   /** Take the ticket only if the book pays at least this price. */
   minAmerican: number;
+  /** Combined price from the listed leg prices, when every leg had one. */
+  priced?: number;
   note: string;
 }
 

@@ -1,5 +1,7 @@
 import { easternDate } from "../data/autograde";
+import type { Offer } from "../data/linemate";
 import type { Boxscore, ClubGame, Leaders, ScheduledGame } from "../data/nhl";
+import { attachPrices } from "./pricing";
 import { gradeDay, mergeGrades } from "./grade";
 import { buildHistories, type DatedBox } from "./history";
 import { projectPlayer, type Projection } from "./project";
@@ -16,6 +18,8 @@ export interface Fetchers {
   loadBoxscore(gameId: number): Promise<Boxscore | null>;
   /** Season top-12 skaters per stat. When provided, only those players are priced for that stat. */
   loadLeaders?(date: string): Promise<Leaders>;
+  /** Linemate offers. When provided, a pick needs a matching Linemate price, and no Linemate data means no picks. */
+  loadOffers?(): Promise<Offer[]>;
 }
 
 const FINAL = new Set(["FINAL", "OFF"]);
@@ -126,7 +130,30 @@ export async function generateDay(f: Fetchers, now: Date, opts: { date?: string 
   }
   log.push(`${new Set(projections.map((p) => p.key)).size} players projected`);
 
-  const day = selectDay(date, applyPriors(candidatesFrom(projections), "nhl", parlaybot as Priors), now);
+  let candidates = applyPriors(candidatesFrom(projections), "nhl", parlaybot as Priors);
+  let priced = false;
+  if (f.loadOffers) {
+    let offers: Offer[];
+    try {
+      offers = await retry(() => f.loadOffers!());
+    } catch (err) {
+      log.push(`Could not read Linemate (${(err as Error).message}), so no picks were made`);
+      const none = selectDay(date, [], now);
+      none.notes.push("Linemate could not be read, so no picks were made.");
+      return { day: none, log };
+    }
+    log.push(`Linemate: ${offers.length} NHL offers`);
+    if (offers.length === 0) {
+      const none = selectDay(date, [], now);
+      none.notes.push("Linemate has no NHL data yet, so no picks were made.");
+      return { day: none, log };
+    }
+    const res = attachPrices(candidates, offers, "nhl");
+    log.push(`${res.priced.length} candidates matched a Linemate price, ${res.dropped} had none and were dropped`);
+    candidates = res.priced;
+    priced = true;
+  }
+  const day = selectDay(date, candidates, now, undefined, { priced });
   if (boxes.length === 0) day.notes.push("No box score history could be read, so no picks were made.");
   return { day, log };
 }
