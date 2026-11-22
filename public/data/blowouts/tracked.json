@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-22T17:58:06.826Z",
+ "updatedAt": "2026-11-22T20:30:24.177Z",
  "games": [
   {
    "id": "401864545",
@@ -189,7 +189,7 @@
    "date": "2026-11-27",
    "fav": "MISS",
    "dog": "MSST",
-   "spread": 19.5,
+   "spread": 18.5,
    "total": 56.5,
    "status": "pre"
   },
@@ -219,7 +219,7 @@
    "date": "2026-11-28",
    "fav": "MIA",
    "dog": "BC",
-   "spread": 26.5,
+   "spread": 25.5,
    "total": 53.5,
    "status": "pre"
   },
@@ -231,6 +231,16 @@
    "dog": "GT",
    "spread": 35.5,
    "total": 55.5,
+   "status": "pre"
+  },
+  {
+   "id": "401860926",
+   "start": "2026-11-28T23:00Z",
+   "date": "2026-11-28",
+   "fav": "BOIS",
+   "dog": "CSU",
+   "spread": 21,
+   "total": 75.5,
    "status": "pre"
   },
   {
