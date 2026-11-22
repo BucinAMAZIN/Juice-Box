@@ -128,3 +128,39 @@ export async function loadClosingLine(id: string, league: League = FBS): Promise
     return null;
   }
 }
+
+/** What the book did around the total: where it opened, and the price on each side at open and close (American odds). */
+export interface TotalExtras {
+  openTotal: number | null;
+  openOver: number | null;
+  openUnder: number | null;
+  closeOver: number | null;
+  closeUnder: number | null;
+}
+
+const american = (v: unknown): number | null => {
+  const a = isObj(v) ? v.american : v;
+  const n = typeof a === "string" ? Number(a.replace("+", "")) : typeof a === "number" ? a : NaN;
+  return Number.isFinite(n) ? n : null;
+};
+
+export function pickExtras(json: unknown): TotalExtras | null {
+  const items = isObj(json) && Array.isArray(json.items) ? json.items.filter(isObj) : [];
+  const item = items.find((i) => isObj(i.provider) && String(i.provider.id) === "58") ?? items[0];
+  if (!item || !isObj(item.open) || !isObj(item.close)) return null;
+  return {
+    openTotal: isObj(item.open.total) ? american(item.open.total) : null,
+    openOver: american(item.open.over),
+    openUnder: american(item.open.under),
+    closeOver: american(item.close.over),
+    closeUnder: american(item.close.under),
+  };
+}
+
+export async function loadExtras(id: string, league: League = FBS): Promise<TotalExtras | null> {
+  try {
+    return pickExtras(await getJson(`${coreUrl(league)}/events/${id}/competitions/${id}/odds`));
+  } catch {
+    return null;
+  }
+}

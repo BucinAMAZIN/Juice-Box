@@ -25,6 +25,7 @@ on:
           - grade
           - backfill
           - lines-backfill
+          - lines-extras
           - none
       league:
         description: "League for lines-backfill (nba, nfl, nhl, ncaaf, ncaab, mlb)"
@@ -89,6 +90,12 @@ jobs:
         continue-on-error: true
         run: npm run lines
 
+      - name: Opening totals and prices for line history
+        if: steps.task.outputs.task == 'lines-extras'
+        env:
+          LEAGUE: ${{ inputs.league }}
+        run: npm run lines -- --extras --league="$LEAGUE"
+
       - name: Backfill line history
         if: steps.task.outputs.task == 'lines-backfill'
         env:
@@ -109,10 +116,9 @@ jobs:
           npm run grade-streaks -- --dry-run
           npm run blowouts -- --dry-run
           npm run lines -- --dry-run
-          npx tsx scripts/probe-ncaa.ts
 
       - name: Commit data
-        if: steps.task.outputs.task == 'picks' || steps.task.outputs.task == 'grade' || steps.task.outputs.task == 'backfill' || steps.task.outputs.task == 'lines-backfill'
+        if: steps.task.outputs.task == 'picks' || steps.task.outputs.task == 'grade' || steps.task.outputs.task == 'backfill' || steps.task.outputs.task == 'lines-backfill' || steps.task.outputs.task == 'lines-extras'
         env:
           TASK: ${{ steps.task.outputs.task }}
         run: |

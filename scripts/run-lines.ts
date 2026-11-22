@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { LEAGUES, type League, leagueById } from "../src/data/leagues";
-import { loadBoard, loadClosingLine } from "../src/data/ncaa";
+import { loadBoard, loadClosingLine, loadExtras } from "../src/data/ncaa";
 import { type LineGame, type LineRow, toLineGame, toRow } from "../src/engine/lines";
 
 /**
@@ -9,6 +9,7 @@ import { type LineGame, type LineRow, toLineGame, toRow } from "../src/engine/li
  */
 const DIR = "public/data/lines";
 const backfill = process.argv.includes("--backfill");
+const extras = process.argv.includes("--extras");
 const dry = process.argv.includes("--dry-run");
 const only = process.argv.find((a) => a.startsWith("--league="))?.slice(9);
 const ymd = (d: Date): string => d.toISOString().slice(0, 10).replaceAll("-", "");
@@ -76,10 +77,27 @@ async function history(league: League): Promise<void> {
   }
 }
 
+/** Opening total and the price on each side, for every game in the history. Written to extras.json as id -> [openTotal, openOver, openUnder, closeOver, closeUnder]. */
+async function addExtras(league: League): Promise<void> {
+  const file = `${DIR}/${league.id}/extras.json`;
+  const rows = read<{ rows: Record<string, Array<number | null>> }>(file, { rows: {} }).rows;
+  const ids = read<{ rows: LineRow[] }>(`${DIR}/${league.id}/history.json`, { rows: [] }).rows.map((r) => r[0]).filter((id) => !(id in rows));
+  let kept = 0;
+  const found = await pool(ids, 8, (id) => loadExtras(id, league));
+  ids.forEach((id, i) => {
+    const e = found[i];
+    if (!e) return;
+    rows[id] = [e.openTotal, e.openOver, e.openUnder, e.closeOver, e.closeUnder];
+    kept++;
+  });
+  console.log(`${league.label}: ${ids.length} games asked, ${kept} with an opening line and prices.`);
+  write(league, "extras.json", { rows });
+}
+
 const targets = only ? [leagueById(only)].filter((l): l is League => !!l) : LEAGUES;
 for (const l of targets) {
   try {
-    await (backfill ? history(l) : track(l));
+    await (extras ? addExtras(l) : backfill ? history(l) : track(l));
   } catch (e) {
     console.log(`${l.label}: failed (${e instanceof Error ? e.message : e})`);
   }
