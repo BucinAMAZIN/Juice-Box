@@ -111,7 +111,7 @@ function gameCard(g: LineGame, lean: Lean, league?: string, extra = "", live?: {
         liveBox.textContent = line ?? "";
         liveBox.className = `s-live live-${game?.state === "post" ? "wait" : "on"}`;
         const sp = lean.spread?.side;
-        drawLane(spreadSlot, game && (sp === "favorite" || sp === "underdog") ? spreadLane(sp, gl, game, live.league) : null);
+        drawLane(spreadSlot, game && (sp === "favorite" || sp === "underdog") ? spreadLane(sp, gl, game, live.league, lean.spread?.note === "moneyline") : null);
         const tt = lean.total?.side;
         drawLane(totalSlot, game && (tt === "over" || tt === "under") ? totalLane(tt, g, game, gameFrac(live.league, game)) : null);
       },

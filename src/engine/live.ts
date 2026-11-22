@@ -125,17 +125,17 @@ export function scoreLine(g: { fav: string; dog: string; favHome: boolean }, gam
 }
 
 /** How our spread (or moneyline) call is doing: margin on our side against what it needs. */
-export function spreadLane(side: "favorite" | "underdog", g: { favHome: boolean; spread: number; ml?: number }, game: GameScore, league: string): LaneLive | null {
+export function spreadLane(side: "favorite" | "underdog", g: { favHome: boolean; spread: number }, game: GameScore, league: string, moneyline = false): LaneLive | null {
   if (game.state === "pre" || game.homeScore == null || game.awayScore == null) return null;
   const fav = g.favHome ? game.homeScore : game.awayScore;
   const dog = g.favHome ? game.awayScore : game.homeScore;
   const done = game.state === "post";
-  const raw = g.ml != null ? fav - dog : fav - dog - g.spread;
+  const raw = moneyline ? fav - dog : fav - dog - g.spread;
   const m = side === "favorite" ? raw : -raw;
   const scale = MARGIN_SCALE[league] ?? 10;
   const fill = Math.max(-1, Math.min(1, m / scale));
   const abs = +Math.abs(m).toFixed(1);
-  const word = g.ml != null ? (m > 0 ? `Winning by ${abs}` : m < 0 ? `Losing by ${abs}` : "Tied") : m > 0 ? `Covering by ${abs}` : m < 0 ? `${abs} short of covering` : "Push";
+  const word = moneyline ? (m > 0 ? `Winning by ${abs}` : m < 0 ? `Losing by ${abs}` : "Tied") : m > 0 ? `Covering by ${abs}` : m < 0 ? `${abs} short of covering` : "Push";
   return { tone: done ? (m > 0 ? "hit" : "miss") : m > 0 ? "on" : "off", text: done ? `FINAL · ${word}` : word, fill, center: true, tick: null };
 }
 
