@@ -45,7 +45,7 @@ export function applyCached(row: HTMLElement, pick: HandedPick): void {
   if (g) showProp(row, pick, g);
 }
 
-const INTERVAL_MS = 45_000;
+const INTERVAL_MS = 20_000;
 /** A game is worth polling from just before kickoff until a few hours after, or until it is final. */
 const eligible = (p: HandedPick, now: number): boolean => Date.parse(p.gameStart) <= now + 5 * 60_000 && Date.parse(p.gameStart) >= now - 6 * 3_600_000;
 
@@ -77,7 +77,9 @@ export function watchProps(root: HTMLElement, picks: () => HandedPick[], load: t
     }));
   };
   const timer = setInterval(() => void tick(), INTERVAL_MS);
-  const stop = () => { stopped = true; clearInterval(timer); };
+  const wake = () => { if (!document.hidden) void tick(); };
+  if (typeof document !== "undefined") document.addEventListener("visibilitychange", wake);
+  const stop = () => { stopped = true; clearInterval(timer); if (typeof document !== "undefined") document.removeEventListener("visibilitychange", wake); };
   void tick();
   return stop;
 }
@@ -114,7 +116,9 @@ export function watchScores(root: HTMLElement, targets: () => ScoreTarget[], loa
     }));
   };
   const timer = setInterval(() => void tick(), INTERVAL_MS);
-  const stop = () => { stopped = true; clearInterval(timer); };
+  const wake = () => { if (!document.hidden) void tick(); };
+  if (typeof document !== "undefined") document.addEventListener("visibilitychange", wake);
+  const stop = () => { stopped = true; clearInterval(timer); if (typeof document !== "undefined") document.removeEventListener("visibilitychange", wake); };
   void tick();
   return stop;
 }
