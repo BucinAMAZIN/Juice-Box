@@ -38,6 +38,13 @@ export function showProp(row: HTMLElement, pick: HandedPick, game: GameLive | nu
   row.dataset.live = live?.tone ?? "";
 }
 
+/** The last live reading per prop, so a row rebuilt by a filter or tab change shows it at once instead of waiting for the next poll. */
+const lastGame = new Map<string, GameLive>();
+export function applyCached(row: HTMLElement, pick: HandedPick): void {
+  const g = lastGame.get(pick.id);
+  if (g) showProp(row, pick, g);
+}
+
 const INTERVAL_MS = 45_000;
 /** A game is worth polling from just before kickoff until a few hours after, or until it is final. */
 const eligible = (p: HandedPick, now: number): boolean => Date.parse(p.gameStart) <= now + 5 * 60_000 && Date.parse(p.gameStart) >= now - 6 * 3_600_000;
@@ -63,6 +70,7 @@ export function watchProps(root: HTMLElement, picks: () => HandedPick[], load: t
       const g = await load(sport, Number(id));
       for (const p of ps) {
         const row = root.querySelector<HTMLElement>(`[data-pick-id="${p.id.replace(/"/g, "\\\"")}"]`);
+        if (g) lastGame.set(p.id, g);
         if (row) showProp(row, p, g);
         if (g?.status.state === "post") done.add(p.id);
       }

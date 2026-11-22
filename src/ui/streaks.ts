@@ -62,7 +62,7 @@ function signalLine(p: HandedPick): HTMLElement | null {
 import { heatHue } from "../engine/heat";
 import { type Models, evidence, fit, gradedRows, letter, linemateChance, ourChance } from "./grading";
 import { loadHistory } from "./results";
-import { watchProps } from "./live";
+import { applyCached, watchProps } from "./live";
 
 function row(p: HandedPick, state: StreakState, refresh: () => void): HTMLElement {
   const started = Date.parse(p.gameStart) <= Date.now();
@@ -81,7 +81,7 @@ function row(p: HandedPick, state: StreakState, refresh: () => void): HTMLElemen
   const mode = state.grading ?? "ours";
   const chance = mode === "linemate" ? lm : ours;
   const hue = chance == null ? null : heatHue(chance);
-  return h(
+  const article = h(
     "article",
     { class: hue == null ? "streak" : "streak heat", "data-pick-id": p.id, ...(hue == null ? {} : { style: `--heat:${hue}` }), title: ours != null ? `Our chance ${Math.round(ours * 100)}%, Linemate ${Math.round(lm * 100)}%` : `Linemate ${Math.round(lm * 100)}%. We have too few graded ${SPORT[p.sport] ?? p.sport} props to grade it ourselves yet, so the colour follows the price.` },
     pick,
@@ -93,6 +93,8 @@ function row(p: HandedPick, state: StreakState, refresh: () => void): HTMLElemen
     ),
     h("div", { class: "s-live", hidden: "" }),
   );
+  applyCached(article, p);
+  return article;
 }
 
 export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakState): void {
