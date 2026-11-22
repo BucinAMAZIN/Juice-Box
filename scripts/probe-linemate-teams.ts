@@ -1,3 +1,4 @@
+export {};
 /** Discovery only: how Linemate describes team rows (spread, team total, moneyline). Prints a summary, writes nothing. */
 const BASE = "https://api.linemate.io/api";
 const headers = { "user-agent": "Mozilla/5.0", accept: "application/json", origin: "https://linemate.io", referer: "https://linemate.io/" };
