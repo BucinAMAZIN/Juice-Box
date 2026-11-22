@@ -1,6 +1,7 @@
 import { LEAGUES } from "../data/leagues";
 import { BREAK_EVEN, RULES, RULES_START, ruleRate } from "../engine/rules";
 import { type Cell, type LineGame, type LineRow, cellFor, coverRate, coverResult, fromRow, overRate, slice, totalResult, winRate, withMoneyline } from "../engine/lines";
+import { type LoggedLean, tallyLeans, tallyRate } from "../engine/leanlog";
 import { type Call, callText, leanFor } from "../engine/leans";
 import { clear, h } from "./dom";
 import { pct } from "./format";
@@ -9,6 +10,7 @@ import { getJson } from "./picks";
 export interface LinesSource {
   history(league: string): Promise<LineRow[] | null>;
   tracked(league: string): Promise<LineGame[] | null>;
+  leans?(): Promise<Record<string, LoggedLean> | null>;
 }
 
 export const linesSource: LinesSource = {
@@ -17,6 +19,9 @@ export const linesSource: LinesSource = {
   },
   async tracked(league) {
     return (await getJson<{ games: LineGame[] }>(`lines/${league}/tracked.json`))?.games ?? null;
+  },
+  async leans() {
+    return (await getJson<{ leans: Record<string, LoggedLean> }>("lines/leans.json"))?.leans ?? null;
   },
 };
 
@@ -83,6 +88,20 @@ export function renderLeague(box: HTMLElement, id: string, all: LineGame[], trac
 
 const RULES_TAB = "rules";
 const BOARD_TAB = "board";
+const LEANS_TAB = "leans";
+
+/** How the logged leans have done since they started being logged, by grade. */
+export function renderLeanRecord(box: HTMLElement, logged: Record<string, LoggedLean>, finals: Map<string, LineGame>): void {
+  clear(box);
+  const tallies = tallyLeans(logged, finals);
+  const total = Object.keys(logged).length;
+  box.append(h("p", { class: "note" }, `Every lean is saved before kickoff and graded against the final score at the line it was made on. ${total} logged so far, ${finals.size ? `${[...finals.keys()].filter((id) => id in logged).length} finished` : "none finished yet"}. Break-even at -110 is ${pct(BREAK_EVEN, 1)}. Sample sizes are small at first, so give each grade a few hundred games before reading anything into it.`));
+  const rows = tallies.map((t) => {
+    const r = tallyRate(t);
+    return h("tr", {}, h("th", { scope: "row" }, `${t.grade} · ${t.kind}`), h("td", {}, `${t.wins}-${t.losses}${t.pushes ? `-${t.pushes}` : ""}`), h("td", {}, r.pct == null ? "–" : pct(r.pct, 0)), h("td", {}, r.lo == null ? "–" : `${pct(r.lo, 0)} to ${pct(r.hi!, 0)}`));
+  });
+  box.append(h("section", { class: "records" }, h("h3", {}, "Record by grade"), rows.length ? h("div", { class: "scroll" }, h("table", {}, h("thead", {}, h("tr", {}, h("th", {}, "Call"), h("th", {}, "Record"), h("th", {}, "Win"), h("th", {}, "95% range"))), h("tbody", {}, ...rows))) : h("p", { class: "empty" }, "No logged lean has finished yet. Leans are logged on each morning's run and graded after the games end.")));
+}
 
 /** Every game on the board in every league, each with its lean on the total and the spread. */
 export function renderBoard(box: HTMLElement, data: Record<string, { all: LineGame[]; tracked: LineGame[] }>): void {
@@ -133,6 +152,19 @@ export async function renderLines(view: HTMLElement, _ledger?: unknown, source: 
     return { trackedGames, all: [...(hist ?? []).filter((r) => !seen.has(r[0])).map(fromRow), ...trackedGames.filter((g) => g.status === "post")] };
   };
   const show = async (id: string) => {
+    if (id === LEANS_TAB) {
+      current = id;
+      for (const b of chips.children) b.setAttribute("aria-selected", String((b as HTMLElement).dataset.tab === id));
+      clear(body);
+      body.append(h("p", { class: "empty" }, "Loading…"));
+      const logged = (await source.leans?.().catch(() => null)) ?? {};
+      const finals = new Map<string, LineGame>();
+      await Promise.all(LEAGUES.map(async (l) => {
+        for (const g of ((await source.tracked(l.id).catch(() => null)) ?? []).map(withMoneyline)) if (g.status === "post") finals.set(g.id, g);
+      }));
+      if (current === id) renderLeanRecord(body, logged, finals);
+      return;
+    }
     if (id === BOARD_TAB) {
       current = id;
       for (const b of chips.children) b.setAttribute("aria-selected", String((b as HTMLElement).dataset.tab === id));
@@ -171,7 +203,7 @@ export async function renderLines(view: HTMLElement, _ledger?: unknown, source: 
     const m = merge(hist, tracked);
     renderLeague(body, id, m.all, m.trackedGames);
   };
-  for (const [id, text] of [[BOARD_TAB, "All games"], [RULES_TAB, "Rules"], ...LEAGUES.map((l) => [l.id, l.label])] as Array<[string, string]>) chips.append(h("button", { type: "button", role: "tab", class: "chip", "data-tab": id, onclick: () => void show(id) }, text));
+  for (const [id, text] of [[BOARD_TAB, "All games"], [LEANS_TAB, "Lean record"], [RULES_TAB, "Rules"], ...LEAGUES.map((l) => [l.id, l.label])] as Array<[string, string]>) chips.append(h("button", { type: "button", role: "tab", class: "chip", "data-tab": id, onclick: () => void show(id) }, text));
   view.append(h("p", { class: "note" }, "Every game with a spread and total, tracked to the final score, to find where the over and the favorite pay."), chips, body);
   await show(current);
 }

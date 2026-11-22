@@ -90,6 +90,12 @@ jobs:
         continue-on-error: true
         run: npm run lines
 
+      # A lean is logged once, before kickoff, and graded after the final.
+      - name: Log leans
+        if: steps.task.outputs.task == 'picks' || steps.task.outputs.task == 'grade'
+        continue-on-error: true
+        run: npm run leans
+
       - name: Opening totals and prices for line history
         if: steps.task.outputs.task == 'lines-extras'
         env:
@@ -116,6 +122,7 @@ jobs:
           npm run grade-streaks -- --dry-run
           npm run blowouts -- --dry-run
           npm run lines -- --dry-run
+          npm run leans -- --dry-run
 
       - name: Commit data
         if: steps.task.outputs.task == 'picks' || steps.task.outputs.task == 'grade' || steps.task.outputs.task == 'backfill' || steps.task.outputs.task == 'lines-backfill' || steps.task.outputs.task == 'lines-extras'

@@ -139,3 +139,17 @@ describe("leans for every game", () => {
     expect(root.textContent).toContain("Spread: BOS -5");
   });
 });
+
+describe("lean log", () => {
+  it("freezes a lean and grades it at the logged line", async () => {
+    const { freeze, gradeLean, tallyLeans } = await import("../src/engine/leanlog");
+    const board: LineGame = { id: "z", start: "2099-01-01T00:00:00Z", date: "2099-01-01", fav: "BOS", dog: "NYK", favHome: true, spread: 5, total: 200, status: "pre" };
+    const logged = freeze(board, "nba", { total: { side: "over", pct: 0.6, n: 60, grade: "lean", breakEven: 0.52 }, spread: { side: "underdog", pct: 0.55, n: 60, grade: "slight", breakEven: 0.52 } });
+    const final: LineGame = { ...board, status: "post", favScore: 108, dogScore: 104 };
+    expect(gradeLean(logged, "total", final)).toBe("win");
+    expect(gradeLean(logged, "spread", final)).toBe("win");
+    expect(gradeLean(logged, "total", board)).toBeNull();
+    const t = tallyLeans({ z: logged }, new Map([["z", final]]));
+    expect(t.map((x) => `${x.grade}|${x.kind}|${x.wins}`)).toEqual(["lean|total|1", "slight|spread|1"]);
+  });
+});

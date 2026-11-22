@@ -16,6 +16,7 @@
     "streaks": "tsx scripts/run-streaks.ts",
     "grade-streaks": "tsx scripts/run-grade-streaks.ts",
     "blowouts": "tsx scripts/run-blowouts.ts",
+    "leans": "tsx scripts/run-leans.ts",
     "lines": "tsx scripts/run-lines.ts"
   },
   "devDependencies": {
