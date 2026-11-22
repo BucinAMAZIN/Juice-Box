@@ -13482,6 +13482,35 @@
       "sid": "6434561653901230484",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/6434561653901230484",
       "note": "Over 0.5 in 5 straight games."
+    },
+    {
+      "id": "2026-11-22-s-nfl-401873069-m-nabers-rushRecYds-39.5",
+      "createdAt": "2026-11-22T20:49:52.672Z",
+      "gameStart": "2026-11-22T21:25Z",
+      "gameId": 401873069,
+      "sport": "nfl",
+      "kind": "streak",
+      "player": "Malik Nabers",
+      "team": "NYG",
+      "opponent": "JAX",
+      "market": "rushRecYds",
+      "line": 39.5,
+      "side": "over",
+      "modelProb": 0.8,
+      "limitOdds": -400,
+      "mean": 39.5,
+      "price": -400,
+      "book": "Betano",
+      "streak": 6,
+      "home": true,
+      "alt": true,
+      "split": {
+        "games": 3,
+        "hits": 3
+      },
+      "avg": 99.33,
+      "teamName": "Giants",
+      "note": "Over 39.5 in 6 straight games."
     }
   ],
   "tickets": [],
