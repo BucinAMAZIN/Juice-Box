@@ -135,8 +135,10 @@ describe("leans for every game", () => {
     const hist = Array.from({ length: 100 }, (_, i) => toRow(g(5, 200, 110, 100, `h${i}`))!);
     await renderLines(root, undefined, { history: async () => hist as LineRow[], tracked: async (l) => (l === "nba" ? [board] : null) });
     expect(root.textContent).toContain("All games on the board (1)");
-    expect(root.textContent).toContain("Total: Over 200 · lean");
-    expect(root.textContent).toContain("Spread: BOS -5");
+    expect(root.textContent).toContain("Over 200");
+    expect(root.textContent).toContain("Lean");
+    expect(root.textContent).toContain("BOS -5");
+    expect(root.querySelectorAll(".callbox").length).toBe(2);
   });
 });
 

@@ -2,7 +2,7 @@ import { LEAGUES } from "../data/leagues";
 import { BREAK_EVEN, RULES, RULES_START, ruleRate } from "../engine/rules";
 import { type Cell, type LineGame, type LineRow, cellFor, coverRate, coverResult, fromRow, overRate, slice, totalResult, winRate, withMoneyline } from "../engine/lines";
 import { type LoggedLean, tallyLeans, tallyRate } from "../engine/leanlog";
-import { type Call, callText, leanFor } from "../engine/leans";
+import { type Call, type Lean, callText, leanFor } from "../engine/leans";
 import { clear, h } from "./dom";
 import { pct } from "./format";
 import { getJson } from "./picks";
@@ -30,6 +30,52 @@ const when = (iso: string): string => new Date(iso).toLocaleString([], { weekday
 const GRADE_TEXT: Record<Call["grade"], string> = { "sweet spot": "sweet spot", lean: "lean", slight: "slight lean" };
 export const leanLine = (c: Call | null, g: LineGame, kind: "total" | "spread"): string =>
   c == null ? `${kind === "total" ? "Total" : "Spread"}: not enough similar games` : `${kind === "total" ? "Total" : c.note === "moneyline" ? "Moneyline" : "Spread"}: ${callText(c, g, kind)} · ${GRADE_TEXT[c.grade]} · ${pct(c.pct, 0)} of ${c.n} ${c.note && c.note !== "moneyline" ? `games (${c.note})` : "similar games"} (break-even ${pct(c.breakEven, 0)})`;
+type Tone = "sweet" | "lean" | "above" | "below" | "none";
+const toneOf = (c: Call | null): Tone => (c == null ? "none" : c.grade === "sweet spot" ? "sweet" : c.grade === "lean" ? "lean" : c.pct >= c.breakEven ? "above" : "below");
+const TAG: Record<Tone, string> = { sweet: "Sweet spot", lean: "Lean", above: "Slight", below: "Slight", none: "No call" };
+/** How far a call sits above its break-even, for sorting. A sweet spot counts for more. */
+const strengthOf = (l: Lean): number => Math.max(...[l.total, l.spread].map((c) => (c == null ? -1 : c.pct - c.breakEven + (c.grade === "sweet spot" ? 0.1 : c.grade === "lean" ? 0.03 : 0))));
+const barPos = (x: number): string => `${Math.max(0, Math.min(100, Math.round(((x - 0.4) / 0.3) * 100)))}%`;
+
+function callBox(kind: "total" | "spread", c: Call | null, g: LineGame): HTMLElement {
+  const tone = toneOf(c);
+  const name = kind === "total" ? "Total" : c?.note === "moneyline" ? "Moneyline" : "Spread";
+  const head = h("div", { class: "cb-head" }, h("span", { class: "cb-name" }, name), h("span", { class: "cb-tag" }, TAG[tone]));
+  if (c == null) return h("div", { class: "callbox tone-none" }, head, h("div", { class: "cb-none" }, "Not enough similar games"));
+  return h(
+    "div",
+    { class: `callbox tone-${tone}` },
+    head,
+    h("div", { class: "cb-call" }, callText(c, g, kind)),
+    h("div", { class: "cb-bar", role: "img", "aria-label": `${pct(c.pct, 0)} hit rate, ${pct(c.breakEven, 0)} needed to break even` }, h("div", { class: "cb-fill", style: `width:${barPos(c.pct)}` }), h("div", { class: "cb-tick", style: `left:${barPos(c.breakEven)}` })),
+    h("div", { class: "cb-note" }, h("strong", {}, pct(c.pct, 0)), ` of ${c.n} ${c.note && c.note !== "moneyline" ? `games (${c.note})` : "games"}`),
+  );
+}
+
+/** One game: who is favored and when, then a box for the spread call and a box for the total call. */
+function gameCard(g: LineGame, lean: Lean, league?: string, extra = ""): HTMLElement {
+  const fav = `${g.fav} ${g.ml != null ? `-${g.ml}` : g.spread > 0 ? `-${g.spread}` : "pick'em"}`;
+  return h(
+    "article",
+    { class: "gamecard" },
+    h("div", { class: "gc-top" }, h("h4", {}, `${league ? `${league.toUpperCase()} · ` : ""}${fav} vs ${g.dog}`), h("span", { class: "gc-when" }, when(g.start))),
+    h("div", { class: "gc-meta" }, `Total ${g.total}${g.favWin != null && g.dogWin != null ? ` · records ${pct(g.favWin, 0)} vs ${pct(g.dogWin, 0)}` : ""}${extra}`),
+    h("div", { class: "lanes" }, callBox("spread", lean.spread, g), callBox("total", lean.total, g)),
+  );
+}
+
+type SortMode = "time" | "strength";
+const sortToggle = (get: () => SortMode, set: (m: SortMode) => void): HTMLElement => {
+  const box = h("div", { class: "chips", role: "group", "aria-label": "Sort games" });
+  for (const [id, label] of [["time", "By time"], ["strength", "Strongest first"]] as const) {
+    const b = h("button", { type: "button", class: "chip", "data-sort": id, "aria-pressed": String(get() === id), onclick: () => { set(id); for (const x of box.children) x.setAttribute("aria-pressed", String((x as HTMLElement).dataset.sort === id)); } }, label);
+    box.append(b);
+  }
+  return box;
+};
+
+const COLOUR_KEY = (): HTMLElement => h("div", { class: "tone-key", "aria-label": "Colour key" }, ...([["sweet", "Sweet spot"], ["lean", "Lean"], ["above", "Slight, above break-even"], ["below", "Slight, below break-even"], ["none", "No call"]] as const).map(([t, l]) => h("span", { class: `tone-${t}` }, l)));
+
 const PICK_TEXT: Record<NonNullable<Cell["pick"]>, string> = { over: "over", under: "under", favorite: "favorite covers", underdog: "underdog covers" };
 
 function cellLine(c: Cell, ml: boolean): HTMLElement {
@@ -55,15 +101,22 @@ export function renderLeague(box: HTMLElement, id: string, all: LineGame[], trac
   if (s.ml) box.append(h("p", { class: "note" }, `${label} lists moneylines, so favorite strength is the price. Only the over and under are flagged, because the favorite's -1.5 line is priced at plus money and has no 50% baseline.`));
   box.append(h("p", { class: "note" }, `${label}: ${done.length} games with lines. Over ${rateText(overRate(done))}, ${s.ml ? `favorite wins ${rateText(winRate(done))}` : `favorite covers ${rateText(coverRate(done))}`}, average total ${avg.toFixed(1)}.`));
 
-  const upcoming = tracked.filter((g) => g.status !== "post").sort((a, b) => a.start.localeCompare(b.start));
+  const upcoming = tracked.filter((g) => g.status !== "post");
   const sec = h("section", {}, h("h3", {}, `On the board (${upcoming.length})`));
-  if (upcoming.length === 0) sec.append(h("p", { class: "empty" }, "No games with a line on the board right now."));
-  for (const g of upcoming) {
+  const list = h("div", {});
+  const items = upcoming.map((g) => {
     const c = cellFor(g, s);
-    const flag = c?.pick ? ` · sweet spot: ${PICK_TEXT[c.pick]}` : "";
-    const lean = leanFor(g, all, id, s.ml);
-    sec.append(h("div", { class: "streak" }, h("div", { class: "s-main" }, h("strong", {}, `${g.fav} ${g.ml != null ? `-${g.ml}` : g.spread > 0 ? `-${g.spread}` : "pick'em"} vs ${g.dog}`), h("div", { class: "signals" }, `${when(g.start)} · total ${g.total}${g.favWin != null && g.dogWin != null ? ` · records ${pct(g.favWin, 0)} vs ${pct(g.dogWin, 0)}` : ""}${flag}`), h("div", { class: "signals" }, leanLine(lean.total, g, "total")), h("div", { class: "signals" }, leanLine(lean.spread, g, "spread")))));
-  }
+    return { g, lean: leanFor(g, all, id, s.ml), extra: c?.pick ? ` · sweet spot: ${PICK_TEXT[c.pick]}` : "" };
+  });
+  let mode: SortMode = "time";
+  const draw = () => {
+    clear(list);
+    const sorted = [...items].sort((a, b) => (mode === "strength" ? strengthOf(b.lean) - strengthOf(a.lean) : 0) || a.g.start.localeCompare(b.g.start));
+    for (const x of sorted) list.append(gameCard(x.g, x.lean, undefined, x.extra));
+  };
+  if (upcoming.length === 0) sec.append(h("p", { class: "empty" }, "No games with a line on the board right now."));
+  else sec.append(COLOUR_KEY(), sortToggle(() => mode, (m) => { mode = m; draw(); }), list);
+  draw();
   box.append(sec);
 
   const spots = s.cells.filter((c) => c.pick).sort((a, b) => b.edge - a.edge);
@@ -111,11 +164,17 @@ export function renderBoard(box: HTMLElement, data: Record<string, { all: LineGa
   rows.sort((a, b) => a.g.start.localeCompare(b.g.start));
   box.append(h("p", { class: "note" }, "Each game gets a lean on the total and the spread from the finished games closest to it in spread and total. Sweet spot means a pattern that held up season by season. Lean means the 95% range sits above 50%. Slight lean is just the better side of a near coin flip, and most closing lines are close to efficient, so treat a slight lean as a tiebreaker only. Break-even at -110 is 52.4%."));
   const sec = h("section", {}, h("h3", {}, `All games on the board (${rows.length})`));
+  const list = h("div", {});
+  const items = rows.map(({ g, id, ml }) => ({ g, id, lean: leanFor(g, data[id]!.all, id, ml) }));
+  let mode: SortMode = "time";
+  const draw = () => {
+    clear(list);
+    const sorted = [...items].sort((x, y) => (mode === "strength" ? strengthOf(y.lean) - strengthOf(x.lean) : 0) || x.g.start.localeCompare(y.g.start));
+    for (const x of sorted) list.append(gameCard(x.g, x.lean, x.id));
+  };
   if (rows.length === 0) sec.append(h("p", { class: "empty" }, "No games with a line on the board right now."));
-  for (const { g, id, ml } of rows) {
-    const lean = leanFor(g, data[id]!.all, id, ml);
-    sec.append(h("div", { class: "streak" }, h("div", { class: "s-main" }, h("strong", {}, `${id.toUpperCase()}: ${g.fav} ${g.ml != null ? `-${g.ml}` : g.spread > 0 ? `-${g.spread}` : "pick'em"} vs ${g.dog}`), h("div", { class: "signals" }, `${when(g.start)} · total ${g.total}`), h("div", { class: "signals" }, leanLine(lean.total, g, "total")), h("div", { class: "signals" }, leanLine(lean.spread, g, "spread")))));
-  }
+  else sec.append(COLOUR_KEY(), sortToggle(() => mode, (m) => { mode = m; draw(); }), list);
+  draw();
   box.append(sec);
 }
 
