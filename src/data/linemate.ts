@@ -75,14 +75,20 @@ export function normalizeTeam(code: string): string {
   return LM_TEAM_ALIAS[code] ?? code;
 }
 
+const SUFFIX = new Set(["jr", "sr", "ii", "iii", "iv", "v"]);
+
 export function playerKey(first: string, last: string): string {
   const initial = nameKey(first).charAt(0);
-  return `${initial} ${nameKey(last).replace(/ /g, "")}`;
+  const parts = nameKey(last).split(" ").filter(Boolean);
+  while (parts.length > 1 && SUFFIX.has(parts[parts.length - 1]!)) parts.pop();
+  return `${initial} ${parts.join("")}`;
 }
 
 /** The comparable key for a box-score style name such as "K. Connor". */
 export function boxNameKey(name: string): string {
   const parts = nameKey(name).split(" ").filter(Boolean);
+  // Box scores write "James Cook III" or "Michael Pittman Jr." where the books write "James Cook", so drop the suffix.
+  while (parts.length > 2 && SUFFIX.has(parts[parts.length - 1]!)) parts.pop();
   if (parts.length < 2) return nameKey(name);
   return `${parts[0]!.charAt(0)} ${parts.slice(1).join("")}`;
 }

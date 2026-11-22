@@ -37,3 +37,12 @@ describe("espnStatus score", () => {
     expect(espnStatus(json, "nfl").score).toBe("TB 7 - DET 17");
   });
 });
+
+import { boxNameKey, playerKey } from "../src/data/linemate";
+describe("name keys ignore suffixes", () => {
+  it("matches James Cook III to James Cook", () => {
+    expect(boxNameKey("James Cook III")).toBe(boxNameKey("James Cook"));
+    expect(boxNameKey("Michael Pittman Jr.")).toBe(playerKey("Michael", "Pittman Jr."));
+    expect(boxNameKey("Michael Pittman Jr.")).toBe(playerKey("Michael", "Pittman"));
+  });
+});
