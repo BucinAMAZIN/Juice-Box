@@ -90,6 +90,12 @@ jobs:
         continue-on-error: true
         run: npm run lines
 
+      # Linemate's team trends (spreads, team totals, moneylines): save today's and grade finished games.
+      - name: Team trends
+        if: steps.task.outputs.task == 'picks' || steps.task.outputs.task == 'grade'
+        continue-on-error: true
+        run: npm run team-trends
+
       # A lean is logged once, before kickoff, and graded after the final.
       - name: Log leans
         if: steps.task.outputs.task == 'picks' || steps.task.outputs.task == 'grade'
@@ -123,7 +129,7 @@ jobs:
           npm run blowouts -- --dry-run
           npm run lines -- --dry-run
           npm run leans -- --dry-run
-          npx tsx scripts/probe-linemate-teams.ts
+          npm run team-trends -- --dry-run
 
       - name: Commit data
         if: steps.task.outputs.task == 'picks' || steps.task.outputs.task == 'grade' || steps.task.outputs.task == 'backfill' || steps.task.outputs.task == 'lines-backfill' || steps.task.outputs.task == 'lines-extras'

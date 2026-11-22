@@ -3,6 +3,11 @@ import { BREAK_EVEN, RULES, RULES_START, ruleRate } from "../engine/rules";
 import { type Cell, type LineGame, type LineRow, cellFor, coverRate, coverResult, fromRow, overRate, slice, totalResult, winRate, withMoneyline } from "../engine/lines";
 import { type LoggedLean, tallyLeans, tallyRate } from "../engine/leanlog";
 import { type Call, type Lean, callText, leanFor } from "../engine/leans";
+import { hardRockUrl } from "../data/hardrock";
+import { heatHue } from "../engine/heat";
+import { type TeamTrend, type TrendMarket, type TrendOutcome, MARKET_TEXT, trendChance } from "../engine/teamtrends";
+import { letter } from "./grading";
+import { odds } from "./streaks";
 import { clear, h } from "./dom";
 import { pct } from "./format";
 import { getJson } from "./picks";
@@ -11,6 +16,8 @@ export interface LinesSource {
   history(league: string): Promise<LineRow[] | null>;
   tracked(league: string): Promise<LineGame[] | null>;
   leans?(): Promise<Record<string, LoggedLean> | null>;
+  /** Linemate team trends, saved by game day. */
+  trends?(): Promise<Array<TeamTrend & { outcome?: TrendOutcome }>>;
 }
 
 export const linesSource: LinesSource = {
@@ -19,6 +26,11 @@ export const linesSource: LinesSource = {
   },
   async tracked(league) {
     return (await getJson<{ games: LineGame[] }>(`lines/${league}/tracked.json`))?.games ?? null;
+  },
+  async trends() {
+    const dates = (await getJson<{ dates: string[] }>("team-trends/index.json"))?.dates ?? [];
+    const days = await Promise.all(dates.map((d) => getJson<{ trends: Array<TeamTrend & { outcome?: TrendOutcome }> }>(`team-trends/${d}.json`).catch(() => null)));
+    return days.flatMap((d) => d?.trends ?? []);
   },
   async leans() {
     return (await getJson<{ leans: Record<string, LoggedLean> }>("lines/leans.json"))?.leans ?? null;
@@ -142,6 +154,55 @@ export function renderLeague(box: HTMLElement, id: string, all: LineGame[], trac
 const RULES_TAB = "rules";
 const BOARD_TAB = "board";
 const LEANS_TAB = "leans";
+const LINEMATE_TAB = "linemate";
+
+const trendName = (t: TeamTrend): string => {
+  const [, away, home] = t.gameId.split("-");
+  const n = (x: number) => (x > 0 ? `+${x}` : String(x));
+  switch (t.market) {
+    case "SPREAD": return `${t.team} ${n(t.line)}`;
+    case "MONEY_LINE": return `${t.team} to win`;
+    case "TEAM_TOTAL": return `${t.team} team total ${t.side} ${t.line}`;
+    case "GAME_TOTAL": return `${away ?? t.team} @ ${home ?? t.opponent} total ${t.side} ${t.line}`;
+  }
+};
+
+/** Linemate's own team trends, ranked by its numbers, with how they have done once graded. */
+export function renderTeamTrends(box: HTMLElement, trends: Array<TeamTrend & { outcome?: TrendOutcome }>, now = Date.now()): void {
+  clear(box);
+  const filter = { market: "all" as TrendMarket | "all", sport: "all" as string };
+  const upcoming = trends.filter((t) => Date.parse(t.start) > now);
+  const list = h("div", {});
+  const record = h("section", { class: "records" });
+  const draw = () => {
+    clear(list);
+    const shown = upcoming.filter((t) => (filter.market === "all" || t.market === filter.market) && (filter.sport === "all" || t.sport === filter.sport)).map((t) => ({ t, p: trendChance(t) })).sort((a, b) => b.p - a.p || a.t.start.localeCompare(b.t.start));
+    if (shown.length === 0) list.append(h("p", { class: "empty" }, "No Linemate team trends of 5+ games at 80%+ for these filters right now."));
+    for (const { t, p } of shown.slice(0, 60)) {
+      const hr = t.book === "Hard Rock" && t.sid;
+      const price = t.price == null ? null : hr ? h("a", { class: "hr s-odds", href: hardRockUrl([t.sid!]), target: "_blank", rel: "noopener" }, odds(t.price)) : h("span", { class: "s-odds off", title: "Hard Rock may still offer this line: check the Hard Rock app." }, odds(t.price), h("small", {}, `${t.book ?? "other"} · check HR`));
+      list.append(h("article", { class: "streak heat", style: `--heat:${heatHue(p)}` }, h("div", { class: "s-main" }, h("strong", {}, trendName(t)), h("div", { class: "muted" }, `${MARKET_TEXT[t.market]} · ${t.sport.toUpperCase()} · ${t.team} vs ${t.opponent} · ${when(t.start)}`), h("div", { class: "signals" }, `${t.hits} of last ${t.games}${t.h2h ? ` · vs ${t.opponent} ${t.h2h.hits}/${t.h2h.games}` : ""}${t.split ? ` · ${t.home ? "home" : "away"} ${t.split.hits}/${t.split.games}` : ""}`)), price, h("div", { class: "s-grades" }, h("span", {}, `${letter(p)} ${Math.round(p * 100)}%`))));
+    }
+    clear(record);
+    const done = trends.filter((t) => t.outcome);
+    const rows = (["SPREAD", "TEAM_TOTAL", "MONEY_LINE", "GAME_TOTAL"] as TrendMarket[]).map((m) => {
+      const mine = done.filter((t) => t.market === m);
+      const w = mine.filter((t) => t.outcome === "win").length;
+      const l = mine.filter((t) => t.outcome === "loss").length;
+      return h("tr", {}, h("th", { scope: "row" }, MARKET_TEXT[m]), h("td", {}, `${w}-${l}`), h("td", {}, w + l ? pct(w / (w + l), 0) : "–"));
+    });
+    record.append(h("h3", {}, "How Linemate's team trends have done"), done.length === 0 ? h("p", { class: "empty" }, "None graded yet. Trends are saved before kickoff and graded from the final score.") : h("div", { class: "scroll" }, h("table", {}, h("thead", {}, h("tr", {}, h("th", {}, "Market"), h("th", {}, "W-L"), h("th", {}, "Hit"))), h("tbody", {}, ...rows))));
+  };
+  const chip = (group: "market" | "sport", id: string, label: string) => h("button", { type: "button", class: "chip", "data-f": `${group}:${id}`, "aria-pressed": String(filter[group] === id), onclick: () => { filter[group] = id as never; for (const b of box.querySelectorAll(`[data-f^="${group}:"]`)) b.setAttribute("aria-pressed", String((b as HTMLElement).dataset.f === `${group}:${id}`)); draw(); } }, label);
+  box.append(
+    h("p", { class: "note" }, "Linemate's team trends: spreads, team totals, moneylines and game totals where a team has hit the line in 80%+ of its last 5 or more games. Ranked by Linemate's own numbers (recent record, head to head and home/away split), colored green to red. Grades here are Linemate's, not ours: results fill in below as games finish."),
+    h("div", { class: "chips", role: "group", "aria-label": "Market" }, chip("market", "all", "All markets"), chip("market", "SPREAD", "Spread"), chip("market", "TEAM_TOTAL", "Team total"), chip("market", "MONEY_LINE", "Moneyline"), chip("market", "GAME_TOTAL", "Game total")),
+    h("div", { class: "chips", role: "group", "aria-label": "Sport" }, chip("sport", "all", "All sports"), chip("sport", "nba", "NBA"), chip("sport", "nfl", "NFL"), chip("sport", "nhl", "NHL")),
+    h("section", {}, h("h3", {}, `On the board (${upcoming.length})`), list),
+    record,
+  );
+  draw();
+}
 
 /** How the logged leans have done since they started being logged, by grade. */
 export function renderLeanRecord(box: HTMLElement, logged: Record<string, LoggedLean>, finals: Map<string, LineGame>): void {
@@ -211,6 +272,15 @@ export async function renderLines(view: HTMLElement, _ledger?: unknown, source: 
     return { trackedGames, all: [...(hist ?? []).filter((r) => !seen.has(r[0])).map(fromRow), ...trackedGames.filter((g) => g.status === "post")] };
   };
   const show = async (id: string) => {
+    if (id === LINEMATE_TAB) {
+      current = id;
+      for (const b of chips.children) b.setAttribute("aria-selected", String((b as HTMLElement).dataset.tab === id));
+      clear(body);
+      body.append(h("p", { class: "empty" }, "Loading…"));
+      const trends = (await source.trends?.().catch(() => [])) ?? [];
+      if (current === id) renderTeamTrends(body, trends);
+      return;
+    }
     if (id === LEANS_TAB) {
       current = id;
       for (const b of chips.children) b.setAttribute("aria-selected", String((b as HTMLElement).dataset.tab === id));
@@ -262,7 +332,7 @@ export async function renderLines(view: HTMLElement, _ledger?: unknown, source: 
     const m = merge(hist, tracked);
     renderLeague(body, id, m.all, m.trackedGames);
   };
-  for (const [id, text] of [[BOARD_TAB, "All games"], [LEANS_TAB, "Lean record"], [RULES_TAB, "Rules"], ...LEAGUES.map((l) => [l.id, l.label])] as Array<[string, string]>) chips.append(h("button", { type: "button", role: "tab", class: "chip", "data-tab": id, onclick: () => void show(id) }, text));
+  for (const [id, text] of [[BOARD_TAB, "All games"], [LINEMATE_TAB, "Linemate"], [LEANS_TAB, "Lean record"], [RULES_TAB, "Rules"], ...LEAGUES.map((l) => [l.id, l.label])] as Array<[string, string]>) chips.append(h("button", { type: "button", role: "tab", class: "chip", "data-tab": id, onclick: () => void show(id) }, text));
   view.append(h("p", { class: "note" }, "Every game with a spread and total, tracked to the final score, to find where the over and the favorite pay."), chips, body);
   await show(current);
 }

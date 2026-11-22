@@ -155,3 +155,47 @@ describe("lean log", () => {
     expect(t.map((x) => `${x.grade}|${x.kind}|${x.wins}`)).toEqual(["lean|total|1", "slight|spread|1"]);
   });
 });
+
+describe("Linemate team trends", () => {
+  const raw = (over: object = {}) => ({
+    gameId: "20261122-DEN-CHI", timestamp: "2026-11-23T00:00:00.000+00:00", type: "team", team: { code: "CHI", name: "Bulls" }, opposingTeam: { code: "DEN" }, home: true, outcome: "cover", line: 10.5,
+    signals: [{ type: "RECENT_FORM", hitRecord: { games: 7, hits: 6 } }, { type: "HEAD_TO_HEAD", hitRecord: { games: 4, hits: 3 } }, { type: "HOME_SPLIT", hitRecord: { games: 6, hits: 6 } }],
+    market: { name: "SPREAD", books: { hardrock: { cover: { current: { value: 9.5, odds: { american: -110 }, operatorData: { selectionId: "1" } }, alternates: { "10.5": { value: 10.5, odds: { american: -150 }, operatorData: { selectionId: "2" } } } } }, fanduel: { cover: { current: { value: 10.5, odds: { american: -140 } }, alternates: {} } } } },
+    ...over,
+  });
+
+  it("reads a team row with Hard Rock's price at the exact line", async () => {
+    const { parseTeamRow } = await import("../src/data/teamtrends");
+    expect(parseTeamRow(raw(), "nba")).toMatchObject({ team: "CHI", opponent: "DEN", market: "SPREAD", side: "cover", line: 10.5, hits: 6, games: 7, price: -150, book: "Hard Rock", sid: "2", home: true, h2h: { games: 4, hits: 3 }, split: { games: 6, hits: 6 } });
+  });
+  it("falls back to another book's price when Hard Rock lacks the line, and skips player and unsupported rows", async () => {
+    const { parseTeamRow } = await import("../src/data/teamtrends");
+    const r = raw({ line: 11.5 });
+    expect(parseTeamRow(r, "nba")?.price).toBeUndefined();
+    const other = raw({ market: { name: "SPREAD", books: { fanduel: { cover: { current: { value: 10.5, odds: { american: -140 } }, alternates: {} } } } } });
+    expect(parseTeamRow(other, "nba")).toMatchObject({ price: -140, book: "fanduel" });
+    expect(parseTeamRow(raw({ type: "player" }), "nba")).toBeNull();
+    expect(parseTeamRow(raw({ market: { name: "SPREAD_1Q", books: {} } }), "nba")).toBeNull();
+  });
+  it("ranks a long record above a short one and grades from the final score", async () => {
+    const { trendChance, gradeTrend, finalFor, canonTeam } = await import("../src/engine/teamtrends");
+    expect(trendChance({ hits: 8, games: 8 })).toBeGreaterThan(trendChance({ hits: 5, games: 5 }));
+    const t = { market: "SPREAD", side: "cover", line: 10.5, team: "CHI", opponent: "DEN", start: "2026-11-23T00:00:00Z", sport: "nba" } as never;
+    expect(gradeTrend(t, { team: 100, opp: 108 })).toBe("win");
+    expect(gradeTrend(t, { team: 90, opp: 108 })).toBe("loss");
+    expect(gradeTrend({ ...(t as object), market: "GAME_TOTAL", side: "under", line: 200 } as never, { team: 100, opp: 100 })).toBe("push");
+    const final: LineGame = { id: "1", start: "2026-11-23T00:00:00Z", date: "2026-11-22", fav: "DEN", dog: "CHI", favHome: false, spread: 8.5, total: 220, status: "post", favScore: 110, dogScore: 101 };
+    expect(finalFor(t, [final], (c) => canonTeam("nba", c))).toEqual({ team: 101, opp: 110 });
+    expect(canonTeam("nba", "WSH")).toBe("WAS");
+  });
+  it("lists upcoming trends best first and tallies graded ones", async () => {
+    const { renderTeamTrends } = await import("../src/ui/lines");
+    const mk = (over: object) => ({ id: String(Math.random()), sport: "nba", gameId: "20261122-DEN-CHI", start: "2099-01-01T00:00:00Z", team: "CHI", opponent: "DEN", home: true, market: "SPREAD", side: "cover", line: 10.5, hits: 5, games: 5, ...over }) as never;
+    const root = document.createElement("div");
+    renderTeamTrends(root, [mk({ hits: 5, games: 5 }), mk({ hits: 9, games: 9, team: "IND" }), mk({ start: "2020-01-01T00:00:00Z", outcome: "win" }), mk({ start: "2020-01-01T00:00:00Z", outcome: "loss" })], Date.parse("2026-11-22T12:00:00Z"));
+    const names = [...root.querySelectorAll(".streak strong")].map((x) => x.textContent);
+    expect(names[0]).toBe("IND +10.5");
+    expect(root.textContent).toContain("On the board (2)");
+    expect(root.textContent).toContain("1-1");
+  });
+});
