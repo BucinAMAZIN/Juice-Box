@@ -1,0 +1,16 @@
+name: Probe box score
+on:
+  workflow_dispatch:
+    inputs:
+      event:
+        description: ESPN NFL event id
+        required: true
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci
+      - run: npx tsx scripts/probe-box.ts "${{ inputs.event }}"
