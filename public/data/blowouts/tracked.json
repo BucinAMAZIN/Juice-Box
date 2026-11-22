@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-21T23:36:36.862Z",
+ "updatedAt": "2026-11-22T13:24:22.766Z",
  "games": [
   {
    "id": "401864545",
@@ -93,7 +93,11 @@
    "dog": "SAM",
    "spread": 48.5,
    "total": 59.5,
-   "status": "in"
+   "status": "post",
+   "favScore": 59,
+   "dogScore": 17,
+   "points": 76,
+   "result": "over"
   },
   {
    "id": "401858532",
@@ -103,7 +107,11 @@
    "dog": "RUTG",
    "spread": 24.5,
    "total": 48.5,
-   "status": "in"
+   "status": "post",
+   "favScore": 24,
+   "dogScore": 25,
+   "points": 49,
+   "result": "over"
   },
   {
    "id": "401864543",
@@ -113,7 +121,11 @@
    "dog": "NIU",
    "spread": 25.5,
    "total": 46.5,
-   "status": "in"
+   "status": "post",
+   "favScore": 31,
+   "dogScore": 25,
+   "points": 56,
+   "result": "over"
   },
   {
    "id": "401858302",
@@ -123,7 +135,11 @@
    "dog": "VT",
    "spread": 21,
    "total": 61.5,
-   "status": "pre"
+   "status": "post",
+   "favScore": 28,
+   "dogScore": 20,
+   "points": 48,
+   "result": "under"
   },
   {
    "id": "401858307",
@@ -133,7 +149,11 @@
    "dog": "SMU",
    "spread": 20.5,
    "total": 55.5,
-   "status": "pre"
+   "status": "post",
+   "favScore": 24,
+   "dogScore": 3,
+   "points": 27,
+   "result": "under"
   },
   {
    "id": "401860918",
@@ -143,7 +163,11 @@
    "dog": "CSU",
    "spread": 20.5,
    "total": 67.5,
-   "status": "pre"
+   "status": "post",
+   "favScore": 49,
+   "dogScore": 42,
+   "points": 91,
+   "result": "over"
   },
   {
    "id": "401860925",
@@ -153,6 +177,30 @@
    "dog": "SDSU",
    "spread": 20.5,
    "total": 60.5,
+   "status": "post",
+   "favScore": 20,
+   "dogScore": 22,
+   "points": 42,
+   "result": "under"
+  },
+  {
+   "id": "401856762",
+   "start": "2026-11-27T17:00Z",
+   "date": "2026-11-27",
+   "fav": "MISS",
+   "dog": "MSST",
+   "spread": 20.5,
+   "total": 57.5,
+   "status": "pre"
+  },
+  {
+   "id": "401858314",
+   "start": "2026-11-28T17:00Z",
+   "date": "2026-11-28",
+   "fav": "ND",
+   "dog": "SYR",
+   "spread": 24.5,
+   "total": 52.5,
    "status": "pre"
   }
  ]
