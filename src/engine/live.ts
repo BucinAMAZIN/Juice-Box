@@ -7,6 +7,8 @@ export interface GameStatus {
   state: GameState;
   detail: string;
   frac: number;
+  /** "DET 17 - TB 7", when the feed gives the score. */
+  score?: string;
 }
 
 /** Regulation length in periods and minutes per period. */

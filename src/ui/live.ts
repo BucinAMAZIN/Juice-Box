@@ -32,7 +32,7 @@ export function showProp(row: HTMLElement, pick: HandedPick, game: GameLive | nu
       bar.append(tick);
     }
     const label = document.createElement("span");
-    label.textContent = live.text;
+    label.textContent = game.status.score ? `${live.text} · ${game.status.score}` : live.text;
     box.append(label, bar);
   } else box.textContent = live?.text ?? "";
   row.dataset.live = live?.tone ?? "";

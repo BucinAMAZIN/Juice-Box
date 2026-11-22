@@ -29,3 +29,11 @@ describe("puck line lean", () => {
     expect(leanFor(mk(999, 0, 0), hist, "nba", false).puck).toBeUndefined();
   });
 });
+
+import { espnStatus } from "../src/data/live";
+describe("espnStatus score", () => {
+  it("reads both scores", () => {
+    const json = { header: { competitions: [{ status: { type: { state: "in" }, displayClock: "5:00", period: 3 }, competitors: [{ homeAway: "home", score: "17", team: { abbreviation: "DET" } }, { homeAway: "away", score: "7", team: { abbreviation: "TB" } }] }] } };
+    expect(espnStatus(json, "nfl").score).toBe("TB 7 - DET 17");
+  });
+});

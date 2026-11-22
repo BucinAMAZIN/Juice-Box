@@ -32,7 +32,11 @@ export function espnStatus(json: unknown, sport: string): GameStatus {
   const clock = st && typeof st.displayClock === "string" ? st.displayClock : "";
   const period = st && typeof st.period === "number" ? st.period : 0;
   const detail = typeof type.shortDetail === "string" ? type.shortDetail : clock;
-  return { state, detail, frac: state === "post" ? 1 : state === "pre" ? 0 : elapsedFraction(sport, period, clock) };
+  const comps = isObj(header) && Array.isArray(header.competitors) ? header.competitors.filter(isObj) : [];
+  const side = (w: string) => comps.find((c) => c.homeAway === w);
+  const part = (c: Obj | undefined) => (c && isObj(c.team) && typeof c.team.abbreviation === "string" ? `${c.team.abbreviation} ${c.score ?? ""}`.trim() : "");
+  const score = side("away") && side("home") && state !== "pre" ? `${part(side("away"))} - ${part(side("home"))}` : undefined;
+  return { state, detail, frac: state === "post" ? 1 : state === "pre" ? 0 : elapsedFraction(sport, period, clock), ...(score ? { score } : {}) };
 }
 
 export function nhlStatus(json: unknown): GameStatus {
@@ -42,7 +46,9 @@ export function nhlStatus(json: unknown): GameStatus {
   const clock = isObj(o.clock) && typeof o.clock.timeRemaining === "string" ? o.clock.timeRemaining : "";
   const period = isObj(o.periodDescriptor) && typeof o.periodDescriptor.number === "number" ? o.periodDescriptor.number : 0;
   const intermission = isObj(o.clock) && o.clock.inIntermission === true;
-  return { state, detail: state === "in" ? `P${period} ${intermission ? "intermission" : clock}` : state === "post" ? "Final" : "", frac: state === "post" ? 1 : state === "pre" ? 0 : elapsedFraction("nhl", period, intermission ? "0:00" : clock) };
+  const tm = (k: string) => (isObj(o[k]) && typeof (o[k] as Obj).abbrev === "string" ? `${(o[k] as Obj).abbrev} ${(o[k] as Obj).score ?? ""}`.trim() : "");
+  const score = state !== "pre" && tm("awayTeam") && tm("homeTeam") ? `${tm("awayTeam")} - ${tm("homeTeam")}` : undefined;
+  return { ...(score ? { score } : {}), state, detail: state === "in" ? `P${period} ${intermission ? "intermission" : clock}` : state === "post" ? "Final" : "", frac: state === "post" ? 1 : state === "pre" ? 0 : elapsedFraction("nhl", period, intermission ? "0:00" : clock) };
 }
 
 /** Fetch one game's current box score and status. Null when the feed cannot be read. */
