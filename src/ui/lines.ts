@@ -8,6 +8,9 @@ import { heatHue } from "../engine/heat";
 import { type TeamTrend, type TrendMarket, type TrendOutcome, MARKET_TEXT, trendChance } from "../engine/teamtrends";
 import { letter } from "./grading";
 import { odds } from "./streaks";
+import { gameFrac, type ScoreTarget, watchScores } from "./live";
+import { gameLive, trendLive } from "../engine/live";
+import { canonTeam } from "../engine/teamtrends";
 import { clear, h } from "./dom";
 import { pct } from "./format";
 import { getJson } from "./picks";
@@ -65,15 +68,32 @@ function callBox(kind: "total" | "spread", c: Call | null, g: LineGame): HTMLEle
 }
 
 /** One game: who is favored and when, then a box for the spread call and a box for the total call. */
-function gameCard(g: LineGame, lean: Lean, league?: string, extra = ""): HTMLElement {
+function gameCard(g: LineGame, lean: Lean, league?: string, extra = "", live?: { league: string; targets: ScoreTarget[]; ml: boolean }): HTMLElement {
   const fav = `${g.fav} ${g.ml != null ? `-${g.ml}` : g.spread > 0 ? `-${g.spread}` : "pick'em"}`;
-  return h(
+  const liveBox = h("div", { class: "s-live", hidden: "" });
+  const card = h(
     "article",
     { class: "gamecard" },
     h("div", { class: "gc-top" }, h("h4", {}, `${league ? `${league.toUpperCase()} · ` : ""}${fav} vs ${g.dog}`), h("span", { class: "gc-when" }, when(g.start))),
     h("div", { class: "gc-meta" }, `Total ${g.total}${g.favWin != null && g.dogWin != null ? ` · records ${pct(g.favWin, 0)} vs ${pct(g.dogWin, 0)}` : ""}${extra}`),
+    liveBox,
     h("div", { class: "lanes" }, callBox("spread", lean.spread, g), callBox("total", lean.total, g)),
   );
+  if (live) {
+    live.targets.push({
+      el: card,
+      league: live.league,
+      start: g.start,
+      update: (games) => {
+        const game = games.find((x) => x.id === g.id);
+        const out = game ? gameLive({ ...g, ...(live.ml && g.ml != null ? { ml: g.ml } : {}) }, game, gameFrac(live.league, game)) : null;
+        liveBox.hidden = out == null;
+        liveBox.textContent = out?.text ?? "";
+        liveBox.className = `s-live live-${out?.tone ?? "wait"}`;
+      },
+    });
+  }
+  return card;
 }
 
 type SortMode = "time" | "strength";
@@ -121,15 +141,18 @@ export function renderLeague(box: HTMLElement, id: string, all: LineGame[], trac
     return { g, lean: leanFor(g, all, id, s.ml), extra: c?.pick ? ` · sweet spot: ${PICK_TEXT[c.pick]}` : "" };
   });
   let mode: SortMode = "time";
+  const targets: ScoreTarget[] = [];
   const draw = () => {
     clear(list);
+    targets.length = 0;
     const sorted = [...items].sort((a, b) => (mode === "strength" ? strengthOf(b.lean) - strengthOf(a.lean) : 0) || a.g.start.localeCompare(b.g.start));
-    for (const x of sorted) list.append(gameCard(x.g, x.lean, undefined, x.extra));
+    for (const x of sorted) list.append(gameCard(x.g, x.lean, undefined, x.extra, { league: id, targets, ml: s.ml }));
   };
   if (upcoming.length === 0) sec.append(h("p", { class: "empty" }, "No games with a line on the board right now."));
   else sec.append(COLOUR_KEY(), sortToggle(() => mode, (m) => { mode = m; draw(); }), list);
   draw();
   box.append(sec);
+  watchScores(box, () => targets);
 
   const spots = s.cells.filter((c) => c.pick).sort((a, b) => b.edge - a.edge);
   const spotSec = h("section", {}, h("h3", {}, `Sweet spots (${spots.length})`));
@@ -174,14 +197,36 @@ export function renderTeamTrends(box: HTMLElement, trends: Array<TeamTrend & { o
   const upcoming = trends.filter((t) => Date.parse(t.start) > now);
   const list = h("div", {});
   const record = h("section", { class: "records" });
+  const targets: ScoreTarget[] = [];
   const draw = () => {
     clear(list);
+    targets.length = 0;
     const shown = upcoming.filter((t) => (filter.market === "all" || t.market === filter.market) && (filter.sport === "all" || t.sport === filter.sport)).map((t) => ({ t, p: trendChance(t) })).sort((a, b) => b.p - a.p || a.t.start.localeCompare(b.t.start));
     if (shown.length === 0) list.append(h("p", { class: "empty" }, "No Linemate team trends of 5+ games at 80%+ for these filters right now."));
     for (const { t, p } of shown.slice(0, 60)) {
       const hr = t.book === "Hard Rock" && t.sid;
       const price = t.price == null ? null : hr ? h("a", { class: "hr s-odds", href: hardRockUrl([t.sid!]), target: "_blank", rel: "noopener" }, odds(t.price)) : h("span", { class: "s-odds off", title: "Hard Rock may still offer this line: check the Hard Rock app." }, odds(t.price), h("small", {}, `${t.book ?? "other"} · check HR`));
-      list.append(h("article", { class: "streak heat", style: `--heat:${heatHue(p)}` }, h("div", { class: "s-main" }, h("strong", {}, trendName(t)), h("div", { class: "muted" }, `${MARKET_TEXT[t.market]} · ${t.sport.toUpperCase()} · ${t.team} vs ${t.opponent} · ${when(t.start)}`), h("div", { class: "signals" }, `${t.hits} of last ${t.games}${t.h2h ? ` · vs ${t.opponent} ${t.h2h.hits}/${t.h2h.games}` : ""}${t.split ? ` · ${t.home ? "home" : "away"} ${t.split.hits}/${t.split.games}` : ""}`)), price, h("div", { class: "s-grades" }, h("span", {}, `${letter(p)} ${Math.round(p * 100)}%`))));
+      const liveBox = h("div", { class: "s-live", hidden: "" });
+      const row = h("article", { class: "streak heat", style: `--heat:${heatHue(p)}` }, h("div", { class: "s-main" }, h("strong", {}, trendName(t)), h("div", { class: "muted" }, `${MARKET_TEXT[t.market]} · ${t.sport.toUpperCase()} · ${t.team} vs ${t.opponent} · ${when(t.start)}`), h("div", { class: "signals" }, `${t.hits} of last ${t.games}${t.h2h ? ` · vs ${t.opponent} ${t.h2h.hits}/${t.h2h.games}` : ""}${t.split ? ` · ${t.home ? "home" : "away"} ${t.split.hits}/${t.split.games}` : ""}`), liveBox), price, h("div", { class: "s-grades" }, h("span", {}, `${letter(p)} ${Math.round(p * 100)}%`)));
+      list.append(row);
+      targets.push({
+        el: row,
+        league: t.sport,
+        start: t.start,
+        update: (games) => {
+          const a = canonTeam(t.sport, t.team);
+          const b = canonTeam(t.sport, t.opponent);
+          const game = games.find((x) => Math.abs(Date.parse(x.start) - Date.parse(t.start)) <= 3 * 3_600_000 && ((canonTeam(t.sport, x.home) === a && canonTeam(t.sport, x.away) === b) || (canonTeam(t.sport, x.away) === a && canonTeam(t.sport, x.home) === b)));
+          let out = null;
+          if (game && game.homeScore != null && game.awayScore != null) {
+            const mine = canonTeam(t.sport, game.home) === a;
+            out = trendLive(t, { team: mine ? game.homeScore : game.awayScore, opp: mine ? game.awayScore : game.homeScore }, { state: game.state, detail: game.detail ?? "", frac: gameFrac(t.sport, game) });
+          }
+          liveBox.hidden = out == null;
+          liveBox.textContent = out?.text ?? "";
+          liveBox.className = `s-live live-${out?.tone ?? "wait"}`;
+        },
+      });
     }
     clear(record);
     const done = trends.filter((t) => t.outcome);
@@ -202,6 +247,7 @@ export function renderTeamTrends(box: HTMLElement, trends: Array<TeamTrend & { o
     record,
   );
   draw();
+  watchScores(box, () => targets);
 }
 
 /** How the logged leans have done since they started being logged, by grade. */
@@ -228,15 +274,19 @@ export function renderBoard(box: HTMLElement, data: Record<string, { all: LineGa
   const list = h("div", {});
   const items = rows.map(({ g, id, ml }) => ({ g, id, lean: leanFor(g, data[id]!.all, id, ml) }));
   let mode: SortMode = "time";
+  const targets: ScoreTarget[] = [];
+  const mlOf = new Map(rows.map((r) => [r.id, r.ml]));
   const draw = () => {
     clear(list);
+    targets.length = 0;
     const sorted = [...items].sort((x, y) => (mode === "strength" ? strengthOf(y.lean) - strengthOf(x.lean) : 0) || x.g.start.localeCompare(y.g.start));
-    for (const x of sorted) list.append(gameCard(x.g, x.lean, x.id));
+    for (const x of sorted) list.append(gameCard(x.g, x.lean, x.id, "", { league: x.id, targets, ml: mlOf.get(x.id) ?? false }));
   };
   if (rows.length === 0) sec.append(h("p", { class: "empty" }, "No games with a line on the board right now."));
   else sec.append(COLOUR_KEY(), sortToggle(() => mode, (m) => { mode = m; draw(); }), list);
   draw();
   box.append(sec);
+  watchScores(box, () => targets);
 }
 
 /** Every rule: how it did in the history, how it has done since it was set, and which games on the board fit it. */

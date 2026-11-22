@@ -261,3 +261,12 @@ body { padding-bottom: calc(56px + env(safe-area-inset-bottom)); }
 .tone-none { background: #e6e1d6; }
 .tone-key { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
 .tone-key span { border: 2px solid var(--text); border-radius: 999px; padding: 3px 9px; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; }
+
+/* Live tracking line on a prop row. */
+.s-live { margin-top: 4px; padding: 3px 8px; border: 2px solid var(--text); border-radius: 8px; font-size: 0.75rem; font-weight: 800; background: #fff; display: inline-block; }
+.s-live[hidden] { display: none; }
+.s-live.live-hit { background: #1f9d3a; color: #fff; }
+.s-live.live-miss { background: #c8341c; color: #fff; }
+.s-live.live-on { background: #d8f0b8; }
+.s-live.live-off { background: #fcd9b0; }
+.s-live.live-wait { background: #e6e1d6; }

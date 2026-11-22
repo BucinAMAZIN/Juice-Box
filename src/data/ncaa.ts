@@ -26,6 +26,10 @@ export interface NcaaGame {
   homeWin?: number;
   awayWin?: number;
   line: NcaaLine | null;
+  /** Clock text, period and clock for a game that has started, as ESPN reports them. */
+  detail?: string;
+  period?: number;
+  clock?: string;
 }
 
 type Obj = Record<string, unknown>;
@@ -73,7 +77,11 @@ export function parseGame(raw: unknown): NcaaGame | null {
   };
   const hw = winShare(home);
   const aw = winShare(away);
+  const st = isObj(raw.status) ? raw.status : {};
   return {
+    ...(typeof type.shortDetail === "string" && state !== "pre" ? { detail: type.shortDetail } : {}),
+    ...(typeof st.period === "number" && state !== "pre" ? { period: st.period } : {}),
+    ...(typeof st.displayClock === "string" && state !== "pre" ? { clock: st.displayClock } : {}),
     ...(hw != null ? { homeWin: hw } : {}),
     ...(aw != null ? { awayWin: aw } : {}),
     id: raw.id,
