@@ -334,3 +334,4 @@ html, body { max-width: 100%; overflow-x: hidden; -webkit-text-size-adjust: 100%
 .lane-live.live-miss .s-bar i { background: #c8341c; }
 .lane-live.live-hit > span { color: #0b6b2e; }
 .lane-live.live-miss > span { color: #a3240f; }
+.lanes .callbox.puck, .lanes > :nth-child(3) { grid-column: 1 / -1; }

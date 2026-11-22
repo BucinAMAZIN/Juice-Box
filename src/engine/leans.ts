@@ -18,7 +18,13 @@ export interface Lean {
   total: Call | null;
   /** The spread call, or the moneyline call for leagues that list a price instead of a spread. */
   spread: Call | null;
+  /** Hockey only: the puck line (favorite -1.5 or underdog +1.5), judged at typical prices since we do not track its juice. */
+  puck?: Call | null;
 }
+
+/** Typical puck-line prices: the favorite at -1.5 pays about +140, the underdog at +1.5 lays about -160. */
+const PUCK_FAV_BE = 100 / 240;
+const PUCK_DOG_BE = 160 / 260;
 
 /** Patterns that held up when tested against the line history, season by season. */
 export const SPOTS: Array<{ id: string; league: string; label: string; side: Call["side"]; test: (g: LineGame) => boolean }> = [
@@ -49,7 +55,7 @@ const call = (side: Call["side"], r: Rate, flip: boolean, breakEven: number, not
   const p = r.pct!;
   const mine = flip ? 1 - p : p;
   const lo = flip ? 1 - r.hi! : r.lo!;
-  return { side, pct: mine, n: r.n, grade: lo > 0.5 ? "lean" : "slight", breakEven, ...(note ? { note } : {}) };
+  return { side, pct: mine, n: r.n, grade: lo > (note ? Math.max(0.5, breakEven) : 0.5) ? "lean" : "slight", breakEven, ...(note ? { note } : {}) };
 };
 
 /** A lean on the total and on the spread (or moneyline) for one game, from the games most like it. */
@@ -65,6 +71,10 @@ export function leanFor(g: LineGame, history: LineGame[], league: string, ml: bo
         const implied = (g.ml ?? 150) / ((g.ml ?? 150) + 100);
         out.spread = win.pct! >= implied ? call("favorite", win, false, implied, "moneyline") : call("underdog", win, true, 1 - implied, "moneyline");
       }
+      const margin = (x: LineGame): number => x.favScore! - x.dogScore!;
+      const puck = rate(near.filter((x) => margin(x) >= 2).length, near.filter((x) => margin(x) < 2).length);
+      out.puck = null;
+      if (puck.n >= 30) out.puck = puck.pct! - PUCK_FAV_BE >= 1 - puck.pct! - PUCK_DOG_BE ? call("favorite", puck, false, PUCK_FAV_BE, "puckline") : call("underdog", puck, true, PUCK_DOG_BE, "puckline");
     } else {
       const cover = rate(near.filter((x) => coverResult(x) === "cover").length, near.filter((x) => coverResult(x) === "miss").length);
       if (cover.n >= 30) out.spread = cover.pct! >= 0.5 ? call("favorite", cover, false, BE) : call("underdog", cover, true, BE);
@@ -81,6 +91,7 @@ export function leanFor(g: LineGame, history: LineGame[], league: string, ml: bo
 
 export const callText = (c: Call, g: LineGame, kind: "total" | "spread"): string => {
   if (kind === "total") return `${c.side === "over" ? "Over" : "Under"} ${g.total}`;
+  if (c.note === "puckline") return c.side === "favorite" ? `${g.fav} -1.5` : `${g.dog} +1.5`;
   if (c.note === "moneyline") return c.side === "favorite" ? `${g.fav} to win` : `${g.dog} to win`;
   const pts = g.spread;
   return c.side === "favorite" ? `${g.fav} ${pts > 0 ? `-${pts}` : "pick'em"}` : `${g.dog} ${pts > 0 ? `+${pts}` : "pick'em"}`;

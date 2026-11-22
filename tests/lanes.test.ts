@@ -18,3 +18,14 @@ describe("lane bars", () => {
     expect(totalLane("over", g, { state: "pre", homeScore: null, awayScore: null }, 0)).toBeNull();
   });
 });
+
+import { leanFor } from "../src/engine/leans";
+import type { LineGame } from "../src/engine/lines";
+describe("puck line lean", () => {
+  const mk = (i: number, fav: number, dog: number): LineGame => ({ id: String(i), start: "", date: "", fav: "A", dog: "B", favHome: true, spread: 1.5, ml: 150, total: 6, status: "post", favScore: fav, dogScore: dog });
+  const hist = Array.from({ length: 120 }, (_, i) => (i % 2 ? mk(i, 5, 1) : mk(i, 2, 1)));
+  it("is made only for moneyline leagues", () => {
+    expect(leanFor(mk(999, 0, 0), hist, "nhl", true).puck?.note).toBe("puckline");
+    expect(leanFor(mk(999, 0, 0), hist, "nba", false).puck).toBeUndefined();
+  });
+});

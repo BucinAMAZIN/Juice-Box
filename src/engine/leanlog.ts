@@ -10,18 +10,18 @@ export interface LoggedLean {
   spread: number;
   ml?: number;
   total: number;
-  lean: { total: Pick<Call, "side" | "grade" | "pct" | "n"> | null; spread: (Pick<Call, "side" | "grade" | "pct" | "n"> & { note?: string }) | null };
+  lean: { total: Pick<Call, "side" | "grade" | "pct" | "n"> | null; spread: (Pick<Call, "side" | "grade" | "pct" | "n"> & { note?: string }) | null; puck?: Pick<Call, "side" | "grade" | "pct" | "n"> | null };
 }
 
 export const freeze = (g: LineGame, league: string, lean: Lean): LoggedLean => {
   const pick = (c: Call | null) => (c ? { side: c.side, grade: c.grade, pct: Number(c.pct.toFixed(4)), n: c.n, ...(c.note === "moneyline" ? { note: "moneyline" } : {}) } : null);
-  return { league, date: g.date, fav: g.fav, dog: g.dog, spread: g.spread, ...(g.ml != null ? { ml: g.ml } : {}), total: g.total, lean: { total: pick(lean.total), spread: pick(lean.spread) } as LoggedLean["lean"] };
+  return { league, date: g.date, fav: g.fav, dog: g.dog, spread: g.spread, ...(g.ml != null ? { ml: g.ml } : {}), total: g.total, lean: { total: pick(lean.total), spread: pick(lean.spread), ...(lean.puck !== undefined ? { puck: pick(lean.puck) && { ...pick(lean.puck)!, note: undefined } } : {}) } as LoggedLean["lean"] };
 };
 
 /** Did the logged call win, lose or push against the final score? Null while the game is unfinished. */
-export function gradeLean(l: LoggedLean, kind: "total" | "spread", final: LineGame): "win" | "loss" | "push" | null {
+export function gradeLean(l: LoggedLean, kind: "total" | "spread" | "puck", final: LineGame): "win" | "loss" | "push" | null {
   if (final.favScore == null || final.dogScore == null) return null;
-  const game: LineGame = { ...final, spread: l.spread, total: l.total };
+  const game: LineGame = { ...final, spread: kind === "puck" ? 1.5 : l.spread, total: l.total };
   const c = l.lean[kind];
   if (!c) return null;
   if (kind === "total") {
@@ -37,7 +37,7 @@ export function gradeLean(l: LoggedLean, kind: "total" | "spread", final: LineGa
   return r == null ? null : r === "push" ? "push" : (r === "cover") === (c.side === "favorite") ? "win" : "loss";
 }
 
-export interface Tally { grade: Grade; kind: "total" | "spread"; wins: number; losses: number; pushes: number }
+export interface Tally { grade: Grade; kind: "total" | "spread" | "puck"; wins: number; losses: number; pushes: number }
 
 /** Record by grade and kind across every finished logged game. */
 export function tallyLeans(logged: Record<string, LoggedLean>, finals: Map<string, LineGame>): Tally[] {
@@ -45,7 +45,7 @@ export function tallyLeans(logged: Record<string, LoggedLean>, finals: Map<strin
   for (const [id, l] of Object.entries(logged)) {
     const f = finals.get(id);
     if (!f) continue;
-    for (const kind of ["total", "spread"] as const) {
+    for (const kind of ["total", "spread", "puck"] as const) {
       const c = l.lean[kind];
       const r = c && gradeLean(l, kind, f);
       if (!c || !r) continue;

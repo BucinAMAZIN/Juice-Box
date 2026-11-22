@@ -54,7 +54,7 @@ const barPos = (x: number): string => `${Math.max(0, Math.min(100, Math.round(((
 
 function callBox(kind: "total" | "spread", c: Call | null, g: LineGame, slot?: HTMLElement): HTMLElement {
   const tone = toneOf(c);
-  const name = kind === "total" ? "Total" : c?.note === "moneyline" ? "Moneyline" : "Spread";
+  const name = kind === "total" ? "Total" : c?.note === "moneyline" ? "Moneyline" : c?.note === "puckline" ? "Puck line" : "Spread";
   const head = h("div", { class: "cb-head" }, h("span", { class: "cb-name" }, name), h("span", { class: "cb-tag" }, TAG[tone]));
   if (c == null) return h("div", { class: "callbox tone-none" }, head, h("div", { class: "cb-none" }, "Not enough similar games"));
   return h(
@@ -90,13 +90,14 @@ function gameCard(g: LineGame, lean: Lean, league?: string, extra = "", live?: {
   const liveBox = h("div", { class: "s-live", hidden: "" });
   const spreadSlot = h("div", { class: "lane-live", hidden: "" });
   const totalSlot = h("div", { class: "lane-live", hidden: "" });
+  const puckSlot = h("div", { class: "lane-live", hidden: "" });
   const card = h(
     "article",
     { class: "gamecard" },
     h("div", { class: "gc-top" }, h("h4", {}, `${league ? `${league.toUpperCase()} · ` : ""}${fav} vs ${g.dog}`), h("span", { class: "gc-when" }, when(g.start))),
     h("div", { class: "gc-meta" }, `Total ${g.total}${g.favWin != null && g.dogWin != null ? ` · records ${pct(g.favWin, 0)} vs ${pct(g.dogWin, 0)}` : ""}${extra}`),
     liveBox,
-    h("div", { class: "lanes" }, callBox("spread", lean.spread, g, spreadSlot), callBox("total", lean.total, g, totalSlot)),
+    h("div", { class: "lanes" }, callBox("spread", lean.spread, g, spreadSlot), callBox("total", lean.total, g, totalSlot), ...(lean.puck ? [callBox("spread", lean.puck, g, puckSlot)] : [])),
   );
   if (live) {
     live.targets.push({
@@ -112,6 +113,8 @@ function gameCard(g: LineGame, lean: Lean, league?: string, extra = "", live?: {
         liveBox.className = `s-live live-${game?.state === "post" ? "wait" : "on"}`;
         const sp = lean.spread?.side;
         drawLane(spreadSlot, game && (sp === "favorite" || sp === "underdog") ? spreadLane(sp, gl, game, live.league, lean.spread?.note === "moneyline") : null);
+        const pk = lean.puck?.side;
+        drawLane(puckSlot, game && (pk === "favorite" || pk === "underdog") ? spreadLane(pk, { ...g, spread: 1.5 }, game, live.league, false) : null);
         const tt = lean.total?.side;
         drawLane(totalSlot, game && (tt === "over" || tt === "under") ? totalLane(tt, g, game, gameFrac(live.league, game)) : null);
       },
