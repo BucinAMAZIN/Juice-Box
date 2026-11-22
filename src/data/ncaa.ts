@@ -105,7 +105,9 @@ export function pickLine(json: unknown): NcaaLine | null {
 const FBS: League = leagueById("ncaaf")!;
 
 async function getJson(url: string): Promise<unknown> {
-  const res = await fetch(url, { headers: { "user-agent": "Mozilla/5.0", accept: "application/json" } });
+  // A browser may not set user-agent, and sending it forces a CORS preflight that ESPN refuses, so only scripts send it.
+  const headers: Record<string, string> = typeof window === "undefined" ? { "user-agent": "Mozilla/5.0", accept: "application/json" } : { accept: "application/json" };
+  const res = await fetch(url, { headers });
   if (!res.ok) throw new Error(`ESPN ${res.status} for ${url}`);
   return res.json();
 }
