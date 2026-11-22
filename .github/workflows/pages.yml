@@ -123,6 +123,7 @@ jobs:
           npm run blowouts -- --dry-run
           npm run lines -- --dry-run
           npm run leans -- --dry-run
+          npx tsx scripts/probe-linemate-teams.ts
 
       - name: Commit data
         if: steps.task.outputs.task == 'picks' || steps.task.outputs.task == 'grade' || steps.task.outputs.task == 'backfill' || steps.task.outputs.task == 'lines-backfill' || steps.task.outputs.task == 'lines-extras'
