@@ -21,3 +21,5 @@ test("nfl", "fav 7.5-14, total 49-52 under", (g) => g.spread >= 7.5 && g.spread 
 test("nba", "dog 14-19.5, total 203-210.5 cover", (g) => g.spread >= 14 && g.spread <= 19.5 && g.total >= 203 && g.total <= 210.5, "dog");
 test("nba", "spread 0-2.5, total 235+ under", (g) => g.spread >= 0 && g.spread <= 2.5 && g.total >= 235, "under");
 test("ncaaf", "fav 40+, total 51-58 over", (g) => g.spread >= 40 && g.total >= 51 && g.total <= 58, "over");
+test("ncaaf", "spread 14.5-21, total 62+ under", (g) => g.spread >= 14.5 && g.spread <= 21 && g.total >= 62, "under");
+test("ncaaf", "dog 3.5-7, total 62+ cover", (g) => g.spread >= 3.5 && g.spread <= 7 && g.total >= 62, "dog");
