@@ -294,3 +294,28 @@ html, body { max-width: 100%; overflow-x: hidden; -webkit-text-size-adjust: 100%
   .s-odds { margin-left: auto; }
   .s-live:empty { display: none; }
 }
+
+/* Prop row: title and detail on the left, odds / grade / streak boxed top right, live strip across the bottom. */
+.streak { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; column-gap: 10px; row-gap: 8px; align-items: start; }
+.s-pick:empty { display: none; }
+.s-pick:empty + .s-main { grid-column: 1 / 3; }
+.s-side { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; text-align: right; }
+.s-side .s-odds { margin: 0; min-width: 0; padding: 4px 10px; }
+.s-side .s-grades { align-items: flex-end; min-width: 0; font-size: 0.8rem; }
+.s-side .s-streak { display: flex; align-items: baseline; gap: 4px; }
+.s-side .s-streak span { font-size: 22px; display: inline; }
+.s-live { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 8px 10px; border-width: 2px; border-radius: 10px; font-size: 0.85rem; }
+.s-live[hidden] { display: none; }
+.s-bar { position: relative; height: 12px; border: 2px solid var(--text); border-radius: 7px; background: #fff; }
+.s-bar i { position: absolute; left: 0; top: 0; bottom: 0; background: currentColor; opacity: .75; border-radius: 4px; }
+.s-bar b { position: absolute; top: -5px; bottom: -5px; width: 3px; background: var(--text); margin-left: -1px; }
+.s-live.live-hit .s-bar, .s-live.live-miss .s-bar { border-color: #fff; background: transparent; }
+.s-live.live-hit .s-bar i, .s-live.live-miss .s-bar i { background: #fff; opacity: 1; }
+.s-live.live-on .s-bar i { background: #5ba11f; opacity: 1; }
+.s-live.live-off .s-bar i { background: #e07b12; opacity: 1; }
+@media (max-width: 520px) {
+  .streak { flex-wrap: initial; }
+  .s-main { flex: initial; }
+  .s-odds, .s-chance, .s-grades, .s-streak { order: 0; }
+  .s-side .s-odds { font-size: 16px; }
+}

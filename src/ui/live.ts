@@ -14,8 +14,27 @@ export function showProp(row: HTMLElement, pick: HandedPick, game: GameLive | nu
   if (!box) return;
   const live: PropLive | null = game ? propLive(pick.side, pick.line, game.stat(pick), game.status, UNIT[pick.market] ?? pick.market) : null;
   box.hidden = live == null;
-  box.textContent = live?.text ?? "";
   box.className = `s-live live-${live?.tone ?? "wait"}`;
+  box.textContent = "";
+  if (live && game) {
+    const stat = game.stat(pick);
+    const goal = pick.side === "over" ? Math.floor(pick.line) + 1 : pick.line;
+    const fill = stat == null || goal <= 0 ? 0 : Math.max(0, Math.min(1, stat / goal));
+    const bar = document.createElement("div");
+    bar.className = "s-bar";
+    const inner = document.createElement("i");
+    inner.style.width = `${Math.round(fill * 100)}%`;
+    bar.append(inner);
+    if (game.status.state === "in") {
+      const tick = document.createElement("b");
+      tick.title = "Where it needs to be by now";
+      tick.style.left = `${Math.round(Math.max(0, Math.min(1, game.status.frac)) * 100)}%`;
+      bar.append(tick);
+    }
+    const label = document.createElement("span");
+    label.textContent = live.text;
+    box.append(label, bar);
+  } else box.textContent = live?.text ?? "";
   row.dataset.live = live?.tone ?? "";
 }
 
