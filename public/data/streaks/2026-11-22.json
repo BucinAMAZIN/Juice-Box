@@ -5511,7 +5511,11 @@
       },
       "avg": 19.4,
       "teamName": "Bulls",
-      "note": "Over 13.5 in 5 straight games."
+      "note": "Over 13.5 in 5 straight games.",
+      "h2h": {
+        "games": 3,
+        "hits": 1
+      }
     },
     {
       "id": "2026-11-22-s-nba-401910032-i-okoro-points-8.5",
@@ -5540,7 +5544,11 @@
       },
       "avg": 11.6,
       "teamName": "Bulls",
-      "note": "Over 8.5 in 5 straight games."
+      "note": "Over 8.5 in 5 straight games.",
+      "h2h": {
+        "games": 3,
+        "hits": 1
+      }
     },
     {
       "id": "2026-11-22-s-nba-401910029-o-okongwu-pr-19.5",
@@ -5602,7 +5610,11 @@
       },
       "avg": 16.8,
       "teamName": "Bulls",
-      "note": "Over 11.5 in 5 straight games."
+      "note": "Over 11.5 in 5 straight games.",
+      "h2h": {
+        "games": 3,
+        "hits": 1
+      }
     },
     {
       "id": "2026-11-22-s-nba-401910032-j-smith-points-10.5",
@@ -5759,7 +5771,11 @@
       },
       "avg": 12.4,
       "teamName": "Warriors",
-      "note": "Over 5.5 in 5 straight games."
+      "note": "Over 5.5 in 5 straight games.",
+      "split": {
+        "games": 9,
+        "hits": 2
+      }
     },
     {
       "id": "2026-11-22-s-nba-401910030-s-gilgeousalexander-points-27.5",
@@ -6054,7 +6070,11 @@
       },
       "avg": 15.6,
       "teamName": "Warriors",
-      "note": "Over 7.5 in 5 straight games."
+      "note": "Over 7.5 in 5 straight games.",
+      "split": {
+        "games": 9,
+        "hits": 2
+      }
     },
     {
       "id": "2026-11-22-s-nba-401910032-i-okoro-points-7.5",
@@ -6388,7 +6408,11 @@
       },
       "avg": 16.8,
       "teamName": "Bulls",
-      "note": "Over 9.5 in 5 straight games."
+      "note": "Over 9.5 in 5 straight games.",
+      "h2h": {
+        "games": 3,
+        "hits": 1
+      }
     },
     {
       "id": "2026-11-22-s-nba-401910029-p-reed-pra-16.5",
@@ -12210,7 +12234,11 @@
       },
       "avg": 45.75,
       "teamName": "Magic",
-      "note": "Over 36.5 in 8 straight games."
+      "note": "Over 36.5 in 8 straight games.",
+      "h2h": {
+        "games": 6,
+        "hits": 2
+      }
     },
     {
       "id": "2026-11-22-s-nba-401910034-k-towns-pr-28.5",
@@ -12639,7 +12667,11 @@
       },
       "avg": 16.6,
       "teamName": "Warriors",
-      "note": "Over 11.5 in 5 straight games."
+      "note": "Over 11.5 in 5 straight games.",
+      "split": {
+        "games": 9,
+        "hits": 1
+      }
     },
     {
       "id": "2026-11-22-s-nba-401910032-j-smith-pa-15.5",
@@ -13511,6 +13543,378 @@
       "avg": 99.33,
       "teamName": "Giants",
       "note": "Over 39.5 in 6 straight games."
+    },
+    {
+      "id": "2026-11-22-s-nba-401910034-k-towns-pra-29.5",
+      "createdAt": "2026-11-22T23:49:32.629Z",
+      "gameStart": "2026-11-23T01:00Z",
+      "gameId": 401910034,
+      "sport": "nba",
+      "kind": "streak",
+      "player": "Karl-Anthony Towns",
+      "team": "NYK",
+      "opponent": "IND",
+      "market": "pra",
+      "line": 29.5,
+      "side": "over",
+      "modelProb": 0.7975708502024291,
+      "limitOdds": -394,
+      "mean": 29.5,
+      "price": -394,
+      "book": "Draftkings",
+      "streak": 15,
+      "home": true,
+      "alt": true,
+      "h2h": {
+        "games": 7,
+        "hits": 7
+      },
+      "split": {
+        "games": 7,
+        "hits": 7
+      },
+      "avg": 39.13,
+      "teamName": "Knicks",
+      "note": "Over 29.5 in 15 straight games."
+    },
+    {
+      "id": "2026-11-22-s-nba-401910034-k-towns-pra-37",
+      "createdAt": "2026-11-22T23:49:32.629Z",
+      "gameStart": "2026-11-23T01:00Z",
+      "gameId": 401910034,
+      "sport": "nba",
+      "kind": "streak",
+      "player": "Karl-Anthony Towns",
+      "team": "NYK",
+      "opponent": "IND",
+      "market": "pra",
+      "line": 37,
+      "side": "over",
+      "modelProb": 0.5780590717299579,
+      "limitOdds": -137,
+      "mean": 37,
+      "price": -137,
+      "book": "Prizepicks",
+      "streak": 7,
+      "home": true,
+      "alt": false,
+      "h2h": {
+        "games": 7,
+        "hits": 6
+      },
+      "split": {
+        "games": 20,
+        "hits": 5
+      },
+      "avg": 42,
+      "teamName": "Knicks",
+      "note": "Over 37 in 7 straight games."
+    },
+    {
+      "id": "2026-11-22-s-nba-401910034-k-towns-pa-23.5",
+      "createdAt": "2026-11-22T23:49:32.629Z",
+      "gameStart": "2026-11-23T01:00Z",
+      "gameId": 401910034,
+      "sport": "nba",
+      "kind": "streak",
+      "player": "Karl-Anthony Towns",
+      "team": "NYK",
+      "opponent": "IND",
+      "market": "pa",
+      "line": 23.5,
+      "side": "over",
+      "modelProb": 0.5815899581589958,
+      "limitOdds": -139,
+      "mean": 23.5,
+      "price": -139,
+      "book": "Sleeper",
+      "streak": 7,
+      "home": true,
+      "alt": false,
+      "h2h": {
+        "games": 7,
+        "hits": 7
+      },
+      "split": {
+        "games": 20,
+        "hits": 8
+      },
+      "avg": 27.71,
+      "teamName": "Knicks",
+      "note": "Over 23.5 in 7 straight games."
+    },
+    {
+      "id": "2026-11-22-s-nba-401910034-k-oubre-pr-18.5",
+      "createdAt": "2026-11-22T23:49:32.629Z",
+      "gameStart": "2026-11-23T01:00Z",
+      "gameId": 401910034,
+      "sport": "nba",
+      "kind": "streak",
+      "player": "Kelly Oubre",
+      "team": "IND",
+      "opponent": "NYK",
+      "market": "pr",
+      "line": 18.5,
+      "side": "over",
+      "modelProb": 0.4566210045662101,
+      "limitOdds": 119,
+      "mean": 18.5,
+      "price": 119,
+      "book": "Fanduel",
+      "streak": 5,
+      "home": false,
+      "alt": true,
+      "h2h": {
+        "games": 4,
+        "hits": 3
+      },
+      "avg": 21,
+      "teamName": "Pacers",
+      "note": "Over 18.5 in 5 straight games."
+    },
+    {
+      "id": "2026-11-22-s-nba-401910032-i-okoro-pra-16.5",
+      "createdAt": "2026-11-22T23:49:32.629Z",
+      "gameStart": "2026-11-23T00:00Z",
+      "gameId": 401910032,
+      "sport": "nba",
+      "kind": "streak",
+      "player": "Isaac Okoro",
+      "team": "CHI",
+      "opponent": "DEN",
+      "market": "pra",
+      "line": 16.5,
+      "side": "over",
+      "modelProb": 0.49504950495049505,
+      "limitOdds": 102,
+      "mean": 16.5,
+      "price": 102,
+      "book": "Betano",
+      "streak": 5,
+      "home": true,
+      "alt": true,
+      "avg": 19.4,
+      "teamName": "Bulls",
+      "note": "Over 16.5 in 5 straight games."
+    },
+    {
+      "id": "2026-11-22-s-nba-401910034-k-oubre-pr-17",
+      "createdAt": "2026-11-22T23:49:32.629Z",
+      "gameStart": "2026-11-23T01:00Z",
+      "gameId": 401910034,
+      "sport": "nba",
+      "kind": "streak",
+      "player": "Kelly Oubre",
+      "team": "IND",
+      "opponent": "NYK",
+      "market": "pr",
+      "line": 17,
+      "side": "over",
+      "modelProb": 0.5780590717299579,
+      "limitOdds": -137,
+      "mean": 17,
+      "price": -137,
+      "book": "Prizepicks",
+      "streak": 5,
+      "home": false,
+      "alt": false,
+      "h2h": {
+        "games": 4,
+        "hits": 3
+      },
+      "split": {
+        "games": 20,
+        "hits": 6
+      },
+      "avg": 21,
+      "teamName": "Pacers",
+      "note": "Over 17 in 5 straight games."
+    },
+    {
+      "id": "2026-11-22-s-nba-401910035-w-richard-pr-8.5",
+      "createdAt": "2026-11-22T23:49:32.629Z",
+      "gameStart": "2026-11-23T01:30Z",
+      "gameId": 401910035,
+      "sport": "nba",
+      "kind": "streak",
+      "player": "Will Richard",
+      "team": "GSW",
+      "opponent": "BOS",
+      "market": "pr",
+      "line": 8.5,
+      "side": "over",
+      "modelProb": 0.6323529411764706,
+      "limitOdds": -172,
+      "mean": 8.5,
+      "price": -172,
+      "book": "Sportsbet",
+      "streak": 5,
+      "home": true,
+      "alt": true,
+      "h2h": {
+        "games": 2,
+        "hits": 2
+      },
+      "avg": 15.6,
+      "teamName": "Warriors",
+      "note": "Over 8.5 in 5 straight games."
+    },
+    {
+      "id": "2026-11-22-s-nba-401910032-i-okoro-pra-12.5",
+      "createdAt": "2026-11-22T23:49:32.629Z",
+      "gameStart": "2026-11-23T00:00Z",
+      "gameId": 401910032,
+      "sport": "nba",
+      "kind": "streak",
+      "player": "Isaac Okoro",
+      "team": "CHI",
+      "opponent": "DEN",
+      "market": "pra",
+      "line": 12.5,
+      "side": "over",
+      "modelProb": 0.7409326424870467,
+      "limitOdds": -286,
+      "mean": 12.5,
+      "price": -286,
+      "book": "Betano",
+      "streak": 5,
+      "home": true,
+      "alt": true,
+      "split": {
+        "games": 4,
+        "hits": 3
+      },
+      "avg": 19.4,
+      "teamName": "Bulls",
+      "note": "Over 12.5 in 5 straight games."
+    },
+    {
+      "id": "2026-11-22-s-nba-401910034-m-bridges-pr-10.5",
+      "createdAt": "2026-11-22T23:49:32.629Z",
+      "gameStart": "2026-11-23T01:00Z",
+      "gameId": 401910034,
+      "sport": "nba",
+      "kind": "streak",
+      "player": "Mikal Bridges",
+      "team": "NYK",
+      "opponent": "IND",
+      "market": "pr",
+      "line": 10.5,
+      "side": "over",
+      "modelProb": 0.8,
+      "limitOdds": -400,
+      "mean": 10.5,
+      "price": -400,
+      "book": "Sportsbet",
+      "streak": 5,
+      "home": true,
+      "alt": true,
+      "h2h": {
+        "games": 14,
+        "hits": 14
+      },
+      "split": {
+        "games": 20,
+        "hits": 12
+      },
+      "avg": 16,
+      "teamName": "Knicks",
+      "note": "Over 10.5 in 5 straight games."
+    },
+    {
+      "id": "2026-11-22-s-nfl-401873077-c-mccaffrey-recYds-14.5",
+      "createdAt": "2026-11-22T23:49:32.629Z",
+      "gameStart": "2026-11-23T01:20Z",
+      "gameId": 401873077,
+      "sport": "nfl",
+      "kind": "streak",
+      "player": "Christian McCaffrey",
+      "team": "SF",
+      "opponent": "MIN",
+      "market": "recYds",
+      "line": 14.5,
+      "side": "over",
+      "modelProb": 0.8,
+      "limitOdds": -400,
+      "mean": 14.5,
+      "price": -400,
+      "book": "Novig",
+      "streak": 14,
+      "home": true,
+      "alt": true,
+      "split": {
+        "games": 7,
+        "hits": 7
+      },
+      "avg": 45.71,
+      "teamName": "49ers",
+      "note": "Over 14.5 in 14 straight games."
+    },
+    {
+      "id": "2026-11-22-s-nfl-401873077-k-cousins-passYds-179.5",
+      "createdAt": "2026-11-22T23:49:32.629Z",
+      "gameStart": "2026-11-23T01:20Z",
+      "gameId": 401873077,
+      "sport": "nfl",
+      "kind": "streak",
+      "player": "Kirk Cousins",
+      "team": "MIN",
+      "opponent": "SF",
+      "market": "passYds",
+      "line": 179.5,
+      "side": "over",
+      "modelProb": 0.7938144329896907,
+      "limitOdds": -385,
+      "mean": 179.5,
+      "price": -385,
+      "book": "Unibet",
+      "streak": 9,
+      "home": false,
+      "alt": true,
+      "h2h": {
+        "games": 1,
+        "hits": 1
+      },
+      "split": {
+        "games": 10,
+        "hits": 10
+      },
+      "avg": 265.22,
+      "teamName": "Vikings",
+      "note": "Over 179.5 in 9 straight games."
+    },
+    {
+      "id": "2026-11-22-s-nhl-2026020375-j-berggren-sog-0.5",
+      "createdAt": "2026-11-22T23:49:32.629Z",
+      "gameStart": "2026-11-23T00:00:00Z",
+      "gameId": 2026020375,
+      "sport": "nhl",
+      "kind": "streak",
+      "player": "Jonatan Berggren",
+      "team": "STL",
+      "opponent": "EDM",
+      "market": "sog",
+      "line": 0.5,
+      "side": "over",
+      "modelProb": 0.8,
+      "limitOdds": -400,
+      "mean": 0.5,
+      "price": -400,
+      "book": "Fanatics",
+      "streak": 6,
+      "home": true,
+      "alt": true,
+      "h2h": {
+        "games": 5,
+        "hits": 4
+      },
+      "split": {
+        "games": 9,
+        "hits": 8
+      },
+      "avg": 2.5,
+      "teamName": "Blues",
+      "note": "Over 0.5 in 6 straight games."
     }
   ],
   "tickets": [],
