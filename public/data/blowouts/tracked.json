@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-22T16:17:03.809Z",
+ "updatedAt": "2026-11-22T17:04:44.344Z",
  "games": [
   {
    "id": "401864545",
@@ -189,8 +189,8 @@
    "date": "2026-11-27",
    "fav": "MISS",
    "dog": "MSST",
-   "spread": 20.5,
-   "total": 57.5,
+   "spread": 19.5,
+   "total": 56.5,
    "status": "pre"
   },
   {
@@ -199,8 +199,8 @@
    "date": "2026-11-27",
    "fav": "UTAH",
    "dog": "WVU",
-   "spread": 20.5,
-   "total": 68.5,
+   "spread": 19.5,
+   "total": 69.5,
    "status": "pre"
   },
   {
@@ -221,6 +221,16 @@
    "dog": "BC",
    "spread": 26.5,
    "total": 53.5,
+   "status": "pre"
+  },
+  {
+   "id": "401856760",
+   "start": "2026-11-28T20:30Z",
+   "date": "2026-11-28",
+   "fav": "UGA",
+   "dog": "GT",
+   "spread": 35.5,
+   "total": 55.5,
    "status": "pre"
   },
   {
