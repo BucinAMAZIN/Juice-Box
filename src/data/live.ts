@@ -18,7 +18,7 @@ export interface GameLive {
 }
 
 async function getJson(url: string): Promise<unknown> {
-  const res = await fetch(url, { headers: { accept: "application/json" }, cache: "no-store" });
+  const res = await fetch(`${url}${url.includes("?") ? "&" : "?"}_=${Date.now()}`, { headers: { accept: "application/json" } });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }

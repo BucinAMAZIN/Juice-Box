@@ -107,7 +107,7 @@ const FBS: League = leagueById("ncaaf")!;
 async function getJson(url: string): Promise<unknown> {
   // A browser may not set user-agent, and sending it forces a CORS preflight that ESPN refuses, so only scripts send it.
   const headers: Record<string, string> = typeof window === "undefined" ? { "user-agent": "Mozilla/5.0", accept: "application/json" } : { accept: "application/json" };
-  const res = await fetch(url, { headers, ...(typeof window === "undefined" ? {} : { cache: "no-store" as const }) });
+  const res = await fetch(typeof window === "undefined" ? url : `${url}${url.includes("?") ? "&" : "?"}_=${Date.now()}`, { headers });
   if (!res.ok) throw new Error(`ESPN ${res.status} for ${url}`);
   return res.json();
 }
