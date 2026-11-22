@@ -270,3 +270,27 @@ body { padding-bottom: calc(56px + env(safe-area-inset-bottom)); }
 .s-live.live-on { background: #d8f0b8; }
 .s-live.live-off { background: #fcd9b0; }
 .s-live.live-wait { background: #e6e1d6; }
+
+/* Phone fit: nothing may be wider than the screen, so the browser never zooms the page out. */
+html, body { max-width: 100%; overflow-x: hidden; -webkit-text-size-adjust: 100%; }
+.view, .view > * { min-width: 0; max-width: 100%; }
+.heat-legend { flex-wrap: wrap; row-gap: 4px; }
+.heat-legend i { flex: 1 1 120px; }
+.heat-legend span:last-child { flex: 1 0 100%; font-weight: 600; }
+@media (max-width: 520px) {
+  .streak { padding: 10px 10px; gap: 8px; }
+  .s-main strong { font-size: 17px; }
+  .s-main .muted { font-size: 13px; }
+  .signals { font-size: 13px; }
+  .s-odds { min-width: 56px; font-size: 16px; }
+  .s-streak span { font-size: 26px; }
+  .s-chance, .s-grades { font-size: 0.78rem; min-width: 0; }
+  .chip { font-size: 15px; }
+}
+@media (max-width: 520px) {
+  .streak { flex-wrap: wrap; align-items: center; }
+  .s-main { flex: 1 1 calc(100% - 40px); }
+  .s-odds, .s-chance, .s-grades, .s-streak { order: 2; }
+  .s-odds { margin-left: auto; }
+  .s-live:empty { display: none; }
+}
