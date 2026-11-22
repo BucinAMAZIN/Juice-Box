@@ -104,11 +104,18 @@ describe("props Hard Rock does not list", () => {
 describe("heat", () => {
   it("scores likelier props higher and maps them from red to green", async () => {
     const { likelihood, heatHue } = await import("../src/engine/heat");
-    const base = { modelProb: 0.7, streak: 5, avg: 5, line: 4.5 } as never;
-    const strong = { modelProb: 0.7, streak: 12, avg: 8, line: 4.5 } as never;
+    const base = { sport: "nba", modelProb: 0.7, streak: 5, avg: 5, line: 4.5 } as never;
+    const strong = { sport: "nba", modelProb: 0.7, streak: 12, avg: 8, line: 4.5 } as never;
     expect(likelihood(strong)).toBeGreaterThan(likelihood(base));
     expect(heatHue(0.4)).toBe(0);
     expect(heatHue(0.9)).toBe(120);
     expect(heatHue(0.675)).toBe(60);
+  });
+});
+
+describe("heat outside the NBA", () => {
+  it("uses the price alone for other sports", async () => {
+    const { likelihood } = await import("../src/engine/heat");
+    expect(likelihood({ sport: "nhl", modelProb: 0.7, streak: 12, avg: 8, line: 4.5 } as never)).toBe(0.7);
   });
 });

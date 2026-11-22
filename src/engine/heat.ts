@@ -7,6 +7,8 @@ import type { HandedPick } from "./types";
  */
 export function likelihood(p: HandedPick): number {
   let s = p.modelProb;
+  // The adjustments were measured on NBA props only. Other sports use the price alone until they have their own graded results.
+  if (p.sport !== "nba") return Math.max(0.01, Math.min(0.99, s));
   const c = p.avg != null && p.line + 0.5 > 0 ? p.avg / (p.line + 0.5) - 1 : null;
   if (c != null) s += c >= 0.25 ? 0.06 : c < 0.1 ? -0.06 : 0;
   if ((p.streak ?? 0) >= 10) s += 0.08;
