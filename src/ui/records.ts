@@ -1,4 +1,5 @@
 import { clear, h } from "./dom";
+import { gradedRows, letter, linemateChance, outOfDay } from "./grading";
 import { cushionOf } from "./filters";
 import { pct } from "./format";
 import type { PicksSource } from "./picks";
@@ -88,10 +89,38 @@ function table(title: string, rows: Map<string, Tally>, name: (k: string) => str
   );
 }
 
+const LETTERS = ["A", "B", "C", "D", "F"] as const;
+
+/** Linemate's grade against ours: for each letter, how many props, how often they hit and the units they made. */
+function gradeComparison(history: DayResult[]): HTMLElement {
+  const rows = outOfDay(gradedRows(history));
+  const days = new Set(rows.map((r) => r.date)).size;
+  const tally = (pick: (r: (typeof rows)[number]) => string | null) => {
+    const m = new Map<string, Tally>(LETTERS.map((l) => [l, empty()]));
+    for (const r of rows) {
+      const k = pick(r);
+      if (k) bump(m.get(k)!, r.won ? "win" : "loss", r.units);
+    }
+    return m;
+  };
+  const lm = tally((r) => letter(linemateChance(r.pick)));
+  const us = tally((r) => (r.ours == null ? null : letter(r.ours)));
+  const cell = (t: Tally) => (t.wins + t.losses === 0 ? "–" : `${t.wins}-${t.losses} · ${hit(t)} · ${u(t.units)}`);
+  return h(
+    "div",
+    { class: "card" },
+    h("h2", {}, "Linemate's grade vs ours"),
+    h("p", { class: "muted" }, "Linemate's grade is what its own numbers say at face value: straight games, home/away split and head to head. Ours is learned from these records, per sport, and refit every time results come in. A is 80%+, B 70%+, C 60%+, D 50%+, F below that. Each day of ours is scored from a model that never saw that day."),
+    days < 2 ? h("p", { class: "caution" }, "Our grade needs at least two graded days before it can be scored fairly, so only Linemate's column is filled in so far.") : null,
+    h("table", {}, h("thead", {}, h("tr", {}, h("th", {}, "Grade"), h("th", {}, "Linemate"), h("th", {}, "Ours"))), h("tbody", {}, ...LETTERS.map((l) => h("tr", {}, h("td", {}, l), h("td", {}, cell(lm.get(l)!)), h("td", {}, cell(us.get(l)!)))))),
+  );
+}
+
 export async function renderRecords(root: HTMLElement, _ledger?: unknown, source: PicksSource = streakSource): Promise<void> {
   clear(root);
   root.append(h("h2", {}, "Records"));
-  const r = summarizeRecords(await loadHistory(source));
+  const history = await loadHistory(source);
+  const r = summarizeRecords(history);
   const o = r.overall;
   if (o.wins + o.losses + o.pushes === 0) {
     root.append(h("p", { class: "empty" }, "Nothing graded yet. Records appear after the first overnight grading."));
@@ -112,6 +141,7 @@ export async function renderRecords(root: HTMLElement, _ledger?: unknown, source
       ),
       n < 200 ? h("p", { class: "caution" }, `Only ${n} graded props. A hot or cold stretch this small is mostly luck.`) : null,
     ),
+    gradeComparison(history),
     table("By sport", r.bySport, (k) => SPORT[k] ?? k),
     table("By streak length", r.byStreak, (k) => k),
     table("By price", r.byPrice, (k) => k),

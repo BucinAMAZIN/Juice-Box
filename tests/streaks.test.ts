@@ -101,21 +101,49 @@ describe("props Hard Rock does not list", () => {
   });
 });
 
-describe("heat", () => {
-  it("scores likelier props higher and maps them from red to green", async () => {
-    const { likelihood, heatHue } = await import("../src/engine/heat");
-    const base = { sport: "nba", modelProb: 0.7, streak: 5, avg: 5, line: 4.5 } as never;
-    const strong = { sport: "nba", modelProb: 0.7, streak: 12, avg: 8, line: 4.5 } as never;
-    expect(likelihood(strong)).toBeGreaterThan(likelihood(base));
-    expect(heatHue(0.4)).toBe(0);
-    expect(heatHue(0.9)).toBe(120);
-    expect(heatHue(0.675)).toBe(60);
+describe("grading systems", () => {
+  const pick = (over: object = {}) => ({ id: "x", sport: "nba", market: "assists", line: 4.5, modelProb: 0.7, limitOdds: -250, price: -250, streak: 6, gameStart: "2026-01-01T00:00Z", ...over }) as never;
+
+  it("grades Linemate's own numbers at face value, weighted by games", async () => {
+    const { linemateChance, letter } = await import("../src/ui/grading");
+    const long = linemateChance(pick({ streak: 14, split: { games: 8, hits: 8 } }));
+    const short = linemateChance(pick({ streak: 5 }));
+    expect(long).toBeGreaterThan(short);
+    expect(short).toBeCloseTo(6 / 7, 5);
+    expect(letter(0.82)).toBe("A");
+    expect(letter(0.45)).toBe("F");
+  });
+
+  it("learns a sport's hit rates from its own graded props and says nothing without enough", async () => {
+    const { fit, ourChance, MIN_GRADED } = await import("../src/ui/grading");
+    const rows = (n: number, sport: string, won: (i: number) => boolean, over: object) =>
+      Array.from({ length: n }, (_, i) => ({ date: "2026-01-01", pick: pick({ sport, ...over }), won: won(i), units: 0 }));
+    const nba = [...rows(40, "nba", (i) => i < 36, { price: -400, limitOdds: -400 }), ...rows(40, "nba", (i) => i < 16, { price: -120, limitOdds: -120 })];
+    const models = fit([...nba, ...rows(MIN_GRADED - 1, "nfl", () => true, {})]);
+    expect(models.has("nfl")).toBe(false);
+    expect(ourChance(pick({ sport: "nfl" }), models)).toBeNull();
+    const short = ourChance(pick({ price: -400, limitOdds: -400 }), models)!;
+    const long = ourChance(pick({ price: -120, limitOdds: -120 }), models)!;
+    expect(short).toBeGreaterThan(0.7);
+    expect(long).toBeLessThan(0.6);
+    expect(short).toBeGreaterThan(long + 0.15);
+  });
+
+  it("scores each day from a model fit on the other days", async () => {
+    const { outOfDay } = await import("../src/ui/grading");
+    const one = Array.from({ length: 40 }, () => ({ date: "d1", pick: pick(), won: true, units: 0 }));
+    expect(outOfDay(one).every((r) => r.ours == null)).toBe(true);
+    const two = [...one, ...one.map((r) => ({ ...r, date: "d2" }))];
+    expect(outOfDay(two).every((r) => r.ours != null)).toBe(true);
   });
 });
 
-describe("heat outside the NBA", () => {
-  it("uses the price alone for other sports", async () => {
-    const { likelihood } = await import("../src/engine/heat");
-    expect(likelihood({ sport: "nhl", modelProb: 0.7, streak: 12, avg: 8, line: 4.5 } as never)).toBe(0.7);
+describe("our tab evidence", () => {
+  it("lists the records behind a prop's grade", async () => {
+    const { fit, evidence } = await import("../src/ui/grading");
+    const p = { id: "x", sport: "nba", market: "assists", line: 4.5, modelProb: 0.7, limitOdds: -400, price: -400, streak: 12, gameStart: "2026-01-01T00:00Z" } as never;
+    const rows = Array.from({ length: 40 }, (_, i) => ({ date: "d", pick: p, won: i < 38, units: 0 }));
+    expect(evidence(p, fit(rows))).toEqual(["10+ straight 38-2", "-300 or shorter 38-2"]);
+    expect(evidence({ ...(p as object), sport: "nfl" } as never, fit(rows))).toEqual([]);
   });
 });

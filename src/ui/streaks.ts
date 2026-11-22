@@ -43,6 +43,10 @@ export interface StreakState {
   /** College football blowouts, shown on the NCAA tab. */
   blow?: { tracked: BlowoutGame[] | null; history: BlowoutGame[] | null };
   filters: Filters;
+  /** What our own graded results have taught us, per sport. */
+  models?: Models;
+  /** Which grade colours the list: Linemate's own numbers, or our graded results. */
+  grading?: "linemate" | "ours";
 }
 
 function signalLine(p: HandedPick): HTMLElement | null {
@@ -55,7 +59,9 @@ function signalLine(p: HandedPick): HTMLElement | null {
   return bits.length ? h("div", { class: "signals" }, bits.join(" · ")) : null;
 }
 
-import { heatHue, likelihood } from "../engine/heat";
+import { heatHue } from "../engine/heat";
+import { type Models, evidence, fit, gradedRows, letter, linemateChance, ourChance } from "./grading";
+import { loadHistory } from "./results";
 
 function row(p: HandedPick, state: StreakState, refresh: () => void): HTMLElement {
   const started = Date.parse(p.gameStart) <= Date.now();
@@ -69,15 +75,18 @@ function row(p: HandedPick, state: StreakState, refresh: () => void): HTMLElemen
     } });
     pick.append(h("label", { class: "add" }, box));
   }
-  const chance = likelihood(p);
-  const hue = heatHue(chance);
+  const ours = ourChance(p, state.models ?? new Map());
+  const lm = linemateChance(p);
+  const mode = state.grading ?? "ours";
+  const chance = mode === "linemate" ? lm : ours;
+  const hue = chance == null ? null : heatHue(chance);
   return h(
     "article",
-    { class: "streak heat", style: `--heat:${hue}`, title: `Estimated chance ${Math.round(chance * 100)}%` },
+    { class: hue == null ? "streak" : "streak heat", ...(hue == null ? {} : { style: `--heat:${hue}` }), title: ours != null ? `Our chance ${Math.round(ours * 100)}%, Linemate ${Math.round(lm * 100)}%` : `Linemate ${Math.round(lm * 100)}%. We have too few graded ${SPORT[p.sport] ?? p.sport} props to grade it ourselves yet, so the colour follows the price.` },
     pick,
-    h("div", { class: "s-main" }, h("strong", {}, propText(p)), h("div", { class: "muted" }, `${p.teamName ?? p.team} vs ${p.opponent} · ${SPORT[p.sport] ?? p.sport.toUpperCase()} · ${started ? "started" : startTime(p.gameStart)}`), signalLine(p)),
+    h("div", { class: "s-main" }, h("strong", {}, propText(p)), h("div", { class: "muted" }, `${p.teamName ?? p.team} vs ${p.opponent} · ${SPORT[p.sport] ?? p.sport.toUpperCase()} · ${started ? "started" : startTime(p.gameStart)}`), signalLine(p), mode === "ours" ? (ours != null ? h("div", { class: "signals" }, `Our results: ${evidence(p, state.models ?? new Map()).join(" · ") || "too few in each slice"}`) : h("div", { class: "signals" }, `No graded ${SPORT[p.sport] ?? p.sport.toUpperCase()} results yet, so no colour. Grading starts at 30.`)) : null),
     p.url && !started ? h("a", { class: "hr s-odds", href: p.url, target: "_blank", rel: "noopener" }, odds(p.price ?? 0)) : h("span", { class: "s-odds off", title: `Linemate has no Hard Rock price for this line, so this is ${p.book ?? "another book"}'s price. Hard Rock may still offer it: check the Hard Rock app.` }, p.price != null ? odds(p.price) : "–", h("small", {}, p.book && p.book !== "Hard Rock" ? `${p.book} · check HR` : "started")),
-    h("div", { class: "s-chance", title: "Estimated chance it hits" }, h("span", {}, `${Math.round(chance * 100)}%`), h("small", {}, "chance")),
+    h("div", { class: "s-grades", title: mode === "linemate" ? "Linemate's grade: what its own numbers say at face value." : "Our grade: learned from our graded win-loss results." }, mode === "linemate" ? h("span", {}, `${letter(lm)} ${Math.round(lm * 100)}%`) : h("span", {}, ours != null ? `${letter(ours)} ${Math.round(ours * 100)}%` : "No data yet")),
     h("div", { class: "s-streak", title: "Straight games over this line" }, h("span", {}, String(p.streak ?? "")), h("small", {}, "streak")),
   );
 }
@@ -169,8 +178,14 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
     tabs.append(h("button", { type: "button", role: "tab", class: "chip", "data-tab": id, onclick: () => { state.tab = id; draw(); } }, label));
   }
   view.append(tabs);
-  const legend = h("div", { class: "heat-legend", "aria-label": "Colour key" }, h("span", {}, "Least likely"), h("i", { "aria-hidden": "true" }), h("span", {}, "Most likely"));
-  view.append(legend, cats, panel, shownNote, bar, content);
+  const legendFor = () => ((state.grading ?? "ours") === "ours" ? "Most likely, by our win-loss results (grey where we have no data)" : "Most likely, by Linemate's numbers");
+  const legendText = h("span", {}, legendFor());
+  const legend = h("div", { class: "heat-legend", "aria-label": "Colour key" }, h("span", {}, "Least likely"), h("i", { "aria-hidden": "true" }), legendText);
+  const modes = h("div", { class: "chips", role: "tablist", "aria-label": "Grading" });
+  for (const [id, label] of [["ours", "Ours (our results)"], ["linemate", "Linemate (their data)"]] as const) {
+    modes.append(h("button", { type: "button", role: "tab", class: "chip", "data-grading": id, "aria-selected": String((state.grading ?? "ours") === id), onclick: () => { state.grading = id; for (const b of modes.children) b.setAttribute("aria-selected", String((b as HTMLElement).dataset.grading === id)); legendText.textContent = legendFor(); draw(); } }, label));
+  }
+  view.append(modes, legend, cats, panel, shownNote, bar, content);
   draw();
   refreshBar();
 }
@@ -189,10 +204,11 @@ export async function renderStreaks(view: HTMLElement, _ledger?: unknown, source
   }
   const body = h("div", {});
   const loadBlow = async () => ({ tracked: await blow.load("tracked").catch(() => null), history: await blow.load("history").catch(() => null) });
-  let state: StreakState = { chosen: new Map(), tab: "multi", filters: loadFilters(), blow: await loadBlow() };
+  const loadModels = async () => fit(gradedRows(await loadHistory(source).catch(() => [])));
+  let state: StreakState = { chosen: new Map(), tab: "multi", filters: loadFilters(), blow: await loadBlow(), models: await loadModels(), grading: "ours" };
   let shown = dates[dates.length - 1]!;
   const load = async (date: string) => {
-    if (date !== shown) state = { chosen: new Map(), tab: state.tab, category: state.category, filters: state.filters, ...(state.blow ? { blow: state.blow } : {}) };
+    if (date !== shown) state = { chosen: new Map(), tab: state.tab, category: state.category, filters: state.filters, ...(state.blow ? { blow: state.blow } : {}), ...(state.models ? { models: state.models } : {}), ...(state.grading ? { grading: state.grading } : {}) };
     shown = date;
     try {
       const day = await source.loadDay(date);
@@ -208,6 +224,7 @@ export async function renderStreaks(view: HTMLElement, _ledger?: unknown, source
   const refresh = async () => {
     status.textContent = "Refreshing…";
     state.blow = await loadBlow();
+    state.models = await loadModels();
     await load(select.value);
     status.textContent = `Updated ${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
   };
