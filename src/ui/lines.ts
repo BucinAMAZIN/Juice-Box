@@ -1,4 +1,5 @@
 import { LEAGUES } from "../data/leagues";
+import { BREAK_EVEN, RULES, RULES_START, ruleRate } from "../engine/rules";
 import { type Cell, type LineGame, type LineRow, cellFor, coverRate, coverResult, fromRow, overRate, slice, totalResult, winRate, withMoneyline } from "../engine/lines";
 import { clear, h } from "./dom";
 import { pct } from "./format";
@@ -75,24 +76,66 @@ export function renderLeague(box: HTMLElement, id: string, all: LineGame[], trac
   box.append(h("section", { class: "records" }, h("h3", {}, "Every slice"), h("div", { class: "scroll" }, h("table", {}, h("thead", {}, h("tr", {}, h("th", {}, ""), h("th", {}, "Games"), h("th", {}, "Over"), h("th", {}, s.ml ? "Fav wins" : "Fav covers"))), h("tbody", {}, ...rows)))));
 }
 
+const RULES_TAB = "rules";
+
+/** Every rule: how it did in the history, how it has done since it was set, and which games on the board fit it. */
+export function renderRules(box: HTMLElement, data: Record<string, { all: LineGame[]; tracked: LineGame[] }>): void {
+  clear(box);
+  const label = (id: string): string => LEAGUES.find((l) => l.id === id)?.label ?? id.toUpperCase();
+  const plays: HTMLElement[] = [];
+  const rows: HTMLElement[] = [];
+  for (const r of RULES) {
+    const d = data[r.league] ?? { all: [], tracked: [] };
+    const hist = ruleRate(r, d.all);
+    const fwd = ruleRate(r, d.tracked.filter((g) => g.date >= RULES_START));
+    for (const g of d.tracked.filter((x) => x.status !== "post" && r.test(x)).sort((a, b) => a.start.localeCompare(b.start))) {
+      plays.push(h("div", { class: "streak" }, h("div", { class: "s-main" }, h("strong", {}, `${label(r.league)}: ${r.lean} ${g.total} · ${g.fav} vs ${g.dog}`), h("div", { class: "signals" }, `${when(g.start)} · ${r.label} (${hist.pct == null ? "–" : pct(hist.pct, 0)} in the history, n=${hist.n})`))));
+    }
+    rows.push(h("tr", {}, h("th", { scope: "row" }, `${label(r.league)} ${r.lean}: ${r.label}`), h("td", {}, hist.pct == null ? "–" : `${pct(hist.pct, 0)} (${hist.n})`), h("td", {}, fwd.n === 0 ? "none yet" : `${fwd.hits}-${fwd.n - fwd.hits} (${pct(fwd.pct ?? 0, 0)})`)));
+  }
+  box.append(
+    h("p", { class: "note" }, `Leans found in the history. Break-even at -110 is ${pct(BREAK_EVEN, 1)}, and most of these clear it by a point or three, which is within what one season of luck can erase. The forward record counts games from ${RULES_START} on and is the real test.`),
+    h("section", {}, h("h3", {}, `Rule plays on the board (${plays.length})`), ...(plays.length ? plays : [h("p", { class: "empty" }, "No game on the board fits a rule right now.")])),
+    h("section", { class: "records" }, h("h3", {}, "Every rule"), h("div", { class: "scroll" }, h("table", {}, h("thead", {}, h("tr", {}, h("th", {}, "Rule"), h("th", {}, "History"), h("th", {}, "Since set"))), h("tbody", {}, ...rows)))),
+  );
+}
+
 export async function renderLines(view: HTMLElement, _ledger?: unknown, source: LinesSource = linesSource): Promise<void> {
   clear(view);
   const chips = h("div", { class: "chips", role: "tablist", "aria-label": "Leagues" });
   const body = h("div", {});
-  let current = LEAGUES[0]!.id;
+  let current = RULES_TAB;
+  const merge = (hist: LineRow[] | null, tracked: LineGame[] | null) => {
+    const trackedGames = (tracked ?? []).map(withMoneyline);
+    const seen = new Set(trackedGames.filter((g) => g.status === "post").map((g) => g.id));
+    return { trackedGames, all: [...(hist ?? []).filter((r) => !seen.has(r[0])).map(fromRow), ...trackedGames.filter((g) => g.status === "post")] };
+  };
   const show = async (id: string) => {
+    if (id === RULES_TAB) {
+      current = id;
+      for (const b of chips.children) b.setAttribute("aria-selected", String((b as HTMLElement).dataset.tab === id));
+      clear(body);
+      body.append(h("p", { class: "empty" }, "Loading…"));
+      const ids = [...new Set(RULES.map((r) => r.league))];
+      const data: Record<string, { all: LineGame[]; tracked: LineGame[] }> = {};
+      await Promise.all(ids.map(async (lid) => {
+        const [hist, tracked] = await Promise.all([source.history(lid).catch(() => null), source.tracked(lid).catch(() => null)]);
+        const m = merge(hist, tracked);
+        data[lid] = { all: m.all, tracked: m.trackedGames };
+      }));
+      if (current === id) renderRules(body, data);
+      return;
+    }
     current = id;
     for (const b of chips.children) b.setAttribute("aria-selected", String((b as HTMLElement).dataset.tab === id));
     clear(body);
     body.append(h("p", { class: "empty" }, "Loading…"));
     const [hist, tracked] = await Promise.all([source.history(id).catch(() => null), source.tracked(id).catch(() => null)]);
     if (current !== id) return;
-    const trackedGames = (tracked ?? []).map(withMoneyline);
-    const seen = new Set(trackedGames.filter((g) => g.status === "post").map((g) => g.id));
-    const all = [...(hist ?? []).filter((r) => !seen.has(r[0])).map(fromRow), ...trackedGames.filter((g) => g.status === "post")];
-    renderLeague(body, id, all, trackedGames);
+    const m = merge(hist, tracked);
+    renderLeague(body, id, m.all, m.trackedGames);
   };
-  for (const l of LEAGUES) chips.append(h("button", { type: "button", role: "tab", class: "chip", "data-tab": l.id, onclick: () => void show(l.id) }, l.label));
+  for (const [id, text] of [[RULES_TAB, "Rules"], ...LEAGUES.map((l) => [l.id, l.label])] as Array<[string, string]>) chips.append(h("button", { type: "button", role: "tab", class: "chip", "data-tab": id, onclick: () => void show(id) }, text));
   view.append(h("p", { class: "note" }, "Every game with a spread and total, tracked to the final score, to find where the over and the favorite pay."), chips, body);
   await show(current);
 }

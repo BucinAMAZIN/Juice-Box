@@ -55,6 +55,8 @@ describe("Lines screen", () => {
     const rows: LineRow[] = Array.from({ length: 90 }, (_, i) => ["h" + i, "2026-01-01T00:00:00Z", "BOS", "NYK", 1, 3 + (i % 9), 215 + (i % 11), 110, 100] as LineRow);
     const board: LineGame = { id: "t1", start: "2099-01-01T00:00:00Z", date: "2099-01-01", fav: "BOS", dog: "NYK", favHome: true, spread: 4.5, total: 220.5, status: "pre", favWin: 0.7, dogWin: 0.4 };
     await renderLines(root, undefined, { history: async (l) => (l === "nba" ? rows : null), tracked: async (l) => (l === "nba" ? [board] : null) });
+    root.querySelector<HTMLButtonElement>('[data-tab="nba"]')!.click();
+    await new Promise((r) => setTimeout(r, 0));
     expect(root.textContent).toContain("90 games with lines");
     expect(root.textContent).toContain("BOS -4.5 vs NYK");
     expect(root.textContent).toContain("records 70% vs 40%");
@@ -80,5 +82,29 @@ describe("moneyline leagues", () => {
     const games = Array.from({ length: 90 }, (_, i) => fromRow(["m" + i, "2026-05-01T00:00:00Z", "A", "B", 1, 110 + (i % 3) * 50, 8 + (i % 2), 5, 2]));
     expect(slice(games).ml).toBe(true);
     expect(slice(games).cells[0]!.label).toContain("favorite");
+  });
+});
+
+import { RULES, RULES_START, ruleRate, ruleWon } from "../src/engine/rules";
+
+describe("rules", () => {
+  const rule = RULES.find((r) => r.id === "nba-under-pickem")!;
+  const game = (spread: number, total: number, fav: number, dog: number, date = "2026-12-01"): LineGame => ({ id: `${spread}${total}${fav}${dog}${date}`, start: `${date}T00:00:00Z`, date, fav: "A", dog: "B", favHome: true, spread, total, status: "post", favScore: fav, dogScore: dog });
+  it("scores a rule on the lean it names and skips pushes", () => {
+    expect(ruleWon(rule, game(1.5, 220, 100, 99))).toBe(true);
+    expect(ruleWon(rule, game(1.5, 190, 100, 99))).toBe(false);
+    expect(ruleWon(rule, game(1.5, 199, 100, 99))).toBeNull();
+    const r = ruleRate(rule, [game(1.5, 220, 100, 99), game(1.5, 190, 100, 99), game(6, 190, 100, 99), game(2, 200, 110, 100)]);
+    expect([r.hits, r.n]).toEqual([1, 3]);
+  });
+  it("lists plays on the board and the forward record on the Rules view", async () => {
+    const root = document.createElement("div");
+    document.body.append(root);
+    const board: LineGame = { id: "b1", start: "2099-01-01T00:00:00Z", date: "2099-01-01", fav: "BOS", dog: "NYK", favHome: true, spread: 1.5, total: 220.5, status: "pre" };
+    const done = game(1, 210, 100, 99, RULES_START);
+    await renderLines(root, undefined, { history: async () => null, tracked: async (l) => (l === "nba" ? [board, done] : null) });
+    expect(root.textContent).toContain("Rule plays on the board (1)");
+    expect(root.textContent).toContain("NBA: under 220.5 · BOS vs NYK");
+    expect(root.textContent).toContain("1-0 (100%)");
   });
 });
