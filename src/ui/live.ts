@@ -17,22 +17,31 @@ export function showProp(row: HTMLElement, pick: HandedPick, game: GameLive | nu
   box.className = `s-live live-${live?.tone ?? "wait"}`;
   box.textContent = "";
   if (live && game) {
-    const stat = game.stat(pick);
+    const stat = game.stat(pick) ?? 0;
     const goal = pick.side === "over" ? Math.floor(pick.line) + 1 : pick.line;
-    const fill = stat == null || goal <= 0 ? 0 : Math.max(0, Math.min(1, stat / goal));
+    const frac = game.status.frac;
+    const pace = game.status.state === "in" && frac >= 0.1 ? stat / frac : null;
+    // The bar runs from zero to whichever is furthest: the line, the number so far, or where he is on pace to finish.
+    const scale = Math.max(goal, stat, pace ?? 0) * 1.05 || 1;
+    const at = (x: number): string => `${Math.max(0, Math.min(100, Math.round((x / scale) * 100)))}%`;
     const bar = document.createElement("div");
     bar.className = "s-bar";
     const inner = document.createElement("i");
-    inner.style.width = `${Math.round(fill * 100)}%`;
+    inner.style.width = at(stat);
     bar.append(inner);
-    if (game.status.state === "in") {
-      const tick = document.createElement("b");
-      tick.title = "Where it needs to be by now";
-      tick.style.left = `${Math.round(Math.max(0, Math.min(1, game.status.frac)) * 100)}%`;
-      bar.append(tick);
+    const mark = document.createElement("b");
+    mark.title = "The line: what the prop needs";
+    mark.style.left = at(goal);
+    bar.append(mark);
+    if (pace != null) {
+      const p = document.createElement("u");
+      p.title = "Where he is on pace to finish";
+      p.style.left = at(pace);
+      bar.append(p);
     }
+    const paceText = pace != null && !live.text.includes("on pace") ? ` · pace ${pace.toFixed(pace < 10 ? 1 : 0)}` : "";
     const label = document.createElement("span");
-    label.textContent = game.status.score ? `${live.text} · ${game.status.score}` : live.text;
+    label.textContent = `${live.text}${paceText}${game.status.score ? ` · ${game.status.score}` : ""}`;
     box.append(label, bar);
   } else box.textContent = live?.text ?? "";
   row.dataset.live = live?.tone ?? "";
