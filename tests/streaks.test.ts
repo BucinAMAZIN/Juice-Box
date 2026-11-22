@@ -100,3 +100,15 @@ describe("props Hard Rock does not list", () => {
     expect(passes(picks[0]!, { ...defaultFilters(), hrOnly: true })).toBe(false);
   });
 });
+
+describe("heat", () => {
+  it("scores likelier props higher and maps them from red to green", async () => {
+    const { likelihood, heatHue } = await import("../src/engine/heat");
+    const base = { modelProb: 0.7, streak: 5, avg: 5, line: 4.5 } as never;
+    const strong = { modelProb: 0.7, streak: 12, avg: 8, line: 4.5 } as never;
+    expect(likelihood(strong)).toBeGreaterThan(likelihood(base));
+    expect(heatHue(0.4)).toBe(0);
+    expect(heatHue(0.9)).toBe(120);
+    expect(heatHue(0.675)).toBe(60);
+  });
+});

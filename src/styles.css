@@ -226,3 +226,10 @@ body { padding-bottom: calc(56px + env(safe-area-inset-bottom)); }
 .cats::-webkit-scrollbar { display: none; }
 .cats .chip { flex: none; min-height: 34px; font-size: 13px; padding: 0 10px; }
 .cats .chip[aria-selected="true"] { background: var(--accent); color: var(--text); }
+
+/* Streak rows are tinted by estimated chance: green most likely, red least. */
+.streak.heat { background: hsl(var(--heat) 70% 90%); border-left-width: 10px; border-left-color: hsl(var(--heat) 65% 40%); }
+.s-chance { display: flex; flex-direction: column; align-items: center; min-width: 44px; font-weight: 800; }
+.s-chance small { font-weight: 600; font-size: 0.65rem; opacity: 0.7; }
+.heat-legend { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; font-weight: 700; margin: 6px 0; }
+.heat-legend i { flex: 1; height: 10px; border: 2px solid var(--text); border-radius: 6px; background: linear-gradient(90deg, hsl(0 70% 60%), hsl(60 75% 60%), hsl(120 60% 50%)); }

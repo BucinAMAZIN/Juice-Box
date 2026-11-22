@@ -55,6 +55,8 @@ function signalLine(p: HandedPick): HTMLElement | null {
   return bits.length ? h("div", { class: "signals" }, bits.join(" · ")) : null;
 }
 
+import { heatHue, likelihood } from "../engine/heat";
+
 function row(p: HandedPick, state: StreakState, refresh: () => void): HTMLElement {
   const started = Date.parse(p.gameStart) <= Date.now();
   const sid = p.sid ?? "";
@@ -67,12 +69,15 @@ function row(p: HandedPick, state: StreakState, refresh: () => void): HTMLElemen
     } });
     pick.append(h("label", { class: "add" }, box));
   }
+  const chance = likelihood(p);
+  const hue = heatHue(chance);
   return h(
     "article",
-    { class: "streak" },
+    { class: "streak heat", style: `--heat:${hue}`, title: `Estimated chance ${Math.round(chance * 100)}%` },
     pick,
     h("div", { class: "s-main" }, h("strong", {}, propText(p)), h("div", { class: "muted" }, `${p.teamName ?? p.team} vs ${p.opponent} · ${SPORT[p.sport] ?? p.sport.toUpperCase()} · ${started ? "started" : startTime(p.gameStart)}`), signalLine(p)),
     p.url && !started ? h("a", { class: "hr s-odds", href: p.url, target: "_blank", rel: "noopener" }, odds(p.price ?? 0)) : h("span", { class: "s-odds off", title: `Linemate has no Hard Rock price for this line, so this is ${p.book ?? "another book"}'s price. Hard Rock may still offer it: check the Hard Rock app.` }, p.price != null ? odds(p.price) : "–", h("small", {}, p.book && p.book !== "Hard Rock" ? `${p.book} · check HR` : "started")),
+    h("div", { class: "s-chance", title: "Estimated chance it hits" }, h("span", {}, `${Math.round(chance * 100)}%`), h("small", {}, "chance")),
     h("div", { class: "s-streak", title: "Straight games over this line" }, h("span", {}, String(p.streak ?? "")), h("small", {}, "streak")),
   );
 }
@@ -164,7 +169,8 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
     tabs.append(h("button", { type: "button", role: "tab", class: "chip", "data-tab": id, onclick: () => { state.tab = id; draw(); } }, label));
   }
   view.append(tabs);
-  view.append(cats, panel, shownNote, bar, content);
+  const legend = h("div", { class: "heat-legend", "aria-label": "Colour key" }, h("span", {}, "Least likely"), h("i", { "aria-hidden": "true" }), h("span", {}, "Most likely"));
+  view.append(legend, cats, panel, shownNote, bar, content);
   draw();
   refreshBar();
 }
