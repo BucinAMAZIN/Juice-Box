@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-22T13:50:30.178Z",
+ "updatedAt": "2026-11-22T15:45:23.998Z",
  "games": [
   {
    "id": "401864545",
@@ -194,12 +194,32 @@
    "status": "pre"
   },
   {
+   "id": "401856880",
+   "start": "2026-11-28T02:00Z",
+   "date": "2026-11-27",
+   "fav": "UTAH",
+   "dog": "WVU",
+   "spread": 20.5,
+   "total": 68.5,
+   "status": "pre"
+  },
+  {
    "id": "401858314",
    "start": "2026-11-28T17:00Z",
    "date": "2026-11-28",
    "fav": "ND",
    "dog": "SYR",
    "spread": 24.5,
+   "total": 52.5,
+   "status": "pre"
+  },
+  {
+   "id": "401858538",
+   "start": "2026-11-29T00:00Z",
+   "date": "2026-11-28",
+   "fav": "IU",
+   "dog": "PUR",
+   "spread": 22.5,
    "total": 52.5,
    "status": "pre"
   }
