@@ -99,3 +99,57 @@ export function gameLive(
   const side = margin > 0 ? `${g.fav} covering by ${+margin.toFixed(1)}` : margin < 0 ? `${g.dog} covering by ${+(-margin).toFixed(1)}` : "spread is a push";
   return { tone: done ? "hit" : "on", text: `${tag} · ${score} · ${side} · ${total}` };
 }
+
+/** One lane (spread or total) of a game card, drawn as a bar. */
+export interface LaneLive {
+  tone: "hit" | "miss" | "on" | "off";
+  text: string;
+  /** Bar fill, 0 to 1. For a spread lane the bar is centred: `center` is true and fill is signed (-1 short .. 1 covering). */
+  fill: number;
+  center: boolean;
+  /** Where the bar should be by now (total lanes only), 0 to 1. */
+  tick: number | null;
+}
+
+/** Points of margin that fill a spread bar completely. */
+const MARGIN_SCALE: Record<string, number> = { nfl: 14, ncaaf: 14, nba: 15, ncaab: 15, wnba: 15, nhl: 3, mlb: 4 };
+
+type GameScore = { state: GameState; homeScore: number | null; awayScore: number | null };
+
+/** The live score line for a game card's banner. */
+export function scoreLine(g: { fav: string; dog: string; favHome: boolean }, game: GameScore & { detail?: string }): string | null {
+  if (game.state === "pre" || game.homeScore == null || game.awayScore == null) return null;
+  const fav = g.favHome ? game.homeScore : game.awayScore;
+  const dog = g.favHome ? game.awayScore : game.homeScore;
+  return `${game.state === "post" ? "FINAL" : `LIVE ${game.detail ?? ""}`.trim()} · ${g.fav} ${fav} - ${g.dog} ${dog}`;
+}
+
+/** How our spread (or moneyline) call is doing: margin on our side against what it needs. */
+export function spreadLane(side: "favorite" | "underdog", g: { favHome: boolean; spread: number; ml?: number }, game: GameScore, league: string): LaneLive | null {
+  if (game.state === "pre" || game.homeScore == null || game.awayScore == null) return null;
+  const fav = g.favHome ? game.homeScore : game.awayScore;
+  const dog = g.favHome ? game.awayScore : game.homeScore;
+  const done = game.state === "post";
+  const raw = g.ml != null ? fav - dog : fav - dog - g.spread;
+  const m = side === "favorite" ? raw : -raw;
+  const scale = MARGIN_SCALE[league] ?? 10;
+  const fill = Math.max(-1, Math.min(1, m / scale));
+  const abs = +Math.abs(m).toFixed(1);
+  const word = g.ml != null ? (m > 0 ? `Winning by ${abs}` : m < 0 ? `Losing by ${abs}` : "Tied") : m > 0 ? `Covering by ${abs}` : m < 0 ? `${abs} short of covering` : "Push";
+  return { tone: done ? (m > 0 ? "hit" : "miss") : m > 0 ? "on" : "off", text: done ? `FINAL · ${word}` : word, fill, center: true, tick: null };
+}
+
+/** How our total call is doing: points so far against the total, with where it should be by now. */
+export function totalLane(side: "over" | "under", g: { total: number }, game: GameScore, frac: number): LaneLive | null {
+  if (game.state === "pre" || game.homeScore == null || game.awayScore == null) return null;
+  const sum = game.homeScore + game.awayScore;
+  const done = game.state === "post";
+  const fill = Math.max(0, Math.min(1, sum / g.total));
+  const pace = !done && frac >= 0.1 ? Math.round(sum / frac) : null;
+  const note = `${sum} of ${g.total}${pace == null ? "" : ` · pace ${pace}`}`;
+  if (side === "over" && sum > g.total) return { tone: done ? "hit" : "hit", text: `${done ? "FINAL · " : ""}${sum} of ${g.total} · OVER`, fill: 1, center: false, tick: done ? null : frac };
+  if (side === "under" && sum > g.total) return { tone: "miss", text: `${done ? "FINAL · " : ""}${sum} of ${g.total} · OVER`, fill: 1, center: false, tick: done ? null : frac };
+  if (done) return { tone: side === "under" ? "hit" : "miss", text: `FINAL · ${sum} of ${g.total} · UNDER`, fill, center: false, tick: null };
+  const on = pace == null ? true : side === "over" ? pace > g.total : pace < g.total;
+  return { tone: on ? "on" : "off", text: note, fill, center: false, tick: frac };
+}

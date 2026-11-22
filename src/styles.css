@@ -319,3 +319,18 @@ html, body { max-width: 100%; overflow-x: hidden; -webkit-text-size-adjust: 100%
   .s-odds, .s-chance, .s-grades, .s-streak { order: 0; }
   .s-side .s-odds { font-size: 16px; }
 }
+
+/* Lines: each lane gets its own live bar. */
+.s-live.live-on, .s-live.live-wait { background: #fff; }
+.gamecard > .s-live { display: block; font-size: 0.8rem; }
+.lane-live { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; padding-top: 6px; border-top: 2px dashed rgba(0,0,0,.35); font-size: 0.78rem; font-weight: 800; }
+.lane-live[hidden] { display: none; }
+.lane-live .s-bar { height: 12px; }
+.lane-live .s-bar i { opacity: 1; }
+.lane-live .s-bar.centred i { border-radius: 0; }
+.lane-live .s-bar b.mid { width: 2px; background: var(--text); }
+.lane-live.live-on .s-bar i, .lane-live.live-hit .s-bar i { background: #1f9d3a; }
+.lane-live.live-off .s-bar i { background: #e07b12; }
+.lane-live.live-miss .s-bar i { background: #c8341c; }
+.lane-live.live-hit > span { color: #0b6b2e; }
+.lane-live.live-miss > span { color: #a3240f; }

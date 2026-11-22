@@ -9,7 +9,7 @@ import { type TeamTrend, type TrendMarket, type TrendOutcome, MARKET_TEXT, trend
 import { letter } from "./grading";
 import { odds } from "./streaks";
 import { gameFrac, type ScoreTarget, watchScores } from "./live";
-import { gameLive, trendLive } from "../engine/live";
+import { type LaneLive, gameLive, scoreLine, spreadLane, totalLane, trendLive } from "../engine/live";
 import { canonTeam } from "../engine/teamtrends";
 import { clear, h } from "./dom";
 import { pct } from "./format";
@@ -52,7 +52,7 @@ const TAG: Record<Tone, string> = { sweet: "Sweet spot", lean: "Lean", above: "S
 const strengthOf = (l: Lean): number => Math.max(...[l.total, l.spread].map((c) => (c == null ? -1 : c.pct - c.breakEven + (c.grade === "sweet spot" ? 0.1 : c.grade === "lean" ? 0.03 : 0))));
 const barPos = (x: number): string => `${Math.max(0, Math.min(100, Math.round(((x - 0.4) / 0.3) * 100)))}%`;
 
-function callBox(kind: "total" | "spread", c: Call | null, g: LineGame): HTMLElement {
+function callBox(kind: "total" | "spread", c: Call | null, g: LineGame, slot?: HTMLElement): HTMLElement {
   const tone = toneOf(c);
   const name = kind === "total" ? "Total" : c?.note === "moneyline" ? "Moneyline" : "Spread";
   const head = h("div", { class: "cb-head" }, h("span", { class: "cb-name" }, name), h("span", { class: "cb-tag" }, TAG[tone]));
@@ -64,20 +64,39 @@ function callBox(kind: "total" | "spread", c: Call | null, g: LineGame): HTMLEle
     h("div", { class: "cb-call" }, callText(c, g, kind)),
     h("div", { class: "cb-bar", role: "img", "aria-label": `${pct(c.pct, 0)} hit rate, ${pct(c.breakEven, 0)} needed to break even` }, h("div", { class: "cb-fill", style: `width:${barPos(c.pct)}` }), h("div", { class: "cb-tick", style: `left:${barPos(c.breakEven)}` })),
     h("div", { class: "cb-note" }, h("strong", {}, pct(c.pct, 0)), ` of ${c.n} ${c.note && c.note !== "moneyline" ? `games (${c.note})` : "games"}`),
+    ...(slot ? [slot] : []),
   );
+}
+
+/** Draw a lane's live reading (text plus bar) into its slot. */
+function drawLane(slot: HTMLElement, lane: LaneLive | null): void {
+  slot.hidden = lane == null;
+  slot.textContent = "";
+  slot.className = `lane-live live-${lane?.tone ?? "wait"}`;
+  if (!lane) return;
+  const bar = h("div", { class: lane.center ? "s-bar centred" : "s-bar" });
+  const fill = h("i", {});
+  if (lane.center) { fill.style.left = lane.fill >= 0 ? "50%" : `${50 + lane.fill * 50}%`; fill.style.width = `${Math.abs(lane.fill) * 50}%`; }
+  else fill.style.width = `${Math.round(lane.fill * 100)}%`;
+  bar.append(fill);
+  if (lane.center) bar.append(h("b", { class: "mid", style: "left:50%" }));
+  else if (lane.tick != null) bar.append(h("b", { style: `left:${Math.round(Math.max(0, Math.min(1, lane.tick)) * 100)}%`, title: "Where it should be by now" }));
+  slot.append(h("span", {}, lane.text), bar);
 }
 
 /** One game: who is favored and when, then a box for the spread call and a box for the total call. */
 function gameCard(g: LineGame, lean: Lean, league?: string, extra = "", live?: { league: string; targets: ScoreTarget[]; ml: boolean }): HTMLElement {
   const fav = `${g.fav} ${g.ml != null ? `-${g.ml}` : g.spread > 0 ? `-${g.spread}` : "pick'em"}`;
   const liveBox = h("div", { class: "s-live", hidden: "" });
+  const spreadSlot = h("div", { class: "lane-live", hidden: "" });
+  const totalSlot = h("div", { class: "lane-live", hidden: "" });
   const card = h(
     "article",
     { class: "gamecard" },
     h("div", { class: "gc-top" }, h("h4", {}, `${league ? `${league.toUpperCase()} · ` : ""}${fav} vs ${g.dog}`), h("span", { class: "gc-when" }, when(g.start))),
     h("div", { class: "gc-meta" }, `Total ${g.total}${g.favWin != null && g.dogWin != null ? ` · records ${pct(g.favWin, 0)} vs ${pct(g.dogWin, 0)}` : ""}${extra}`),
     liveBox,
-    h("div", { class: "lanes" }, callBox("spread", lean.spread, g), callBox("total", lean.total, g)),
+    h("div", { class: "lanes" }, callBox("spread", lean.spread, g, spreadSlot), callBox("total", lean.total, g, totalSlot)),
   );
   if (live) {
     live.targets.push({
@@ -86,10 +105,15 @@ function gameCard(g: LineGame, lean: Lean, league?: string, extra = "", live?: {
       start: g.start,
       update: (games) => {
         const game = games.find((x) => x.id === g.id);
-        const out = game ? gameLive({ ...g, ...(live.ml && g.ml != null ? { ml: g.ml } : {}) }, game, gameFrac(live.league, game)) : null;
-        liveBox.hidden = out == null;
-        liveBox.textContent = out?.text ?? "";
-        liveBox.className = `s-live live-${out?.tone ?? "wait"}`;
+        const gl = { ...g, ...(live.ml && g.ml != null ? { ml: g.ml } : {}) };
+        const line = game ? scoreLine(g, game) : null;
+        liveBox.hidden = line == null;
+        liveBox.textContent = line ?? "";
+        liveBox.className = `s-live live-${game?.state === "post" ? "wait" : "on"}`;
+        const sp = lean.spread?.side;
+        drawLane(spreadSlot, game && (sp === "favorite" || sp === "underdog") ? spreadLane(sp, gl, game, live.league) : null);
+        const tt = lean.total?.side;
+        drawLane(totalSlot, game && (tt === "over" || tt === "under") ? totalLane(tt, g, game, gameFrac(live.league, game)) : null);
       },
     });
   }
