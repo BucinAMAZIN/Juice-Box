@@ -1,6 +1,7 @@
 import { LEAGUES } from "../data/leagues";
 import { BREAK_EVEN, RULES, RULES_START, ruleRate } from "../engine/rules";
 import { type Cell, type LineGame, type LineRow, cellFor, coverRate, coverResult, fromRow, overRate, slice, totalResult, winRate, withMoneyline } from "../engine/lines";
+import { type Call, callText, leanFor } from "../engine/leans";
 import { clear, h } from "./dom";
 import { pct } from "./format";
 import { getJson } from "./picks";
@@ -21,6 +22,9 @@ export const linesSource: LinesSource = {
 
 const rateText = (r: { n: number; pct: number | null }): string => (r.pct == null ? "none yet" : `${pct(r.pct, 0)} (n=${r.n})`);
 const when = (iso: string): string => new Date(iso).toLocaleString([], { weekday: "short", hour: "numeric", minute: "2-digit" });
+const GRADE_TEXT: Record<Call["grade"], string> = { "sweet spot": "sweet spot", lean: "lean", slight: "slight lean" };
+export const leanLine = (c: Call | null, g: LineGame, kind: "total" | "spread"): string =>
+  c == null ? `${kind === "total" ? "Total" : "Spread"}: not enough similar games` : `${kind === "total" ? "Total" : c.note === "moneyline" ? "Moneyline" : "Spread"}: ${callText(c, g, kind)} · ${GRADE_TEXT[c.grade]} · ${pct(c.pct, 0)} of ${c.n} ${c.note && c.note !== "moneyline" ? `games (${c.note})` : "similar games"} (break-even ${pct(c.breakEven, 0)})`;
 const PICK_TEXT: Record<NonNullable<Cell["pick"]>, string> = { over: "over", under: "under", favorite: "favorite covers", underdog: "underdog covers" };
 
 function cellLine(c: Cell, ml: boolean): HTMLElement {
@@ -52,7 +56,8 @@ export function renderLeague(box: HTMLElement, id: string, all: LineGame[], trac
   for (const g of upcoming) {
     const c = cellFor(g, s);
     const flag = c?.pick ? ` · sweet spot: ${PICK_TEXT[c.pick]}` : "";
-    sec.append(h("div", { class: "streak" }, h("div", { class: "s-main" }, h("strong", {}, `${g.fav} ${g.ml != null ? `-${g.ml}` : g.spread > 0 ? `-${g.spread}` : "pick'em"} vs ${g.dog}`), h("div", { class: "signals" }, `${when(g.start)} · total ${g.total}${g.favWin != null && g.dogWin != null ? ` · records ${pct(g.favWin, 0)} vs ${pct(g.dogWin, 0)}` : ""}${flag}`))));
+    const lean = leanFor(g, all, id, s.ml);
+    sec.append(h("div", { class: "streak" }, h("div", { class: "s-main" }, h("strong", {}, `${g.fav} ${g.ml != null ? `-${g.ml}` : g.spread > 0 ? `-${g.spread}` : "pick'em"} vs ${g.dog}`), h("div", { class: "signals" }, `${when(g.start)} · total ${g.total}${g.favWin != null && g.dogWin != null ? ` · records ${pct(g.favWin, 0)} vs ${pct(g.dogWin, 0)}` : ""}${flag}`), h("div", { class: "signals" }, leanLine(lean.total, g, "total")), h("div", { class: "signals" }, leanLine(lean.spread, g, "spread")))));
   }
   box.append(sec);
 
@@ -77,6 +82,23 @@ export function renderLeague(box: HTMLElement, id: string, all: LineGame[], trac
 }
 
 const RULES_TAB = "rules";
+const BOARD_TAB = "board";
+
+/** Every game on the board in every league, each with its lean on the total and the spread. */
+export function renderBoard(box: HTMLElement, data: Record<string, { all: LineGame[]; tracked: LineGame[] }>): void {
+  clear(box);
+  const rows: Array<{ g: LineGame; id: string; ml: boolean }> = [];
+  for (const [id, d] of Object.entries(data)) for (const g of d.tracked.filter((x) => x.status !== "post")) rows.push({ g, id, ml: d.all.some((x) => x.ml != null) });
+  rows.sort((a, b) => a.g.start.localeCompare(b.g.start));
+  box.append(h("p", { class: "note" }, "Each game gets a lean on the total and the spread from the finished games closest to it in spread and total. Sweet spot means a pattern that held up season by season. Lean means the 95% range sits above 50%. Slight lean is just the better side of a near coin flip, and most closing lines are close to efficient, so treat a slight lean as a tiebreaker only. Break-even at -110 is 52.4%."));
+  const sec = h("section", {}, h("h3", {}, `All games on the board (${rows.length})`));
+  if (rows.length === 0) sec.append(h("p", { class: "empty" }, "No games with a line on the board right now."));
+  for (const { g, id, ml } of rows) {
+    const lean = leanFor(g, data[id]!.all, id, ml);
+    sec.append(h("div", { class: "streak" }, h("div", { class: "s-main" }, h("strong", {}, `${id.toUpperCase()}: ${g.fav} ${g.ml != null ? `-${g.ml}` : g.spread > 0 ? `-${g.spread}` : "pick'em"} vs ${g.dog}`), h("div", { class: "signals" }, `${when(g.start)} · total ${g.total}`), h("div", { class: "signals" }, leanLine(lean.total, g, "total")), h("div", { class: "signals" }, leanLine(lean.spread, g, "spread")))));
+  }
+  box.append(sec);
+}
 
 /** Every rule: how it did in the history, how it has done since it was set, and which games on the board fit it. */
 export function renderRules(box: HTMLElement, data: Record<string, { all: LineGame[]; tracked: LineGame[] }>): void {
@@ -104,13 +126,27 @@ export async function renderLines(view: HTMLElement, _ledger?: unknown, source: 
   clear(view);
   const chips = h("div", { class: "chips", role: "tablist", "aria-label": "Leagues" });
   const body = h("div", {});
-  let current = RULES_TAB;
+  let current = BOARD_TAB;
   const merge = (hist: LineRow[] | null, tracked: LineGame[] | null) => {
     const trackedGames = (tracked ?? []).map(withMoneyline);
     const seen = new Set(trackedGames.filter((g) => g.status === "post").map((g) => g.id));
     return { trackedGames, all: [...(hist ?? []).filter((r) => !seen.has(r[0])).map(fromRow), ...trackedGames.filter((g) => g.status === "post")] };
   };
   const show = async (id: string) => {
+    if (id === BOARD_TAB) {
+      current = id;
+      for (const b of chips.children) b.setAttribute("aria-selected", String((b as HTMLElement).dataset.tab === id));
+      clear(body);
+      body.append(h("p", { class: "empty" }, "Loading…"));
+      const data: Record<string, { all: LineGame[]; tracked: LineGame[] }> = {};
+      await Promise.all(LEAGUES.map(async (l) => {
+        const [hist, tracked] = await Promise.all([source.history(l.id).catch(() => null), source.tracked(l.id).catch(() => null)]);
+        const m = merge(hist, tracked);
+        data[l.id] = { all: m.all, tracked: m.trackedGames };
+      }));
+      if (current === id) renderBoard(body, data);
+      return;
+    }
     if (id === RULES_TAB) {
       current = id;
       for (const b of chips.children) b.setAttribute("aria-selected", String((b as HTMLElement).dataset.tab === id));
@@ -135,7 +171,7 @@ export async function renderLines(view: HTMLElement, _ledger?: unknown, source: 
     const m = merge(hist, tracked);
     renderLeague(body, id, m.all, m.trackedGames);
   };
-  for (const [id, text] of [[RULES_TAB, "Rules"], ...LEAGUES.map((l) => [l.id, l.label])] as Array<[string, string]>) chips.append(h("button", { type: "button", role: "tab", class: "chip", "data-tab": id, onclick: () => void show(id) }, text));
+  for (const [id, text] of [[BOARD_TAB, "All games"], [RULES_TAB, "Rules"], ...LEAGUES.map((l) => [l.id, l.label])] as Array<[string, string]>) chips.append(h("button", { type: "button", role: "tab", class: "chip", "data-tab": id, onclick: () => void show(id) }, text));
   view.append(h("p", { class: "note" }, "Every game with a spread and total, tracked to the final score, to find where the over and the favorite pay."), chips, body);
   await show(current);
 }

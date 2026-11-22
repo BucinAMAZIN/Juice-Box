@@ -103,8 +103,39 @@ describe("rules", () => {
     const board: LineGame = { id: "b1", start: "2099-01-01T00:00:00Z", date: "2099-01-01", fav: "BOS", dog: "NYK", favHome: true, spread: 1.5, total: 220.5, status: "pre" };
     const done = game(1, 210, 100, 99, RULES_START);
     await renderLines(root, undefined, { history: async () => null, tracked: async (l) => (l === "nba" ? [board, done] : null) });
+    (root.querySelector('[data-tab="rules"]') as HTMLElement).click();
+    await new Promise((r) => setTimeout(r, 20));
     expect(root.textContent).toContain("Rule plays on the board (1)");
     expect(root.textContent).toContain("NBA: under 220.5 · BOS vs NYK");
     expect(root.textContent).toContain("1-0 (100%)");
+  });
+});
+
+describe("leans for every game", () => {
+  it("leans over where similar games went over and gives every game a call", async () => {
+    const { leanFor, callText } = await import("../src/engine/leans");
+    const hist: LineGame[] = [];
+    for (let i = 0; i < 100; i++) hist.push(g(5, 200, 110, 100, `h${i}`)); // 210 points, all over; favorite wins by 10, covers
+    const board: LineGame = { id: "x", start: "2099-01-01T00:00:00Z", date: "2099-01-01", fav: "BOS", dog: "NYK", favHome: true, spread: 5, total: 200, status: "pre" };
+    const lean = leanFor(board, hist, "nba", false);
+    expect(lean.total).toMatchObject({ side: "over", grade: "lean", n: 60 });
+    expect(lean.spread).toMatchObject({ side: "favorite" });
+    expect(callText(lean.total!, board, "total")).toBe("Over 200");
+    expect(callText(lean.spread!, board, "spread")).toBe("BOS -5");
+  });
+  it("makes no call without enough similar games", async () => {
+    const { leanFor } = await import("../src/engine/leans");
+    const board: LineGame = { id: "x", start: "2099-01-01T00:00:00Z", date: "2099-01-01", fav: "A", dog: "B", favHome: true, spread: 5, total: 200, status: "pre" };
+    expect(leanFor(board, [g(5, 200, 110, 100)], "nba", false)).toEqual({ total: null, spread: null });
+  });
+  it("shows leans for every league on the All games view", async () => {
+    const root = document.createElement("div");
+    document.body.append(root);
+    const board: LineGame = { id: "b1", start: "2099-01-01T00:00:00Z", date: "2099-01-01", fav: "BOS", dog: "NYK", favHome: true, spread: 5, total: 200, status: "pre" };
+    const hist = Array.from({ length: 100 }, (_, i) => toRow(g(5, 200, 110, 100, `h${i}`))!);
+    await renderLines(root, undefined, { history: async () => hist as LineRow[], tracked: async (l) => (l === "nba" ? [board] : null) });
+    expect(root.textContent).toContain("All games on the board (1)");
+    expect(root.textContent).toContain("Total: Over 200 · lean");
+    expect(root.textContent).toContain("Spread: BOS -5");
   });
 });
