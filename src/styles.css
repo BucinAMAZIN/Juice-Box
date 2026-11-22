@@ -336,3 +336,9 @@ html, body { max-width: 100%; overflow-x: hidden; -webkit-text-size-adjust: 100%
 .lane-live.live-miss > span { color: #a3240f; }
 .lanes .callbox.puck, .lanes > :nth-child(3) { grid-column: 1 / -1; }
 .s-bar u { position: absolute; top: -9px; width: 0; height: 0; margin-left: -5px; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 8px solid currentColor; text-decoration: none; }
+
+/* Injury tags on prop rows. */
+.s-inj { display: inline-block; margin-top: 4px; padding: 2px 8px; border: 2px solid var(--text); border-radius: 999px; font-size: 0.78rem; font-weight: 800; }
+.s-inj.inj-out { background: #c8341c; color: #fff; }
+.s-inj.inj-flag { background: #ffd23f; color: #111; }
+.streak.is-out { opacity: 0.55; }

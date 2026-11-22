@@ -62,6 +62,7 @@ function signalLine(p: HandedPick): HTMLElement | null {
 import { heatHue } from "../engine/heat";
 import { type Models, evidence, fit, gradedRows, letter, linemateChance, ourChance } from "./grading";
 import { loadHistory } from "./results";
+import { applyInjury, watchInjuries } from "./injuries";
 import { applyCached, watchProps } from "./live";
 
 function row(p: HandedPick, state: StreakState, refresh: () => void): HTMLElement {
@@ -94,6 +95,7 @@ function row(p: HandedPick, state: StreakState, refresh: () => void): HTMLElemen
     h("div", { class: "s-live", hidden: "" }),
   );
   applyCached(article, p);
+  applyInjury(article, p);
   return article;
 }
 
@@ -241,4 +243,5 @@ export async function renderStreaks(view: HTMLElement, _ledger?: unknown, source
   await load(shown);
   // Live tracking: while games are on, each prop row shows the player's number so far against the line.
   watchProps(view, () => shownPicks);
+  watchInjuries(view, () => shownPicks);
 }
