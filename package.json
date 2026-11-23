@@ -14,6 +14,7 @@
     "grade": "tsx scripts/run-grade.ts",
     "links": "tsx scripts/run-links.ts",
     "streaks": "tsx scripts/run-streaks.ts",
+    "minutes": "tsx scripts/run-minutes.ts",
     "grade-streaks": "tsx scripts/run-grade-streaks.ts",
     "blowouts": "tsx scripts/run-blowouts.ts",
     "team-trends": "tsx scripts/run-team-trends.ts",

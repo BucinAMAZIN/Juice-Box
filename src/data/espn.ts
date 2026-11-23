@@ -187,6 +187,33 @@ export async function loadNbaSeasonAverages(date: string, pages = 2): Promise<Se
   return [...byKey.values()];
 }
 
+/** Average minutes per game by player key, from a byathlete page. */
+export function parseMinutes(json: unknown): Map<string, number> {
+  const out = new Map<string, number>();
+  if (!isObj(json)) return out;
+  const cats = arr(json.categories).filter(isObj);
+  const where = cats.map((c) => ({ name: str(c.name), i: arr(c.names).map(str).indexOf("avgMinutes") })).find((x) => x.i >= 0);
+  if (!where) throw new Error("byathlete minutes column missing");
+  for (const row of arr(json.athletes)) {
+    if (!isObj(row) || !isObj(row.athlete)) continue;
+    const cat = arr(row.categories).filter(isObj).find((c) => str(c.name) === where.name);
+    const v = cat ? arr(cat.values)[where.i] : undefined;
+    if (typeof v === "number" && v > 0) out.set(boxNameKey(str(row.athlete.displayName)), Math.round(v * 10) / 10);
+  }
+  return out;
+}
+
+/** The 200 NBA players who play the most minutes per game. Anyone not listed plays under about 15. */
+export async function loadNbaMinutes(date: string, pages = 4): Promise<Map<string, number>> {
+  const season = nbaSeason(date);
+  const out = new Map<string, number>();
+  for (let page = 1; page <= pages; page++) {
+    const url = `${COMMON}/statistics/byathlete?season=${season}&seasontype=2&limit=50&page=${page}&sort=${encodeURIComponent("general.avgMinutes:desc")}`;
+    for (const [k, v] of parseMinutes(await getJson(url))) out.set(k, v);
+  }
+  return out;
+}
+
 // ---------------------------------------------------------------- NFL
 
 export const NFL_SITE = "https://site.api.espn.com/apis/site/v2/sports/football/nfl";
