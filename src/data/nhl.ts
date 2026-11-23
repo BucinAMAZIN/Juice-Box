@@ -132,8 +132,9 @@ export function nameKey(name: string): string {
 }
 
 export function findPlayer(box: Boxscore, name: string): PlayerLine | undefined {
-  const key = nameKey(name);
-  return box.players.find((p) => nameKey(p.name) === key);
+  // The box score writes "S. Rinzel" where the books write "Sam Rinzel", so compare first initial plus last name.
+  const key = boxNameKey(name);
+  return box.players.find((p) => boxNameKey(p.name) === key);
 }
 
 export interface ClubGame {
@@ -284,6 +285,31 @@ export async function loadNhlToi(date: string): Promise<Map<string, number>> {
     const page = parseToi(await res.json());
     for (const [k, v] of page) out.set(k, v);
     if (page.size < 100) break;
+  }
+  return out;
+}
+
+export interface NhlAvg { key: string; games: number; sog: number; points: number; goals: number; assists: number }
+
+/** Per-game averages for every NHL skater this season. */
+export async function loadNhlSeasonAverages(date: string): Promise<NhlAvg[]> {
+  const y = Number(date.slice(0, 4));
+  const start0 = Number(date.slice(5, 7)) >= 9 ? y : y - 1;
+  const out: NhlAvg[] = [];
+  for (let start = 0; start < 1500; start += 100) {
+    const url = `https://api.nhle.com/stats/rest/en/skater/summary?isAggregate=false&isGame=false&limit=100&start=${start}&sort=${encodeURIComponent("points")}&cayenneExp=${encodeURIComponent(`seasonId=${start0}${start0 + 1} and gameTypeId=2`)}`;
+    const res = await fetch(url, { headers: { accept: "application/json" } });
+    if (!res.ok) throw new Error(`NHL stats ${res.status}`);
+    const json = (await res.json()) as { data?: Array<Record<string, unknown>> };
+    const rows = json.data ?? [];
+    for (const r of rows) {
+      const n = (k: string): number => (typeof r[k] === "number" ? (r[k] as number) : 0);
+      const gp = n("gamesPlayed");
+      const name = typeof r.skaterFullName === "string" ? r.skaterFullName : "";
+      if (!name || gp <= 0) continue;
+      out.push({ key: boxNameKey(name), games: gp, sog: n("shots") / gp, points: n("points") / gp, goals: n("goals") / gp, assists: n("assists") / gp });
+    }
+    if (rows.length < 100) break;
   }
   return out;
 }

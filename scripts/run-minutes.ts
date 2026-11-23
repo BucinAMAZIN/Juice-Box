@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { loadNbaMinutes, loadNbaSeasonAverages, loadNflSeasonAverages } from "../src/data/espn";
-import { loadNhlToi } from "../src/data/nhl";
+import { loadNhlSeasonAverages, loadNhlToi } from "../src/data/nhl";
 
 const date = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
 const nba = await loadNbaMinutes(date);
@@ -12,12 +12,16 @@ try {
   const r1 = (n: number): number => Math.round(n * 10) / 10;
   const nbaAvg = await loadNbaSeasonAverages(date, 6);
   const nflAvg = await loadNflSeasonAverages(date, 6);
+  const nhlAvg = await loadNhlSeasonAverages(date).catch((e: unknown) => { console.log("NHL season averages failed:", String(e)); return []; });
+  console.log(`NHL season averages: ${nhlAvg.length} skaters`);
+  const r2 = (n: number): number => Math.round(n * 100) / 100;
   console.log(`Season averages: ${nbaAvg.length} NBA, ${nflAvg.length} NFL`);
   if (nbaAvg.length > 50 && nflAvg.length > 50 && !process.argv.includes("--dry-run")) {
     mkdirSync("public/data", { recursive: true });
     writeFileSync("public/data/season-avgs.json", JSON.stringify({
       date,
       nba: Object.fromEntries(nbaAvg.map((a) => [a.key, { points: r1(a.points), rebounds: r1(a.rebounds), assists: r1(a.assists), threes: r1(a.threes) }])),
+      nhl: Object.fromEntries(nhlAvg.map((a) => [a.key, { sog: r2(a.sog), points: r2(a.points), goals: r2(a.goals), assists: r2(a.assists) }])),
       nfl: Object.fromEntries(nflAvg.map((a) => [a.key, { passYds: r1(a.passYds), rushYds: r1(a.rushYds), recYds: r1(a.recYds), receptions: r1(a.receptions) }])),
     }) + "\n");
   }

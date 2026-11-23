@@ -36,3 +36,12 @@ describe("playing time filter", () => {
     expect(passes(pick("nfl", "Anyone"), f)).toBe(true);
   });
 });
+
+import { findPlayer } from "../src/data/nhl";
+describe("NHL name matching", () => {
+  it("matches an abbreviated box-score name to the full book name", () => {
+    const box = { players: [{ name: "S. Rinzel", points: 1 }] } as never;
+    expect(findPlayer(box, "Sam Rinzel")).toBeDefined();
+    expect(findPlayer(box, "Sam Other")).toBeUndefined();
+  });
+});

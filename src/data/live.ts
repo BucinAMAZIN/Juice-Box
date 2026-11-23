@@ -18,7 +18,7 @@ export interface GameLive {
 }
 
 async function getJson(url: string): Promise<unknown> {
-  const res = await fetch(`${url}${url.includes("?") ? "&" : "?"}_=${Date.now()}`, { headers: { accept: "application/json" } });
+  const res = await fetch(url.startsWith(NHL_BASE) ? url : `${url}${url.includes("?") ? "&" : "?"}_=${Date.now()}`, { headers: { accept: "application/json" } });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
@@ -60,8 +60,8 @@ export async function loadGameLive(sport: "nba" | "nfl" | "nhl", gameId: number)
       return {
         status: nhlStatus(json),
         stat: (p) => {
-          const key = nameKey(p.player);
-          const line = box?.players.find((x) => nameKey(x.name) === key);
+          const key = boxNameKey(p.player);
+          const line = box?.players.find((x) => boxNameKey(x.name) === key);
           return line ? statFor(line, p.market as Market) : null;
         },
       };
