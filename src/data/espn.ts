@@ -181,7 +181,9 @@ export async function loadNbaSeasonAverages(date: string, pages = 2): Promise<Se
   for (const sort of sorts) {
     for (let page = 1; page <= pages; page++) {
       const url = `${COMMON}/statistics/byathlete?season=${season}&seasontype=2&limit=50&page=${page}&sort=${encodeURIComponent(sort + ":desc")}`;
-      for (const a of parseByAthlete(await getJson(url))) byKey.set(`${a.key}|${a.name}`, a);
+      const json = await getJson(url);
+      if (isObj(json) && arr(json.athletes).length === 0 && page > 1) break;
+      for (const a of parseByAthlete(json)) byKey.set(`${a.key}|${a.name}`, a);
     }
   }
   return [...byKey.values()];
@@ -347,7 +349,10 @@ export async function loadNflSeasonAverages(date: string, pages = 2): Promise<Nf
   for (const sort of sorts) {
     for (let page = 1; page <= pages; page++) {
       const url = `${NFL_COMMON}/statistics/byathlete?season=${season}&seasontype=2&limit=50&page=${page}&sort=${encodeURIComponent(sort + ":desc")}`;
-      for (const a of parseNflByAthlete(await getJson(url))) byKey.set(`${a.key}|${a.name}`, a);
+      const json = await getJson(url);
+      // Past the last page the service returns no athletes (and no columns), so stop there instead of failing.
+      if (isObj(json) && arr(json.athletes).length === 0 && page > 1) break;
+      for (const a of parseNflByAthlete(json)) byKey.set(`${a.key}|${a.name}`, a);
     }
   }
   return [...byKey.values()];
