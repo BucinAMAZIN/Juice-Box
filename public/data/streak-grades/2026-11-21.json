@@ -1,6 +1,6 @@
 {
   "date": "2026-11-21",
-  "gradedAt": "2026-11-23T00:30:20.125Z",
+  "gradedAt": "2026-11-23T01:53:25.023Z",
   "grades": [
     {
       "pickId": "2026-11-21-s-nba-401910028-z-lavine-rebounds-2.5",
@@ -1003,6 +1003,228 @@
       "actual": 3,
       "outcome": "loss",
       "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020363-r-leonard-sog-1.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.4444444444444444
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020371-b-boeser-points-0.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.8333333333333335
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020368-j-bratt-points-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020361-m-tkachuk-points-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020368-t-meier-sog-2.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.5263157894736841
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020364-j-roslovic-sog-1.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020363-a-protas-points-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020367-s-holmstrom-points-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 1.2000000000000002
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020363-c-hutson-sog-1.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.5714285714285714
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020364-c-coyle-sog-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020363-c-hutson-sog-2.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 1.5
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020371-b-boeser-assists-0.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 1.5
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020369-d-mercer-sog-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020364-m-knies-sog-1.5",
+      "actual": 5,
+      "outcome": "win",
+      "profitAtLimit": 0.5882352941176472
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020369-t-connelly-sog-1.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.4545454545454546
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020363-a-protas-assists-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020367-m-barzal-sog-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020359-l-draisaitl-sog-1.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 0.19999999999999996
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020359-v-podkolzin-sog-0.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.2857142857142856
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020370-c-gauthier-sog-2.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020371-k-kaprizov-points-0.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020361-s-reinhart-sog-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020363-j-chychrun-sog-1.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.33333333333333326
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020363-d-pastrnak-sog-2.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 0.3076923076923077
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020360-j-farabee-sog-1.5",
+      "actual": 5,
+      "outcome": "win",
+      "profitAtLimit": 0.2857142857142856
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020359-c-mcdavid-sog-1.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020367-v-eklund-sog-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020367-e-heineman-sog-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020359-a-svechnikov-sog-1.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.2666666666666666
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020361-l-eller-sog-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020369-b-howden-sog-0.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020366-s-halliday-sog-0.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020362-s-wright-sog-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020368-j-berggren-sog-0.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.21097046413502119
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020365-t-sanheim-sog-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.2857142857142856
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020365-j-drysdale-sog-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-21-s-nhl-2026020364-d-severson-sog-0.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.2666666666666666
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "date": "2026-11-22",
-  "gradedAt": "2026-11-23T00:48:07.898Z",
+  "gradedAt": "2026-11-23T01:53:25.023Z",
   "grades": [
     {
       "pickId": "2026-11-22-s-nba-401910029-d-daniels-ra-12.5",
@@ -949,6 +949,150 @@
       "actual": 4,
       "outcome": "loss",
       "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-m-fields-receptions-1.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.44843049327354256
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-m-nabers-receptions-4.5",
+      "actual": 7,
+      "outcome": "win",
+      "profitAtLimit": 0.5208333333333335
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-c-skattebo-rushRecYds-49.5",
+      "actual": 48,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-t-lawrence-passYds-209.5",
+      "actual": 301,
+      "outcome": "win",
+      "profitAtLimit": 0.510204081632653
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-t-lawrence-passYds-199.5",
+      "actual": 301,
+      "outcome": "win",
+      "profitAtLimit": 0.3984063745019921
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-t-lawrence-passYds-189.5",
+      "actual": 301,
+      "outcome": "win",
+      "profitAtLimit": 0.2923976608187133
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-n-boerkircher-receptions-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-m-nabers-recYds-39.5",
+      "actual": 55,
+      "outcome": "win",
+      "profitAtLimit": 0.26178010471204183
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-c-skattebo-rushYds-55.5",
+      "actual": 34,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-c-skattebo-rushYds-57.5",
+      "actual": 34,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-c-skattebo-rushYds-53.5",
+      "actual": 34,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-c-skattebo-rushYds-54.5",
+      "actual": 34,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-c-skattebo-rushYds-56.5",
+      "actual": 34,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-c-skattebo-rushYds-51.5",
+      "actual": 34,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-c-skattebo-rushYds-49.5",
+      "actual": 34,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-c-skattebo-rushYds-50.5",
+      "actual": 34,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-c-skattebo-rushYds-52.5",
+      "actual": 34,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-c-skattebo-rushYds-44.5",
+      "actual": 34,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-c-skattebo-rushRecYds-59.5",
+      "actual": 48,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-c-skattebo-rushYds-39.5",
+      "actual": 34,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nhl-2026020373-j-miller-sog-1.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.41666666666666674
+    },
+    {
+      "pickId": "2026-11-22-s-nhl-2026020373-a-svechnikov-sog-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nhl-2026020374-c-dastous-sog-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873069-m-nabers-rushRecYds-39.5",
+      "actual": 55,
+      "outcome": "win",
+      "profitAtLimit": 0.25
     }
   ]
 }
