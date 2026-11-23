@@ -1,11 +1,26 @@
-name: Probe CORS
+name: Probe ESPN NHL
 on: { workflow_dispatch: {} }
 jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          for u in "https://api-web.nhle.com/v1/gamecenter/2026020377/boxscore" "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard"; do
-            echo "== $u"; curl -s -D - -o /dev/null -H "Origin: https://bucinamazin.github.io" "$u" | grep -iE "^HTTP|access-control|vary"
-          done
-          echo "== preflight nhl"; curl -s -D - -o /dev/null -X OPTIONS -H "Origin: https://bucinamazin.github.io" -H "Access-Control-Request-Method: GET" -H "Access-Control-Request-Headers: accept" "https://api-web.nhle.com/v1/gamecenter/2026020377/boxscore" | grep -iE "^HTTP|access-control"
+          B=https://site.api.espn.com/apis/site/v2/sports/hockey/nhl
+          curl -s "$B/scoreboard?dates=20261122" > sb.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('sb.json'))
+          for e in d['events']:
+              c=e['competitions'][0]
+              print('EVENT',e['id'],[ (x['homeAway'],x['team']['abbreviation'],x.get('score')) for x in c['competitors']], c['status']['type']['state'], c['status'].get('displayClock'), c['status'].get('period'))
+          PY
+          id=$(python3 -c "import json;print(json.load(open('sb.json'))['events'][0]['id'])")
+          curl -s "$B/summary?event=$id" > sm.json
+          python3 - <<'PY'
+          import json
+          j=json.load(open('sm.json'))
+          for t in j['boxscore']['players']:
+              print('TEAM',t['team']['abbreviation'])
+              for s in t['statistics']:
+                  print(' group',s.get('name'),s.get('keys'),[ (a['athlete']['displayName'],a['stats']) for a in s['athletes'][:2]])
+          PY
