@@ -54,7 +54,9 @@ function signalLine(p: HandedPick): HTMLElement | null {
   if (p.h2h) bits.push(`vs ${p.opponent} ${p.h2h.hits}/${p.h2h.games}`);
   if (p.split) bits.push(`${p.home ? "home" : "away"} ${p.split.hits}/${p.split.games}`);
   const c = cushionOf(p);
-  if (p.avg != null) bits.push(`avg ${p.avg}${c != null ? ` (${c >= 0 ? "+" : ""}${Math.round(c * 100)}%)` : ""}`);
+  const season = seasonAvgOf(p);
+  if (season != null) bits.push(`season avg ${season}/game`);
+  if (p.avg != null) bits.push(`streak avg ${p.avg}${c != null ? ` (${c >= 0 ? "+" : ""}${Math.round(c * 100)}%)` : ""}`);
   if (p.alt) bits.push("alt line");
   return bits.length ? h("div", { class: "signals" }, bits.join(" · ")) : null;
 }
@@ -62,6 +64,7 @@ function signalLine(p: HandedPick): HTMLElement | null {
 import { heatHue } from "../engine/heat";
 import { type Models, evidence, fit, gradedRows, letter, linemateChance, ourChance } from "./grading";
 import { loadHistory } from "./results";
+import { seasonAvgOf, setSeasonAvgs } from "./seasonavg";
 import { applyInjury, watchInjuries } from "./injuries";
 import { applyCached, watchProps } from "./live";
 
@@ -215,6 +218,7 @@ export async function renderStreaks(view: HTMLElement, _ledger?: unknown, source
   const loadBlow = async () => ({ tracked: await blow.load("tracked").catch(() => null), history: await blow.load("history").catch(() => null) });
   const loadModels = async () => fit(gradedRows(await loadHistory(source).catch(() => [])));
   try { const r = await fetch(`${import.meta.env.BASE_URL}data/nba-minutes.json`); if (r.ok) { const j = (await r.json()) as { minutes: Record<string, number>; nhl?: Record<string, number> }; setMinutes(new Map(Object.entries(j.minutes)), new Map(Object.entries(j.nhl ?? {}))); } } catch { /* the filter then treats every NBA player as unknown */ }
+  try { const r = await fetch(`${import.meta.env.BASE_URL}data/season-avgs.json`); if (r.ok) setSeasonAvgs((await r.json()) as Parameters<typeof setSeasonAvgs>[0]); } catch { /* rows just omit the season average */ }
   let state: StreakState = { chosen: new Map(), tab: "multi", filters: loadFilters(), blow: await loadBlow(), models: await loadModels(), grading: "ours" };
   let shown = dates[dates.length - 1]!;
   let shownPicks: HandedPick[] = [];
