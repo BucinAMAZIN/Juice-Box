@@ -4,7 +4,7 @@ import type { DayFile, DayGrades, HandedPick } from "../engine/types";
 import { type BlowoutSource, blowoutSource, renderBlowoutPanel } from "./blowouts";
 import type { BlowoutGame } from "../engine/blowouts";
 import { clear, h } from "./dom";
-import { activeCount, cushionOf, defaultFilters, gameKey, loadFilters, passes, saveFilters, type Filters } from "./filters";
+import { setMinutes, activeCount, cushionOf, defaultFilters, gameKey, loadFilters, passes, saveFilters, type Filters } from "./filters";
 import { getJson, pullToRefresh, type PicksSource } from "./picks";
 
 
@@ -152,6 +152,7 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
     group("Price", [["Any", 0], ["-200", -200], ["-300", -300], ["-400", -400], ["-500", -500]] as Array<[string, number]>, () => state.filters.maxJuice, (v) => (state.filters.maxJuice = v)),
     group("Head to head", [["Any", 0], ["75%+", 0.75], ["100%", 1]] as Array<[string, number]>, () => state.filters.h2h, (v) => (state.filters.h2h = v)),
     group("Home/away", [["Any", 0], ["75%+", 0.75], ["100%", 1]] as Array<[string, number]>, () => state.filters.split, (v) => (state.filters.split = v)),
+    group("Playing time (NBA minutes per game)", [["Any", 0], ["20+", 20], ["28+", 28], ["32+", 32]] as Array<[string, number]>, () => state.filters.minutes, (v) => (state.filters.minutes = v)),
     group("Cushion", [["Any", 0], ["+10%", 0.1], ["+25%", 0.25]] as Array<[string, number]>, () => state.filters.cushion, (v) => (state.filters.cushion = v)),
     h("div", { class: "fgroup" }, h("span", { class: "flabel" }, "Game"), gameSel),
     h("button", { type: "button", class: "ghost", onclick: () => { state.filters = defaultFilters(); saveFilters(state.filters); clear(view); renderStreakDay(view, day, state); } }, "Reset filters"),
@@ -213,6 +214,7 @@ export async function renderStreaks(view: HTMLElement, _ledger?: unknown, source
   const body = h("div", {});
   const loadBlow = async () => ({ tracked: await blow.load("tracked").catch(() => null), history: await blow.load("history").catch(() => null) });
   const loadModels = async () => fit(gradedRows(await loadHistory(source).catch(() => [])));
+  try { const r = await fetch(`${import.meta.env.BASE_URL}data/nba-minutes.json`); if (r.ok) setMinutes(new Map(Object.entries(((await r.json()) as { minutes: Record<string, number> }).minutes))); } catch { /* the filter then treats every NBA player as unknown */ }
   let state: StreakState = { chosen: new Map(), tab: "multi", filters: loadFilters(), blow: await loadBlow(), models: await loadModels(), grading: "ours" };
   let shown = dates[dates.length - 1]!;
   let shownPicks: HandedPick[] = [];

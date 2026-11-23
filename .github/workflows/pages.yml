@@ -77,6 +77,12 @@ jobs:
         if: steps.task.outputs.task == 'picks'
         run: npm run streaks
 
+      # Average minutes per game for the Playing time filter. Not critical, so a failure never stops the run.
+      - name: NBA minutes
+        if: steps.task.outputs.task == 'picks' || steps.task.outputs.task == 'grade'
+        continue-on-error: true
+        run: npm run minutes
+
       - name: Grade streaks
         if: steps.task.outputs.task == 'grade'
         run: npm run grade-streaks

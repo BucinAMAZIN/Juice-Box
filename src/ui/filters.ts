@@ -1,4 +1,5 @@
 import type { HandedPick } from "../engine/types";
+import { boxNameKey } from "../data/linemate";
 
 /** Filters for the streak list, modeled on Linemate's: bet type, line type, game, and signals. */
 export interface Filters {
@@ -17,9 +18,16 @@ export interface Filters {
   cushion: number;
   /** Only props Hard Rock lists. */
   hrOnly: boolean;
+  /** Minimum average minutes per game (NBA only; other sports pass). */
+  minutes: number;
 }
 
-export const defaultFilters = (): Filters => ({ off: new Set(), line: "all", game: "all", minStreak: 0, maxJuice: 0, h2h: 0, split: 0, cushion: 0, hrOnly: false });
+/** Average NBA minutes by player key, loaded once from data/nba-minutes.json. */
+let minutesByKey = new Map<string, number>();
+export function setMinutes(m: Map<string, number>): void { minutesByKey = m; }
+export const minutesOf = (p: HandedPick): number | null => (p.sport === "nba" ? minutesByKey.get(boxNameKey(p.player)) ?? 0 : null);
+
+export const defaultFilters = (): Filters => ({ off: new Set(), line: "all", game: "all", minStreak: 0, maxJuice: 0, h2h: 0, split: 0, cushion: 0, hrOnly: false, minutes: 0 });
 
 const rate = (r?: { games: number; hits: number }): number | null => (r && r.games > 0 ? r.hits / r.games : null);
 /** How far the average over the streak sits above the bet line, as a share of the line. */
@@ -42,6 +50,10 @@ export function passes(p: HandedPick, f: Filters): boolean {
     const r = rate(p.split);
     if (r == null || r < f.split) return false;
   }
+  if (f.minutes > 0) {
+    const m = minutesOf(p);
+    if (m != null && m < f.minutes) return false;
+  }
   if (f.cushion > 0) {
     const c = cushionOf(p);
     if (c == null || c < f.cushion) return false;
@@ -50,7 +62,7 @@ export function passes(p: HandedPick, f: Filters): boolean {
 }
 
 export function activeCount(f: Filters): number {
-  return f.off.size + (f.line !== "all" ? 1 : 0) + (f.game !== "all" ? 1 : 0) + (f.minStreak ? 1 : 0) + (f.maxJuice ? 1 : 0) + (f.h2h ? 1 : 0) + (f.split ? 1 : 0) + (f.cushion ? 1 : 0) + (f.hrOnly ? 1 : 0);
+  return f.off.size + (f.line !== "all" ? 1 : 0) + (f.game !== "all" ? 1 : 0) + (f.minStreak ? 1 : 0) + (f.maxJuice ? 1 : 0) + (f.h2h ? 1 : 0) + (f.split ? 1 : 0) + (f.cushion ? 1 : 0) + (f.hrOnly ? 1 : 0) + (f.minutes ? 1 : 0);
 }
 
 export function loadFilters(): Filters {
@@ -61,7 +73,7 @@ export function loadFilters(): Filters {
       f.off = new Set(raw.off ?? []);
       if (raw.line === "main" || raw.line === "alt") f.line = raw.line;
       if (raw.hrOnly === true) f.hrOnly = true;
-      for (const k of ["minStreak", "maxJuice", "h2h", "split", "cushion"] as const) if (typeof raw[k] === "number") f[k] = raw[k]!;
+      for (const k of ["minStreak", "maxJuice", "h2h", "split", "cushion", "minutes"] as const) if (typeof raw[k] === "number") f[k] = raw[k]!;
     }
   } catch {
     /* storage unavailable: defaults */
