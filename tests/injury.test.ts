@@ -45,3 +45,11 @@ describe("NHL name matching", () => {
     expect(findPlayer(box, "Sam Other")).toBeUndefined();
   });
 });
+
+import { parseEspnNhlBox } from "../src/data/live";
+describe("ESPN hockey box", () => {
+  it("reads goals, assists, shots and sums points", () => {
+    const json = { boxscore: { players: [{ statistics: [{ name: "forwards", keys: ["goals", "assists", "shotsTotal"], athletes: [{ athlete: { displayName: "Brock Boeser" }, stats: ["1", "1", "4"] }] }, { name: "goalies", keys: ["saves"], athletes: [{ athlete: { displayName: "G Tender" }, stats: ["20"] }] }] }] } };
+    expect(parseEspnNhlBox(json)).toEqual([{ key: "b boeser", goals: 1, assists: 1, points: 2, sog: 4 }]);
+  });
+});

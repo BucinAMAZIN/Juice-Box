@@ -76,7 +76,8 @@ export function watchProps(root: HTMLElement, picks: () => HandedPick[], load: t
     }
     await Promise.all([...games.entries()].map(async ([k, ps]) => {
       const [sport, id] = k.split("|") as ["nba" | "nfl" | "nhl", string];
-      const g = await load(sport, Number(id));
+      const first = ps[0]!;
+      const g = await load(sport, Number(id), { team: first.team, opponent: first.opponent, start: first.gameStart });
       for (const p of ps) {
         const row = root.querySelector<HTMLElement>(`[data-pick-id="${p.id.replace(/"/g, "\\\"")}"]`);
         if (g) lastGame.set(p.id, g);

@@ -51,9 +51,72 @@ export function nhlStatus(json: unknown): GameStatus {
   return { ...(score ? { score } : {}), state, detail: state === "in" ? `P${period} ${intermission ? "intermission" : clock}` : state === "post" ? "Final" : "", frac: state === "post" ? 1 : state === "pre" ? 0 : elapsedFraction("nhl", period, intermission ? "0:00" : clock) };
 }
 
+const NHL_SITE = "https://site.api.espn.com/apis/site/v2/sports/hockey/nhl";
+/** Team codes differ between the NHL's feed, Linemate and ESPN; compare them in one form. */
+const NHL_CODE: Record<string, string> = { TBL: "TB", NJD: "NJ", SJS: "SJ", LAK: "LA", UTA: "UTAH", VGK: "VGK", WSH: "WSH", MTL: "MTL" };
+const code = (c: string): string => NHL_CODE[c.toUpperCase()] ?? c.toUpperCase();
+
+/** What we know about a game that lets us find it in another feed. */
+export interface GameHint { team: string; opponent: string; start: string }
+
+const espnNhlId = new Map<number, string>();
+/** The NHL's own feed refuses requests from a web page, so find the same game in ESPN's, which allows them. */
+async function findEspnNhl(gameId: number, hint: GameHint): Promise<string | null> {
+  const known = espnNhlId.get(gameId);
+  if (known) return known;
+  const day = new Date(hint.start).toLocaleDateString("en-CA", { timeZone: "America/New_York" }).replace(/-/g, "");
+  const json = await getJson(`${NHL_SITE}/scoreboard?dates=${day}`);
+  const events = isObj(json) && Array.isArray(json.events) ? json.events.filter(isObj) : [];
+  const want = new Set([code(hint.team), code(hint.opponent)]);
+  for (const e of events) {
+    const comp = Array.isArray(e.competitions) && isObj(e.competitions[0]) ? e.competitions[0] : null;
+    const teams = comp && Array.isArray(comp.competitors) ? comp.competitors.filter(isObj).map((c) => (isObj(c.team) && typeof c.team.abbreviation === "string" ? code(c.team.abbreviation) : "")) : [];
+    if (teams.length === 2 && teams.every((t) => want.has(t)) && typeof e.id === "string") { espnNhlId.set(gameId, e.id); return e.id; }
+  }
+  return null;
+}
+
+export interface EspnNhlLine { key: string; goals: number; assists: number; points: number; sog: number }
+/** Skater lines in an ESPN hockey summary. ESPN gives goals, assists and shots; points are goals plus assists. */
+export function parseEspnNhlBox(json: unknown): EspnNhlLine[] {
+  const out: EspnNhlLine[] = [];
+  const teams = isObj(json) && isObj(json.boxscore) && Array.isArray(json.boxscore.players) ? json.boxscore.players.filter(isObj) : [];
+  for (const t of teams) {
+    for (const g of Array.isArray(t.statistics) ? t.statistics.filter(isObj) : []) {
+      if (g.name !== "forwards" && g.name !== "defenses") continue;
+      const keys = Array.isArray(g.keys) ? g.keys.map(String) : [];
+      const at = (k: string) => keys.indexOf(k);
+      for (const a of Array.isArray(g.athletes) ? g.athletes.filter(isObj) : []) {
+        if (!isObj(a.athlete) || !Array.isArray(a.stats)) continue;
+        const stats = a.stats as unknown[];
+        const n = (k: string): number => { const v = Number(stats[at(k)]); return Number.isFinite(v) ? v : 0; };
+        const goals = n("goals");
+        const assists = n("assists");
+        out.push({ key: boxNameKey(String(a.athlete.displayName ?? "")), goals, assists, points: goals + assists, sog: n("shotsTotal") });
+      }
+    }
+  }
+  return out;
+}
+
 /** Fetch one game's current box score and status. Null when the feed cannot be read. */
-export async function loadGameLive(sport: "nba" | "nfl" | "nhl", gameId: number): Promise<GameLive | null> {
+export async function loadGameLive(sport: "nba" | "nfl" | "nhl", gameId: number, hint?: GameHint): Promise<GameLive | null> {
   try {
+    if (sport === "nhl" && typeof window !== "undefined") {
+      if (!hint) return null;
+      const id = await findEspnNhl(gameId, hint);
+      if (!id) return null;
+      const json = await getJson(`${NHL_SITE}/summary?event=${id}`);
+      const lines = parseEspnNhlBox(json);
+      return {
+        status: espnStatus(json, "nhl"),
+        stat: (p) => {
+          const l = lines.find((x) => x.key === boxNameKey(p.player));
+          if (!l) return null;
+          return p.market === "sog" ? l.sog : p.market === "goals" ? l.goals : p.market === "assists" ? l.assists : p.market === "points" ? l.points : null;
+        },
+      };
+    }
     if (sport === "nhl") {
       const json = await getJson(`${NHL_BASE}/gamecenter/${gameId}/boxscore`);
       const box = parseBoxscore(json);
