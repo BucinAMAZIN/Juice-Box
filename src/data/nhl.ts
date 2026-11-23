@@ -275,8 +275,15 @@ export async function loadNhlToi(date: string): Promise<Map<string, number>> {
   const y = Number(date.slice(0, 4));
   const start = Number(date.slice(5, 7)) >= 9 ? y : y - 1;
   const season = `${start}${start + 1}`;
-  const url = `https://api.nhle.com/stats/rest/en/skater/timeonice?isAggregate=false&isGame=false&limit=-1&cayenneExp=${encodeURIComponent(`seasonId=${season} and gameTypeId=2`)}`;
-  const res = await fetch(url, { headers: { accept: "application/json" } });
-  if (!res.ok) throw new Error(`NHL stats ${res.status}`);
-  return parseToi(await res.json());
+  const out = new Map<string, number>();
+  // The service hands back 100 rows at a time, so page through until a page comes back short.
+  for (let start = 0; start < 1500; start += 100) {
+    const url = `https://api.nhle.com/stats/rest/en/skater/timeonice?isAggregate=false&isGame=false&limit=100&start=${start}&sort=${encodeURIComponent("timeOnIcePerGame")}&cayenneExp=${encodeURIComponent(`seasonId=${season} and gameTypeId=2`)}`;
+    const res = await fetch(url, { headers: { accept: "application/json" } });
+    if (!res.ok) throw new Error(`NHL stats ${res.status}`);
+    const page = parseToi(await res.json());
+    for (const [k, v] of page) out.set(k, v);
+    if (page.size < 100) break;
+  }
+  return out;
 }
