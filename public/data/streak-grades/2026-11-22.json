@@ -1,0 +1,918 @@
+{
+  "date": "2026-11-22",
+  "gradedAt": "2026-11-23T00:30:20.125Z",
+  "grades": [
+    {
+      "pickId": "2026-11-22-s-nba-401910029-d-daniels-ra-12.5",
+      "actual": 22,
+      "outcome": "win",
+      "profitAtLimit": 0.8
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-o-okongwu-threes-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-o-okongwu-points-12.5",
+      "actual": 6,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-o-okongwu-points-11.5",
+      "actual": 6,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-d-daniels-ra-11.5",
+      "actual": 22,
+      "outcome": "win",
+      "profitAtLimit": 0.4651162790697674
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-p-reed-ra-7.5",
+      "actual": 7,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-o-okongwu-pra-22.5",
+      "actual": 17,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-d-daniels-pr-14.5",
+      "actual": 19,
+      "outcome": "win",
+      "profitAtLimit": 0.3999999999999999
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-n-alexanderwalker-pr-20.5",
+      "actual": 29,
+      "outcome": "win",
+      "profitAtLimit": 0.3999999999999999
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-d-daniels-rebounds-5.5",
+      "actual": 14,
+      "outcome": "win",
+      "profitAtLimit": 0.3846153846153846
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-n-alexanderwalker-pr-19.5",
+      "actual": 29,
+      "outcome": "win",
+      "profitAtLimit": 0.3460207612456747
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-n-alexanderwalker-pra-22.5",
+      "actual": 30,
+      "outcome": "win",
+      "profitAtLimit": 0.33333333333333326
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-o-okongwu-pra-19.5",
+      "actual": 17,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-d-daniels-ra-10.5",
+      "actual": 22,
+      "outcome": "win",
+      "profitAtLimit": 0.3003003003003002
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-n-alexanderwalker-points-15.5",
+      "actual": 27,
+      "outcome": "win",
+      "profitAtLimit": 0.28011204481792706
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-o-okongwu-pra-20.5",
+      "actual": 17,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-n-alexanderwalker-pr-18.5",
+      "actual": 29,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-n-alexanderwalker-points-14.5",
+      "actual": 27,
+      "outcome": "win",
+      "profitAtLimit": 0.23474178403755874
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-o-okongwu-points-9.5",
+      "actual": 6,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-o-okongwu-points-13.5",
+      "actual": 6,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-p-reed-rebounds-5.5",
+      "actual": 5,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-o-okongwu-points-15.5",
+      "actual": 6,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-o-okongwu-points-14.5",
+      "actual": 6,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-n-alexanderwalker-rebounds-2.5",
+      "actual": 2,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-n-alexanderwalker-rebounds-3.5",
+      "actual": 2,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-n-alexanderwalker-ra-6.5",
+      "actual": 3,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-o-okongwu-pr-22.5",
+      "actual": 15,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-n-alexanderwalker-assists-2.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-o-okongwu-pr-21.5",
+      "actual": 15,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-o-okongwu-pra-23.5",
+      "actual": 17,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-n-alexanderwalker-pra-24.5",
+      "actual": 30,
+      "outcome": "win",
+      "profitAtLimit": 0.5494505494505495
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-o-okongwu-pr-19.5",
+      "actual": 15,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-p-reed-pra-17.5",
+      "actual": 23,
+      "outcome": "win",
+      "profitAtLimit": 0.4504504504504505
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-n-alexanderwalker-ra-5.5",
+      "actual": 3,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-a-thompson-points-9.5",
+      "actual": 18,
+      "outcome": "win",
+      "profitAtLimit": 0.41666666666666674
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-p-reed-pr-14.5",
+      "actual": 21,
+      "outcome": "win",
+      "profitAtLimit": 0.40816326530612246
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-a-thompson-pra-19.5",
+      "actual": 34,
+      "outcome": "win",
+      "profitAtLimit": 0.3448275862068966
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-a-thompson-pr-16.5",
+      "actual": 29,
+      "outcome": "win",
+      "profitAtLimit": 0.33333333333333326
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-p-reed-pra-16.5",
+      "actual": 23,
+      "outcome": "win",
+      "profitAtLimit": 0.33333333333333326
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-a-thompson-points-8.5",
+      "actual": 18,
+      "outcome": "win",
+      "profitAtLimit": 0.33003300330033003
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-p-reed-points-7.5",
+      "actual": 16,
+      "outcome": "win",
+      "profitAtLimit": 0.33003300330033003
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-a-thompson-pr-15.5",
+      "actual": 29,
+      "outcome": "win",
+      "profitAtLimit": 0.30959752321981426
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873072-j-williams-recYds-29.5",
+      "actual": 93,
+      "outcome": "win",
+      "profitAtLimit": 0.3508771929824561
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873071-d-vele-recYds-9.5",
+      "actual": 76,
+      "outcome": "win",
+      "profitAtLimit": 0.33333333333333326
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873076-p-freiermuth-recYds-9.5",
+      "actual": 39,
+      "outcome": "win",
+      "profitAtLimit": 0.3246753246753247
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873071-d-vele-receptions-1.5",
+      "actual": 7,
+      "outcome": "win",
+      "profitAtLimit": 0.5154639175257731
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873067-t-mcbride-receptions-4.5",
+      "actual": 9,
+      "outcome": "win",
+      "profitAtLimit": 0.41841004184100417
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873070-j-allen-passYds-189.5",
+      "actual": 304,
+      "outcome": "win",
+      "profitAtLimit": 0.3436426116838489
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873067-t-mcbride-recYds-29.5",
+      "actual": 54,
+      "outcome": "win",
+      "profitAtLimit": 0.2906976744186047
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873070-j-allen-passYds-179.5",
+      "actual": 304,
+      "outcome": "win",
+      "profitAtLimit": 0.25380710659898487
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873070-j-allen-passYds-174.5",
+      "actual": 304,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873067-h-long-receptions-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.7692307692307692
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873071-r-odunze-recYds-29.5",
+      "actual": 45,
+      "outcome": "win",
+      "profitAtLimit": 0.44843049327354256
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873071-r-odunze-recYds-34.5",
+      "actual": 45,
+      "outcome": "win",
+      "profitAtLimit": 0.44052863436123335
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873071-r-odunze-rushRecYds-29.5",
+      "actual": 45,
+      "outcome": "win",
+      "profitAtLimit": 0.3597122302158273
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873071-r-odunze-recYds-24.5",
+      "actual": 45,
+      "outcome": "win",
+      "profitAtLimit": 0.34246575342465757
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873073-r-flournoy-recYds-19.5",
+      "actual": 11,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873072-b-irving-rushYds-44.5",
+      "actual": 68,
+      "outcome": "win",
+      "profitAtLimit": 0.2857142857142856
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873072-b-irving-rushYds-39.5",
+      "actual": 68,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873070-m-washington-recYds-19.5",
+      "actual": 30,
+      "outcome": "win",
+      "profitAtLimit": 0.4716981132075473
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873070-m-washington-recYds-14.5",
+      "actual": 30,
+      "outcome": "win",
+      "profitAtLimit": 0.326797385620915
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873076-p-freiermuth-receptions-1.5",
+      "actual": 5,
+      "outcome": "win",
+      "profitAtLimit": 0.30959752321981426
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873076-d-cooper-recYds-4.5",
+      "actual": 59,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-k-vidal-receptions-0.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873071-r-odunze-receptions-2.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 0.5714285714285714
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873070-j-cook-rushYds-69.5",
+      "actual": 89,
+      "outcome": "win",
+      "profitAtLimit": 0.3802281368821292
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873070-j-cook-rushYds-74.5",
+      "actual": 89,
+      "outcome": "win",
+      "profitAtLimit": 0.36363636363636376
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-hall-receptions-1.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.30959752321981426
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873070-j-cook-rushRecYds-79.5",
+      "actual": 92,
+      "outcome": "win",
+      "profitAtLimit": 0.2666666666666666
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873073-g-pickens-recYds-39.5",
+      "actual": 102,
+      "outcome": "win",
+      "profitAtLimit": 0.26178010471204183
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873070-j-cook-rushYds-59.5",
+      "actual": 89,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-allen-rushRecYds-45.5",
+      "actual": 84,
+      "outcome": "win",
+      "profitAtLimit": 0.8695652173913042
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-allen-rushRecYds-44.5",
+      "actual": 84,
+      "outcome": "win",
+      "profitAtLimit": 0.8695652173913042
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-allen-rushRecYds-41.5",
+      "actual": 84,
+      "outcome": "win",
+      "profitAtLimit": 0.8547008547008548
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-allen-rushYds-32.5",
+      "actual": 75,
+      "outcome": "win",
+      "profitAtLimit": 0.847457627118644
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-allen-rushRecYds-40.5",
+      "actual": 84,
+      "outcome": "win",
+      "profitAtLimit": 0.7692307692307692
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-allen-rushRecYds-39.5",
+      "actual": 84,
+      "outcome": "win",
+      "profitAtLimit": 0.7575757575757576
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-allen-rushRecYds-43.5",
+      "actual": 84,
+      "outcome": "win",
+      "profitAtLimit": 0.7299270072992701
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-allen-rushYds-29.5",
+      "actual": 75,
+      "outcome": "win",
+      "profitAtLimit": 0.7142857142857144
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873067-e-higgins-recYds-9.5",
+      "actual": 4,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-allen-rushYds-30.5",
+      "actual": 75,
+      "outcome": "win",
+      "profitAtLimit": 0.6666666666666665
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873067-e-higgins-receptions-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873073-r-flournoy-recYds-34.5",
+      "actual": 11,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873076-m-lemon-receptions-2.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873073-r-flournoy-recYds-29.5",
+      "actual": 11,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-allen-rushYds-24.5",
+      "actual": 75,
+      "outcome": "win",
+      "profitAtLimit": 0.5025125628140703
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873073-r-flournoy-rushRecYds-29.5",
+      "actual": 11,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873070-o-gordon-rushYds-39.5",
+      "actual": 69,
+      "outcome": "win",
+      "profitAtLimit": 0.4608294930875576
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873071-l-burden-receptions-3.5",
+      "actual": 2,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-allen-rushRecYds-34.5",
+      "actual": 84,
+      "outcome": "win",
+      "profitAtLimit": 0.4444444444444444
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-allen-rushRecYds-29.5",
+      "actual": 84,
+      "outcome": "win",
+      "profitAtLimit": 0.36363636363636376
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873076-m-lemon-recYds-14.5",
+      "actual": 3,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-allen-rushYds-19.5",
+      "actual": 75,
+      "outcome": "win",
+      "profitAtLimit": 0.33333333333333326
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873073-r-flournoy-rushRecYds-24.5",
+      "actual": 11,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873071-l-burden-rushRecYds-39.5",
+      "actual": 13,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873068-j-hill-receptions-1.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 0.273972602739726
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873070-o-gordon-rushRecYds-49.5",
+      "actual": 69,
+      "outcome": "win",
+      "profitAtLimit": 0.25773195876288657
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873068-j-cuevas-recYds-13.5",
+      "actual": 8,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873068-j-cuevas-recYds-12.5",
+      "actual": 8,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-c-kolar-recYds-14.5",
+      "actual": 8,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873073-r-flournoy-rushRecYds-39.5",
+      "actual": 11,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873068-j-cuevas-recYds-9.5",
+      "actual": 8,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-c-kolar-recYds-13.5",
+      "actual": 8,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873068-j-cuevas-recYds-10.5",
+      "actual": 8,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873073-r-flournoy-rushRecYds-38.5",
+      "actual": 11,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873068-j-cuevas-recYds-7.5",
+      "actual": 8,
+      "outcome": "win",
+      "profitAtLimit": 0.8333333333333335
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873073-r-flournoy-recYds-37.5",
+      "actual": 11,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-hall-recYds-15.5",
+      "actual": 14,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-hall-recYds-14.5",
+      "actual": 14,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873070-k-shakir-recYds-24.5",
+      "actual": 101,
+      "outcome": "win",
+      "profitAtLimit": 0.48076923076923084
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873070-o-gordon-rushYds-44.5",
+      "actual": 69,
+      "outcome": "win",
+      "profitAtLimit": 0.4545454545454546
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873070-o-gordon-rushRecYds-59.5",
+      "actual": 69,
+      "outcome": "win",
+      "profitAtLimit": 0.4424778761061947
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873068-j-cuevas-recYds-4.5",
+      "actual": 8,
+      "outcome": "win",
+      "profitAtLimit": 0.3597122302158273
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873070-k-shakir-recYds-19.5",
+      "actual": 101,
+      "outcome": "win",
+      "profitAtLimit": 0.3448275862068966
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873071-a-kamara-receptions-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873068-j-cuevas-receptions-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.3012048192771084
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-c-kolar-recYds-4.5",
+      "actual": 8,
+      "outcome": "win",
+      "profitAtLimit": 0.28985507246376807
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873071-k-monangai-rushYds-24.5",
+      "actual": 18,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873076-d-goedert-receptions-3.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873076-d-goedert-recYds-29.5",
+      "actual": 38,
+      "outcome": "win",
+      "profitAtLimit": 0.8695652173913042
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873076-d-smith-recYds-50.5",
+      "actual": 41,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873076-d-smith-recYds-49.5",
+      "actual": 41,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873076-d-smith-recYds-51.5",
+      "actual": 41,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873068-j-hill-receptions-2.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 0.7407407407407407
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873070-j-cook-rushRecYds-99.5",
+      "actual": 92,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873076-d-smith-recYds-48.5",
+      "actual": 41,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-allen-recYds-4.5",
+      "actual": 9,
+      "outcome": "win",
+      "profitAtLimit": 0.5714285714285714
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873070-j-cook-rushYds-79.5",
+      "actual": 89,
+      "outcome": "win",
+      "profitAtLimit": 0.5714285714285714
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873076-d-smith-recYds-47.5",
+      "actual": 41,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873076-d-smith-recYds-44.5",
+      "actual": 41,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873067-t-kelce-recYds-29.5",
+      "actual": 74,
+      "outcome": "win",
+      "profitAtLimit": 0.5376344086021505
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873072-j-gibbs-rushYds-69.5",
+      "actual": 98,
+      "outcome": "win",
+      "profitAtLimit": 0.5154639175257731
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873076-d-smith-recYds-45.5",
+      "actual": 41,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873076-d-smith-recYds-39.5",
+      "actual": 41,
+      "outcome": "win",
+      "profitAtLimit": 0.48076923076923084
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873070-j-cook-rushRecYds-89.5",
+      "actual": 92,
+      "outcome": "win",
+      "profitAtLimit": 0.4504504504504505
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873076-d-goedert-receptions-2.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873071-t-etienne-receptions-1.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873071-k-monangai-rushYds-29.5",
+      "actual": 18,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873067-t-kelce-recYds-24.5",
+      "actual": 74,
+      "outcome": "win",
+      "profitAtLimit": 0.3787878787878789
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873073-b-spannford-recYds-9.5",
+      "actual": 5,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873072-j-gibbs-rushYds-59.5",
+      "actual": 98,
+      "outcome": "win",
+      "profitAtLimit": 0.3246753246753247
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873076-d-goedert-recYds-14.5",
+      "actual": 38,
+      "outcome": "win",
+      "profitAtLimit": 0.273972602739726
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873076-d-smith-recYds-29.5",
+      "actual": 41,
+      "outcome": "win",
+      "profitAtLimit": 0.26178010471204183
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873067-p-mahomes-rushYds-4.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-p-reed-pr-13.5",
+      "actual": 21,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-o-okongwu-points-10.5",
+      "actual": 6,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nba-401910029-o-okongwu-pr-20.5",
+      "actual": 15,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-hall-rushRecYds-49.5",
+      "actual": 100,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-c-kolar-recYds-15.5",
+      "actual": 8,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-hall-recYds-9.5",
+      "actual": 14,
+      "outcome": "win",
+      "profitAtLimit": 0.353356890459364
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873076-r-dowdle-rushYds-19.5",
+      "actual": 15,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873074-b-allen-rushYds-31.5",
+      "actual": 75,
+      "outcome": "win",
+      "profitAtLimit": 0.8064516129032258
+    }
+  ]
+}

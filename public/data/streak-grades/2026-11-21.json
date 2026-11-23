@@ -1,6 +1,6 @@
 {
   "date": "2026-11-21",
-  "gradedAt": "2026-11-22T13:24:16.008Z",
+  "gradedAt": "2026-11-23T00:30:20.125Z",
   "grades": [
     {
       "pickId": "2026-11-21-s-nba-401910028-z-lavine-rebounds-2.5",
@@ -947,6 +947,60 @@
     {
       "pickId": "2026-11-21-s-nba-401910027-s-bey-pra-18.5",
       "actual": 9,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-21-s-nba-401910028-d-acuff-assists-4.5",
+      "actual": 8,
+      "outcome": "win",
+      "profitAtLimit": 0.3076923076923077
+    },
+    {
+      "pickId": "2026-11-21-s-nba-401910028-d-acuff-assists-5.5",
+      "actual": 8,
+      "outcome": "win",
+      "profitAtLimit": 0.625
+    },
+    {
+      "pickId": "2026-11-21-s-nba-401910026-t-shannon-ra-4.5",
+      "actual": 7,
+      "outcome": "win",
+      "profitAtLimit": 0.4201680672268908
+    },
+    {
+      "pickId": "2026-11-21-s-nba-401910028-d-acuff-pra-26.5",
+      "actual": 35,
+      "outcome": "win",
+      "profitAtLimit": 0.2857142857142856
+    },
+    {
+      "pickId": "2026-11-21-s-nba-401910028-d-acuff-threes-1.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.23474178403755874
+    },
+    {
+      "pickId": "2026-11-21-s-nba-401910026-t-shannon-ra-3.5",
+      "actual": 7,
+      "outcome": "win",
+      "profitAtLimit": 0.2666666666666666
+    },
+    {
+      "pickId": "2026-11-21-s-nba-401910023-j-jaquez-assists-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-21-s-nba-401910023-j-jaquez-threes-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.3999999999999999
+    },
+    {
+      "pickId": "2026-11-21-s-nba-401910024-r-williams-rebounds-3.5",
+      "actual": 3,
       "outcome": "loss",
       "profitAtLimit": -1
     }
