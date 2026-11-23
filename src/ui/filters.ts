@@ -18,14 +18,19 @@ export interface Filters {
   cushion: number;
   /** Only props Hard Rock lists. */
   hrOnly: boolean;
-  /** Minimum average minutes per game (NBA only; other sports pass). */
+  /** Playing-time level 0 to 3 (see PLAYING_TIME); NFL props pass. */
   minutes: number;
 }
 
 /** Average NBA minutes by player key, loaded once from data/nba-minutes.json. */
 let minutesByKey = new Map<string, number>();
-export function setMinutes(m: Map<string, number>): void { minutesByKey = m; }
-export const minutesOf = (p: HandedPick): number | null => (p.sport === "nba" ? minutesByKey.get(boxNameKey(p.player)) ?? 0 : null);
+let toiByKey = new Map<string, number>();
+export function setMinutes(m: Map<string, number>, toi: Map<string, number> = new Map()): void { minutesByKey = m; toiByKey = toi; }
+/** The three playing-time levels in each sport's own measure: minutes per game (NBA) or time on ice per game (NHL). */
+export const PLAYING_TIME: Partial<Record<string, number[]>> = { nba: [20, 28, 32], nhl: [14, 17, 20] };
+
+/** Playing time in each sport's own measure: NBA minutes per game, NHL time on ice per game. Null where we have no such number. */
+export const minutesOf = (p: HandedPick): number | null => (p.sport === "nba" ? minutesByKey.get(boxNameKey(p.player)) ?? 0 : p.sport === "nhl" && toiByKey.size > 0 ? toiByKey.get(boxNameKey(p.player)) ?? 0 : null);
 
 export const defaultFilters = (): Filters => ({ off: new Set(), line: "all", game: "all", minStreak: 0, maxJuice: 0, h2h: 0, split: 0, cushion: 0, hrOnly: false, minutes: 0 });
 
@@ -52,7 +57,8 @@ export function passes(p: HandedPick, f: Filters): boolean {
   }
   if (f.minutes > 0) {
     const m = minutesOf(p);
-    if (m != null && m < f.minutes) return false;
+    const need = PLAYING_TIME[p.sport]?.[f.minutes - 1];
+    if (m != null && need != null && m < need) return false;
   }
   if (f.cushion > 0) {
     const c = cushionOf(p);

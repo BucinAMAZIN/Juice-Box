@@ -21,3 +21,18 @@ describe("injuries", () => {
     expect(parseInjuries({}).size).toBe(0);
   });
 });
+
+import { defaultFilters, passes, setMinutes } from "../src/ui/filters";
+import type { HandedPick } from "../src/engine/types";
+describe("playing time filter", () => {
+  const pick = (sport: string, player: string) => ({ sport, player, market: "points", line: 1.5, streak: 6 }) as unknown as HandedPick;
+  it("uses each sport's own cutoffs and skips sports without a number", () => {
+    setMinutes(new Map([["j tatum", 36], ["b role", 12]]), new Map([["c mcdavid", 22], ["d grind", 9]]));
+    const f = { ...defaultFilters(), minutes: 2 };
+    expect(passes(pick("nba", "Jayson Tatum"), f)).toBe(true);
+    expect(passes(pick("nba", "Bob Role"), f)).toBe(false);
+    expect(passes(pick("nhl", "Connor McDavid"), f)).toBe(true);
+    expect(passes(pick("nhl", "Dan Grind"), f)).toBe(false);
+    expect(passes(pick("nfl", "Anyone"), f)).toBe(true);
+  });
+});

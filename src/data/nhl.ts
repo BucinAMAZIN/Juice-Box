@@ -1,3 +1,4 @@
+import { boxNameKey } from "./linemate";
 /**
  * NHL public API adapter (api-web.nhle.com). Parsers are pure and tolerant: a missing or oddly shaped
  * field yields a skipped row, never a crash. Response shapes follow the public API as documented by the
@@ -254,4 +255,28 @@ export async function loadLeaders(date: string): Promise<Leaders> {
     out[market] = parseLeaderRows(await getJson(url)).slice(0, LEADER_COUNT);
   }
   return out;
+}
+
+/** Average time on ice per game, in minutes, by player key, for every NHL skater this season. */
+export function parseToi(json: unknown): Map<string, number> {
+  const out = new Map<string, number>();
+  const rows = typeof json === "object" && json !== null && Array.isArray((json as { data?: unknown }).data) ? ((json as { data: unknown[] }).data) : [];
+  for (const r of rows) {
+    if (typeof r !== "object" || r === null) continue;
+    const o = r as Record<string, unknown>;
+    const name = typeof o.skaterFullName === "string" ? o.skaterFullName : "";
+    const secs = typeof o.timeOnIcePerGame === "number" ? o.timeOnIcePerGame : 0;
+    if (name && secs > 0) out.set(boxNameKey(name), Math.round((secs / 60) * 10) / 10);
+  }
+  return out;
+}
+
+export async function loadNhlToi(date: string): Promise<Map<string, number>> {
+  const y = Number(date.slice(0, 4));
+  const start = Number(date.slice(5, 7)) >= 9 ? y : y - 1;
+  const season = `${start}${start + 1}`;
+  const url = `https://api.nhle.com/stats/rest/en/skater/timeonice?isAggregate=false&isGame=false&limit=-1&cayenneExp=${encodeURIComponent(`seasonId=${season} and gameTypeId=2`)}`;
+  const res = await fetch(url, { headers: { accept: "application/json" } });
+  if (!res.ok) throw new Error(`NHL stats ${res.status}`);
+  return parseToi(await res.json());
 }
