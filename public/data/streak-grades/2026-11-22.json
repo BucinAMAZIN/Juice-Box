@@ -1,6 +1,6 @@
 {
   "date": "2026-11-22",
-  "gradedAt": "2026-11-23T00:30:20.125Z",
+  "gradedAt": "2026-11-23T00:48:07.898Z",
   "grades": [
     {
       "pickId": "2026-11-22-s-nba-401910029-d-daniels-ra-12.5",
@@ -913,6 +913,42 @@
       "actual": 75,
       "outcome": "win",
       "profitAtLimit": 0.8064516129032258
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873075-m-mims-receptions-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.390625
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873075-a-jeanty-receptions-2.5",
+      "actual": 5,
+      "outcome": "win",
+      "profitAtLimit": 0.33003300330033003
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873075-m-mayer-receptions-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873075-c-sutton-recYds-14.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873075-j-dobbins-rushYds-9.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-22-s-nfl-401873075-m-mayer-recYds-14.5",
+      "actual": 4,
+      "outcome": "loss",
+      "profitAtLimit": -1
     }
   ]
 }
