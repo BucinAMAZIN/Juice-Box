@@ -1,0 +1,11 @@
+name: Probe CORS
+on: { workflow_dispatch: {} }
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          for u in "https://api-web.nhle.com/v1/gamecenter/2026020377/boxscore" "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard"; do
+            echo "== $u"; curl -s -D - -o /dev/null -H "Origin: https://bucinamazin.github.io" "$u" | grep -iE "^HTTP|access-control|vary"
+          done
+          echo "== preflight nhl"; curl -s -D - -o /dev/null -X OPTIONS -H "Origin: https://bucinamazin.github.io" -H "Access-Control-Request-Method: GET" -H "Access-Control-Request-Headers: accept" "https://api-web.nhle.com/v1/gamecenter/2026020377/boxscore" | grep -iE "^HTTP|access-control"
