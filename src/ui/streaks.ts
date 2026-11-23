@@ -54,8 +54,6 @@ function signalLine(p: HandedPick): HTMLElement | null {
   if (p.h2h) bits.push(`vs ${p.opponent} ${p.h2h.hits}/${p.h2h.games}`);
   if (p.split) bits.push(`${p.home ? "home" : "away"} ${p.split.hits}/${p.split.games}`);
   const c = cushionOf(p);
-  const season = seasonAvgOf(p);
-  if (season != null) bits.push(`season avg ${season}/game`);
   if (p.avg != null) bits.push(`streak avg ${p.avg}${c != null ? ` (${c >= 0 ? "+" : ""}${Math.round(c * 100)}%)` : ""}`);
   if (p.alt) bits.push("alt line");
   return bits.length ? h("div", { class: "signals" }, bits.join(" · ")) : null;
@@ -93,7 +91,8 @@ function row(p: HandedPick, state: StreakState, refresh: () => void): HTMLElemen
     h("div", { class: "s-side" },
     p.url && !started ? h("a", { class: "hr s-odds", href: p.url, target: "_blank", rel: "noopener" }, odds(p.price ?? 0)) : h("span", { class: "s-odds off", title: `Linemate has no Hard Rock price for this line, so this is ${p.book ?? "another book"}'s price. Hard Rock may still offer it: check the Hard Rock app.` }, p.price != null ? odds(p.price) : "–", h("small", {}, p.book && p.book !== "Hard Rock" ? `${p.book} · check HR` : "started")),
     h("div", { class: "s-grades", title: mode === "linemate" ? "Linemate's grade: what its own numbers say at face value." : "Our grade: learned from our graded win-loss results." }, mode === "linemate" ? h("span", {}, `${letter(lm)} ${Math.round(lm * 100)}%`) : h("span", {}, ours != null ? `${letter(ours)} ${Math.round(ours * 100)}%` : "No data yet")),
-    h("div", { class: "s-streak", title: "Straight games over this line" }, h("span", {}, String(p.streak ?? "")), h("small", {}, "streak"))
+    h("div", { class: "s-streak", title: "Straight games over this line" }, h("span", {}, String(p.streak ?? "")), h("small", {}, "streak")),
+    ...(seasonAvgOf(p) != null ? [h("div", { class: "s-season", title: "What this player averages per game this season for this stat" }, h("span", {}, String(seasonAvgOf(p))), h("small", {}, "per game"))] : []),
     ),
     h("div", { class: "s-live", hidden: "" }),
   );

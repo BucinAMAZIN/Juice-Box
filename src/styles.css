@@ -342,3 +342,8 @@ html, body { max-width: 100%; overflow-x: hidden; -webkit-text-size-adjust: 100%
 .s-inj.inj-out { background: #c8341c; color: #fff; }
 .s-inj.inj-flag { background: #ffd23f; color: #111; }
 .streak.is-out { opacity: 0.55; }
+
+/* Season average per game: a big number under the streak. */
+.s-side .s-season { display: flex; flex-direction: column; align-items: flex-end; line-height: 1; margin-top: 2px; padding: 4px 8px; border: 2px solid var(--text); border-radius: 10px; background: #fff; }
+.s-season span { font-size: 30px; font-weight: 800; }
+.s-season small { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
