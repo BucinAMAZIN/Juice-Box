@@ -347,3 +347,11 @@ html, body { max-width: 100%; overflow-x: hidden; -webkit-text-size-adjust: 100%
 .s-side .s-season { display: flex; flex-direction: column; align-items: flex-end; line-height: 1; margin-top: 2px; padding: 4px 8px; border: 2px solid var(--text); border-radius: 10px; background: #fff; }
 .s-season span { font-size: 30px; font-weight: 800; }
 .s-season small { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* Game picker: tick several games at once */
+.gamepick { border: 2px solid var(--text); border-radius: 12px; background: #fff; margin: 6px 0; }
+.gamepick summary { cursor: pointer; font-weight: 700; padding: 10px 12px; min-height: 24px; }
+.gp-list { display: flex; flex-direction: column; border-top: 2px solid var(--text); max-height: 50vh; overflow-y: auto; }
+.gp-row { display: flex; align-items: center; gap: 12px; padding: 12px; font-size: 16px; border-bottom: 1px solid rgba(0,0,0,.15); cursor: pointer; }
+.gp-row:last-child { border-bottom: 0; }
+.gp-row input { width: 22px; height: 22px; flex: none; accent-color: #6b3fe0; }

@@ -4,6 +4,7 @@ import type { DayFile, DayGrades, HandedPick } from "../engine/types";
 import { type BlowoutSource, blowoutSource, renderBlowoutPanel } from "./blowouts";
 import type { BlowoutGame } from "../engine/blowouts";
 import { clear, h } from "./dom";
+import { clearGames, gameLabel, gamePicker } from "./gamepick";
 import { setMinutes, activeCount, cushionOf, defaultFilters, gameKey, loadFilters, passes, saveFilters, type Filters } from "./filters";
 import { getJson, pullToRefresh, type PicksSource } from "./picks";
 
@@ -143,9 +144,8 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
     } }, MARKET_LABEL[m] ?? m);
     marketBox.append(b);
   }
-  const games = [...new Map(day.picks.map((p) => [gameKey(p), `${p.opponent} @ ${p.team} ${startTime(p.gameStart)}`])).entries()];
-  const gameSel = h("select", { "aria-label": "Game", onchange: () => { state.filters.game = gameSel.value; draw(); } }, h("option", { value: "all" }, "All games"), ...games.map(([k, label]) => h("option", { value: k }, label)));
-  gameSel.value = f0.game;
+  const games = [...new Map(day.picks.map((p) => [gameKey(p), gameLabel(p.opponent, p.team, p.gameStart)])).entries()];
+  const gameSel = gamePicker(games, () => draw());
   panel.append(
     marketBox,
     group("Book", [["All", false], ["Hard Rock price only", true]] as Array<[string, boolean]>, () => state.filters.hrOnly, (v) => (state.filters.hrOnly = v)),
@@ -157,7 +157,7 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
     group("Playing time (NBA 20/28/32 min, NHL 14/17/20 min)", [["Any", 0], ["Rotation", 1], ["Starters", 2], ["Stars", 3]] as Array<[string, number]>, () => state.filters.minutes, (v) => (state.filters.minutes = v)),
     group("Cushion", [["Any", 0], ["+10%", 0.1], ["+25%", 0.25]] as Array<[string, number]>, () => state.filters.cushion, (v) => (state.filters.cushion = v)),
     h("div", { class: "fgroup" }, h("span", { class: "flabel" }, "Game"), gameSel),
-    h("button", { type: "button", class: "ghost", onclick: () => { state.filters = defaultFilters(); saveFilters(state.filters); clear(view); renderStreakDay(view, day, state); } }, "Reset filters"),
+    h("button", { type: "button", class: "ghost", onclick: () => { clearGames(); state.filters = defaultFilters(); saveFilters(state.filters); clear(view); renderStreakDay(view, day, state); } }, "Reset filters"),
   );
   const draw = () => {
     clear(content);

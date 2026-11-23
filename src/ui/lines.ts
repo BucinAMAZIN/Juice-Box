@@ -12,6 +12,7 @@ import { gameFrac, type ScoreTarget, watchScores } from "./live";
 import { type LaneLive, gameLive, scoreLine, spreadLane, totalLane, trendLive } from "../engine/live";
 import { canonTeam } from "../engine/teamtrends";
 import { clear, h } from "./dom";
+import { gameLabel, gamePicker, gameSelected, matchKey } from "./gamepick";
 import { pct } from "./format";
 import { getJson } from "./picks";
 
@@ -51,6 +52,11 @@ const TAG: Record<Tone, string> = { sweet: "Sweet spot", lean: "Lean", above: "S
 /** How far a call sits above its break-even, for sorting. A sweet spot counts for more. */
 const strengthOf = (l: Lean): number => Math.max(...[l.total, l.spread].map((c) => (c == null ? -1 : c.pct - c.breakEven + (c.grade === "sweet spot" ? 0.1 : c.grade === "lean" ? 0.03 : 0))));
 const barPos = (x: number): string => `${Math.max(0, Math.min(100, Math.round(((x - 0.4) / 0.3) * 100)))}%`;
+
+/** The ticked-games picker for a list of lines games, or nothing when there is a single game to pick from. */
+const pickerFor = (games: Array<{ league: string; g: LineGame }>, redraw: () => void): HTMLElement =>
+  gamePicker([...games].sort((a, b) => a.g.start.localeCompare(b.g.start)).map(({ league, g }) => [matchKey(league, g.fav, g.dog), gameLabel(g.favHome ? g.dog : g.fav, g.favHome ? g.fav : g.dog, g.start)] as [string, string]), redraw);
+const inPick = (league: string, g: LineGame): boolean => gameSelected(matchKey(league, g.fav, g.dog));
 
 function callBox(kind: "total" | "spread", c: Call | null, g: LineGame, slot?: HTMLElement): HTMLElement {
   const tone = toneOf(c);
@@ -173,10 +179,10 @@ export function renderLeague(box: HTMLElement, id: string, all: LineGame[], trac
     clear(list);
     targets.length = 0;
     const sorted = [...items].sort((a, b) => (mode === "strength" ? strengthOf(b.lean) - strengthOf(a.lean) : 0) || a.g.start.localeCompare(b.g.start));
-    for (const x of sorted) list.append(gameCard(x.g, x.lean, undefined, x.extra, { league: id, targets, ml: s.ml }));
+    for (const x of sorted.filter((y) => inPick(id, y.g))) list.append(gameCard(x.g, x.lean, undefined, x.extra, { league: id, targets, ml: s.ml }));
   };
   if (upcoming.length === 0) sec.append(h("p", { class: "empty" }, "No games with a line on the board right now."));
-  else sec.append(COLOUR_KEY(), sortToggle(() => mode, (m) => { mode = m; draw(); }), list);
+  else sec.append(pickerFor(items.map((x) => ({ league: id, g: x.g })), draw), COLOUR_KEY(), sortToggle(() => mode, (m) => { mode = m; draw(); }), list);
   draw();
   box.append(sec);
   watchScores(box, () => targets);
@@ -228,7 +234,7 @@ export function renderTeamTrends(box: HTMLElement, trends: Array<TeamTrend & { o
   const draw = () => {
     clear(list);
     targets.length = 0;
-    const shown = upcoming.filter((t) => (filter.market === "all" || t.market === filter.market) && (filter.sport === "all" || t.sport === filter.sport)).map((t) => ({ t, p: trendChance(t) })).sort((a, b) => b.p - a.p || a.t.start.localeCompare(b.t.start));
+    const shown = upcoming.filter((t) => (filter.market === "all" || t.market === filter.market) && (filter.sport === "all" || t.sport === filter.sport) && gameSelected(matchKey(t.sport, t.team, t.opponent))).map((t) => ({ t, p: trendChance(t) })).sort((a, b) => b.p - a.p || a.t.start.localeCompare(b.t.start));
     if (shown.length === 0) list.append(h("p", { class: "empty" }, "No Linemate team trends of 5+ games at 80%+ for these filters right now."));
     for (const { t, p } of shown.slice(0, 60)) {
       const hr = t.book === "Hard Rock" && t.sid;
@@ -270,6 +276,7 @@ export function renderTeamTrends(box: HTMLElement, trends: Array<TeamTrend & { o
     h("p", { class: "note" }, "Linemate's team trends: spreads, team totals, moneylines and game totals where a team has hit the line in 80%+ of its last 5 or more games. Ranked by Linemate's own numbers (recent record, head to head and home/away split), colored green to red. Grades here are Linemate's, not ours: results fill in below as games finish."),
     h("div", { class: "chips", role: "group", "aria-label": "Market" }, chip("market", "all", "All markets"), chip("market", "SPREAD", "Spread"), chip("market", "TEAM_TOTAL", "Team total"), chip("market", "MONEY_LINE", "Moneyline"), chip("market", "GAME_TOTAL", "Game total")),
     h("div", { class: "chips", role: "group", "aria-label": "Sport" }, chip("sport", "all", "All sports"), chip("sport", "nba", "NBA"), chip("sport", "nfl", "NFL"), chip("sport", "nhl", "NHL")),
+    gamePicker([...new Map(upcoming.slice().sort((a, b) => a.start.localeCompare(b.start)).map((t) => [matchKey(t.sport, t.team, t.opponent), gameLabel(t.home ? t.opponent : t.team, t.home ? t.team : t.opponent, t.start)] as [string, string])).entries()], draw),
     h("section", {}, h("h3", {}, `On the board (${upcoming.length})`), list),
     record,
   );
@@ -307,10 +314,10 @@ export function renderBoard(box: HTMLElement, data: Record<string, { all: LineGa
     clear(list);
     targets.length = 0;
     const sorted = [...items].sort((x, y) => (mode === "strength" ? strengthOf(y.lean) - strengthOf(x.lean) : 0) || x.g.start.localeCompare(y.g.start));
-    for (const x of sorted) list.append(gameCard(x.g, x.lean, x.id, "", { league: x.id, targets, ml: mlOf.get(x.id) ?? false }));
+    for (const x of sorted.filter((y) => inPick(y.id, y.g))) list.append(gameCard(x.g, x.lean, x.id, "", { league: x.id, targets, ml: mlOf.get(x.id) ?? false }));
   };
   if (rows.length === 0) sec.append(h("p", { class: "empty" }, "No games with a line on the board right now."));
-  else sec.append(COLOUR_KEY(), sortToggle(() => mode, (m) => { mode = m; draw(); }), list);
+  else sec.append(pickerFor(items.map((x) => ({ league: x.id, g: x.g })), draw), COLOUR_KEY(), sortToggle(() => mode, (m) => { mode = m; draw(); }), list);
   draw();
   box.append(sec);
   watchScores(box, () => targets);

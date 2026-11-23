@@ -1,12 +1,12 @@
 import type { HandedPick } from "../engine/types";
 import { boxNameKey } from "../data/linemate";
+import { gameSelected, matchKey, selectedCount } from "./gamepick";
 
 /** Filters for the streak list, modeled on Linemate's: bet type, line type, game, and signals. */
 export interface Filters {
   /** Markets switched off. */
   off: Set<string>;
   line: "all" | "main" | "alt";
-  game: "all" | string;
   minStreak: number;
   /** Longest price allowed, as a negative number such as -300. 0 means any. */
   maxJuice: number;
@@ -32,19 +32,19 @@ export const PLAYING_TIME: Partial<Record<string, number[]>> = { nba: [20, 28, 3
 /** Playing time in each sport's own measure: NBA minutes per game, NHL time on ice per game. Null where we have no such number. */
 export const minutesOf = (p: HandedPick): number | null => (p.sport === "nba" ? minutesByKey.get(boxNameKey(p.player)) ?? 0 : p.sport === "nhl" && toiByKey.size > 0 ? toiByKey.get(boxNameKey(p.player)) ?? 0 : null);
 
-export const defaultFilters = (): Filters => ({ off: new Set(), line: "all", game: "all", minStreak: 0, maxJuice: 0, h2h: 0, split: 0, cushion: 0, hrOnly: false, minutes: 0 });
+export const defaultFilters = (): Filters => ({ off: new Set(), line: "all", minStreak: 0, maxJuice: 0, h2h: 0, split: 0, cushion: 0, hrOnly: false, minutes: 0 });
 
 const rate = (r?: { games: number; hits: number }): number | null => (r && r.games > 0 ? r.hits / r.games : null);
 /** How far the average over the streak sits above the bet line, as a share of the line. */
 export const cushionOf = (p: HandedPick): number | null => (p.avg != null && p.line + 0.5 > 0 ? p.avg / (p.line + 0.5) - 1 : null);
-export const gameKey = (p: HandedPick): string => `${p.sport}:${p.gameId}`;
+export const gameKey = (p: HandedPick): string => matchKey(p.sport, p.team, p.opponent);
 
 export function passes(p: HandedPick, f: Filters): boolean {
   if (f.off.has(p.market)) return false;
   if (f.hrOnly && !p.url) return false;
   if (f.line === "main" && p.alt === true) return false;
   if (f.line === "alt" && p.alt !== true) return false;
-  if (f.game !== "all" && gameKey(p) !== f.game) return false;
+  if (!gameSelected(gameKey(p))) return false;
   if ((p.streak ?? 0) < f.minStreak) return false;
   if (f.maxJuice !== 0 && (p.price ?? 0) < f.maxJuice) return false;
   if (f.h2h > 0) {
@@ -68,7 +68,7 @@ export function passes(p: HandedPick, f: Filters): boolean {
 }
 
 export function activeCount(f: Filters): number {
-  return f.off.size + (f.line !== "all" ? 1 : 0) + (f.game !== "all" ? 1 : 0) + (f.minStreak ? 1 : 0) + (f.maxJuice ? 1 : 0) + (f.h2h ? 1 : 0) + (f.split ? 1 : 0) + (f.cushion ? 1 : 0) + (f.hrOnly ? 1 : 0) + (f.minutes ? 1 : 0);
+  return f.off.size + (f.line !== "all" ? 1 : 0) + (selectedCount() ? 1 : 0) + (f.minStreak ? 1 : 0) + (f.maxJuice ? 1 : 0) + (f.h2h ? 1 : 0) + (f.split ? 1 : 0) + (f.cushion ? 1 : 0) + (f.hrOnly ? 1 : 0) + (f.minutes ? 1 : 0);
 }
 
 export function loadFilters(): Filters {
@@ -89,7 +89,7 @@ export function loadFilters(): Filters {
 
 export function saveFilters(f: Filters): void {
   try {
-    localStorage.setItem("jb-filters", JSON.stringify({ ...f, off: [...f.off], game: "all" }));
+    localStorage.setItem("jb-filters", JSON.stringify({ ...f, off: [...f.off] }));
   } catch {
     /* ignore */
   }
