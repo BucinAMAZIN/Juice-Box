@@ -149,7 +149,7 @@ describe("Streaks, Results and Records screens", () => {
   it("lists streaks longest first and builds one Hard Rock ticket from the ticked ones", async () => {
     const root = document.createElement("div");
     document.body.append(root);
-    await renderStreaks(root, undefined, source(false));
+    await renderStreaks(root, undefined, source(false), undefined, () => "2026-11-21");
     const rows = [...root.querySelectorAll(".streak strong")].map((e) => e.textContent);
     expect(rows[0]).toBe("P 2026-11-21-a 19+ Points");
     const boxes = [...root.querySelectorAll<HTMLInputElement>(".s-pick input")];
@@ -167,13 +167,35 @@ describe("Streaks, Results and Records screens", () => {
       loadDay: async (d) => ({ date: d, generatedAt: "", modelVersion: "x", tickets: [], notes: [], picks: [mk("p1", 9, -200), { ...mk("r1", 7, -200), market: "rebounds" as const }, { ...mk("r2", 6, -200), market: "rebounds" as const }] }),
       loadGrades: async () => null,
     };
-    await renderStreaks(root, undefined, src);
+    await renderStreaks(root, undefined, src, undefined, () => "2026-11-21");
     const cats = [...root.querySelectorAll<HTMLButtonElement>(".cats .chip")].map((b) => b.textContent);
     expect(cats).toEqual(["All 3", "Rebounds 2", "Points 1"]);
     root.querySelector<HTMLButtonElement>('.cats [data-cat="rebounds"]')!.click();
     expect([...root.querySelectorAll(".streak strong")].map((e) => e.textContent)).toEqual(["P r1 19+ Rebounds", "P r2 19+ Rebounds"]);
     root.querySelector<HTMLButtonElement>('.cats [data-cat="all"]')!.click();
     expect(root.querySelectorAll(".streak").length).toBe(3);
+  });
+  it("shows only today's list on Streaks, and says so when it isn't posted yet", async () => {
+    const root = document.createElement("div");
+    document.body.append(root);
+    await renderStreaks(root, undefined, source(false), undefined, () => "2026-11-22");
+    expect(root.querySelector("select")).toBeNull();
+    expect(root.textContent).toContain("Today · Sun, Nov 22");
+    expect(root.textContent).toContain("Today's streaks aren't posted yet");
+    expect(root.querySelectorAll(".streak").length).toBe(0);
+    expect(root.querySelector<HTMLAnchorElement>('a[href="#results"]')).not.toBeNull();
+  });
+  it("picks a day on Results", async () => {
+    const root = document.createElement("div");
+    await renderResults(root, undefined, source(true));
+    const select = root.querySelector<HTMLSelectElement>("select")!;
+    expect([...select.options].map((o) => o.value)).toEqual(["all", "2026-11-21", "2026-11-20"]);
+    const visible = () => [...root.querySelectorAll<HTMLElement>("section.day")].filter((s) => !s.hidden).map((s) => s.dataset.date);
+    expect(visible()).toEqual(["2026-11-21", "2026-11-20"]);
+    select.value = "2026-11-20";
+    select.dispatchEvent(new Event("change"));
+    expect(visible()).toEqual(["2026-11-20"]);
+    expect(root.textContent).toContain("Record: 1-1");
   });
   it("lists graded props by day with a running record", async () => {
     const root = document.createElement("div");

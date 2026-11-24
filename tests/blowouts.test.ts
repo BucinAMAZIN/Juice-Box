@@ -74,7 +74,7 @@ describe("NCAA blowout tab", () => {
     const root = document.createElement("div");
     document.body.append(root);
     const day = { date: "2099-01-01", generatedAt: "", modelVersion: "x", tickets: [], notes: [], picks: [] };
-    await renderStreaks(root, undefined, { loadIndex: async () => ({ dates: ["2099-01-01"] }), loadDay: async () => day, loadGrades: async () => null }, { load: async (n) => (n === "tracked" ? [g("1", 48.5, 51, "pre")] : null) });
+    await renderStreaks(root, undefined, { loadIndex: async () => ({ dates: ["2099-01-01"] }), loadDay: async () => day, loadGrades: async () => null }, { load: async (n) => (n === "tracked" ? [g("1", 48.5, 51, "pre")] : null) }, () => "2099-01-01");
     root.querySelector<HTMLButtonElement>('[data-tab="ncaa"]')!.click();
     expect(root.textContent).toContain("Blowout 1");
     expect(root.textContent).toContain("AUB -48.5 vs SAM");
