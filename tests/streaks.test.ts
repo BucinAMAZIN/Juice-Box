@@ -147,3 +147,18 @@ describe("our tab evidence", () => {
     expect(evidence({ ...(p as object), sport: "nfl" } as never, fit(rows))).toEqual([]);
   });
 });
+
+import { sortStreaks } from "../src/ui/streaks";
+import type { HandedPick } from "../src/engine/types";
+describe("streak sort", () => {
+  const mk = (id: string, streak: number, price: number, start: string) => ({ id, streak, price, gameStart: start }) as unknown as HandedPick;
+  const rows = [mk("a", 8, -300, "2026-11-21T23:00:00Z"), mk("b", 10, -200, "2026-11-21T20:00:00Z"), mk("c", 8, -150, "2026-11-21T22:00:00Z")];
+  const ids = (l: HandedPick[]) => l.map((p) => p.id);
+  it("sorts by streak, payout, start time and grade, with streak breaking ties", () => {
+    const chance = (p: HandedPick) => ({ a: 0.9, b: null, c: 0.9 })[p.id as "a" | "b" | "c"];
+    expect(ids(sortStreaks(rows, "streak", chance))).toEqual(["b", "c", "a"]);
+    expect(ids(sortStreaks(rows, "price", chance))).toEqual(["c", "b", "a"]);
+    expect(ids(sortStreaks(rows, "time", chance))).toEqual(["b", "c", "a"]);
+    expect(ids(sortStreaks(rows, "grade", chance))).toEqual(["c", "a", "b"]);
+  });
+});
