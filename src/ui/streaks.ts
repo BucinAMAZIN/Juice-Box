@@ -48,6 +48,27 @@ export interface StreakState {
   models?: Models;
   /** Which grade colours the list: Linemate's own numbers, or our graded results. */
   grading?: "linemate" | "ours";
+  /** How the list is ordered. Streak length is the default. */
+  sort?: SortKey;
+}
+
+export type SortKey = "streak" | "grade" | "price" | "time";
+export const SORT_LABEL: Record<SortKey, string> = { streak: "Streak", grade: "Grade", price: "Best payout", time: "Start time" };
+
+/** Orders streak rows by the chosen key. Ties fall back to streak length, then payout. */
+export function sortStreaks(list: HandedPick[], key: SortKey, chanceOf: (p: HandedPick) => number | null): HandedPick[] {
+  const byStreak = (a: HandedPick, b: HandedPick) => (b.streak ?? 0) - (a.streak ?? 0) || (b.price ?? 0) - (a.price ?? 0);
+  const primary = (a: HandedPick, b: HandedPick): number => {
+    if (key === "grade") {
+      const x = chanceOf(a), y = chanceOf(b);
+      if (x == null || y == null) return x == null && y == null ? 0 : x == null ? 1 : -1; // ungraded rows go last
+      return y - x;
+    }
+    if (key === "price") return (b.price ?? -Infinity) - (a.price ?? -Infinity);
+    if (key === "time") return Date.parse(a.gameStart) - Date.parse(b.gameStart);
+    return 0;
+  };
+  return [...list].sort((a, b) => primary(a, b) || byStreak(a, b));
 }
 
 function signalLine(p: HandedPick): HTMLElement | null {
@@ -162,7 +183,7 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
   const draw = () => {
     clear(content);
     const ncaa = state.tab === "ncaa";
-    cats.hidden = panel.hidden = shownNote.hidden = ncaa;
+    cats.hidden = panel.hidden = shownNote.hidden = sortBar.hidden = ncaa;
     for (const t of tabs.children) t.setAttribute("aria-selected", String((t as HTMLElement).dataset.tab === state.tab));
     if (ncaa) {
       renderBlowoutPanel(content, day.date, state.blow?.tracked ?? null, state.blow?.history ?? null);
@@ -179,11 +200,13 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
     for (const [id, label, n] of [["all", "All", total], ...[...counts.entries()].sort((a, b) => b[1] - a[1]).map(([m, n]) => [m, SHORT_LABEL[m] ?? MARKET_LABEL[m] ?? m, n] as const)] as Array<[string, string, number]>) {
       cats.append(h("button", { type: "button", class: "chip", "data-cat": id, "aria-selected": String(cat === id), onclick: () => { state.category = id; draw(); } }, `${label} ${n}`));
     }
-    const list = inTab.filter((p) => passes(p, f) && (cat === "all" || p.market === cat)).sort((a, b) => (b.streak ?? 0) - (a.streak ?? 0) || (b.price ?? 0) - (a.price ?? 0));
+    const list = inTab.filter((p) => passes(p, f) && (cat === "all" || p.market === cat));
+    const mode = state.grading ?? "ours";
+    const sorted = sortStreaks(list, state.sort ?? "streak", (p) => (mode === "linemate" ? linemateChance(p) : ourChance(p, state.models ?? new Map())));
     count.textContent = activeCount(f) ? `Filters (${activeCount(f)})` : "Filters";
     shownNote.textContent = activeCount(f) || cat !== "all" ? `Showing ${list.length} of ${inTab.length}` : "";
     if (list.length === 0) content.append(h("p", { class: "empty" }, inTab.length ? "Nothing matches these filters." : "No streaks of 5+ with a Hard Rock price for this day yet."));
-    for (const p of list) content.append(row(p, state, refreshBar));
+    for (const p of sorted) content.append(row(p, state, refreshBar));
   };
   for (const [id, label] of [...(sports.length > 1 ? [["multi", "Multi-sport"]] : []), ...sports.map((s) => [s, SPORT[s] ?? s.toUpperCase()]), ["ncaa", "NCAA"]] as Array<[string, string]>) {
     tabs.append(h("button", { type: "button", role: "tab", class: "chip", "data-tab": id, onclick: () => { state.tab = id; draw(); } }, label));
@@ -192,11 +215,15 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
   const legendFor = () => ((state.grading ?? "ours") === "ours" ? "Most likely, by our win-loss results (grey where we have no data)" : "Most likely, by Linemate's numbers");
   const legendText = h("span", {}, legendFor());
   const legend = h("div", { class: "heat-legend", "aria-label": "Colour key" }, h("span", {}, "Least likely"), h("i", { "aria-hidden": "true" }), legendText);
+  const sortBar = h("div", { class: "chips sorts", role: "group", "aria-label": "Sort by" }, h("span", { class: "flabel" }, "Sort by"));
+  for (const key of Object.keys(SORT_LABEL) as SortKey[]) {
+    sortBar.append(h("button", { type: "button", class: "chip", "data-sort": key, "aria-pressed": String((state.sort ?? "streak") === key), onclick: () => { state.sort = key; for (const b of sortBar.querySelectorAll("button")) b.setAttribute("aria-pressed", String((b as HTMLElement).dataset.sort === key)); draw(); } }, SORT_LABEL[key]));
+  }
   const modes = h("div", { class: "chips", role: "tablist", "aria-label": "Grading" });
   for (const [id, label] of [["ours", "Ours (our results)"], ["linemate", "Linemate (their data)"]] as const) {
     modes.append(h("button", { type: "button", role: "tab", class: "chip", "data-grading": id, "aria-selected": String((state.grading ?? "ours") === id), onclick: () => { state.grading = id; for (const b of modes.children) b.setAttribute("aria-selected", String((b as HTMLElement).dataset.grading === id)); legendText.textContent = legendFor(); draw(); } }, label));
   }
-  view.append(modes, legend, cats, panel, shownNote, bar, content);
+  view.append(modes, legend, cats, sortBar, panel, shownNote, bar, content);
   draw();
   refreshBar();
 }
@@ -222,7 +249,7 @@ export async function renderStreaks(view: HTMLElement, _ledger?: unknown, source
   let shown = dates[dates.length - 1]!;
   let shownPicks: HandedPick[] = [];
   const load = async (date: string) => {
-    if (date !== shown) state = { chosen: new Map(), tab: state.tab, category: state.category, filters: state.filters, ...(state.blow ? { blow: state.blow } : {}), ...(state.models ? { models: state.models } : {}), ...(state.grading ? { grading: state.grading } : {}) };
+    if (date !== shown) state = { chosen: new Map(), tab: state.tab, category: state.category, filters: state.filters, ...(state.blow ? { blow: state.blow } : {}), ...(state.models ? { models: state.models } : {}), ...(state.grading ? { grading: state.grading } : {}), ...(state.sort ? { sort: state.sort } : {}) };
     shown = date;
     try {
       const day = await source.loadDay(date);
