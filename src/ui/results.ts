@@ -57,11 +57,25 @@ export async function renderResults(root: HTMLElement, _ledger?: unknown, source
     sections.push(
       h(
         "section",
-        { class: "day" },
+        { class: "day", "data-date": date },
         h("h3", {}, `${date} · ${byId.size ? `${w}-${l}` : "not graded yet"}${open > 0 && byId.size ? ` · ${open} open` : ""}`),
         ...[...day.picks].sort((a, b) => (b.streak ?? 0) - (a.streak ?? 0)).map((p) => row(p, byId.get(p.id)?.outcome, byId.get(p.id)?.actual)),
       ),
     );
   }
-  root.append(h("div", { class: "card" }, h("strong", {}, `Record: ${wins}-${losses}${pushes ? `-${pushes}` : ""}`), h("div", { class: "muted" }, "All graded streak props so far. Breakdowns are on the Records tab.")), ...sections);
+  // Pick one day, or "All days" to scroll through everything newest first.
+  const show = (date: string) => {
+    for (const s of sections) s.hidden = date !== "all" && s.dataset.date !== date;
+  };
+  const select = h(
+    "select",
+    { "aria-label": "Pick a day", onchange: () => show(select.value) },
+    h("option", { value: "all" }, "All days"),
+    ...history.map(({ date }) => h("option", { value: date }, date)),
+  );
+  root.append(
+    h("div", { class: "card" }, h("strong", {}, `Record: ${wins}-${losses}${pushes ? `-${pushes}` : ""}`), h("div", { class: "muted" }, "All graded streak props so far. Breakdowns are on the Records tab.")),
+    h("div", { class: "controls" }, select),
+    ...sections,
+  );
 }

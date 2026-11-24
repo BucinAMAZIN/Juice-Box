@@ -228,51 +228,67 @@ export function renderStreakDay(view: HTMLElement, day: DayFile, state: StreakSt
   refreshBar();
 }
 
-export async function renderStreaks(view: HTMLElement, _ledger?: unknown, source: PicksSource = streakSource, blow: BlowoutSource = blowoutSource): Promise<void> {
+/** Today's date on the Eastern clock, which is the clock the scheduled runs name their files by. */
+export function easternToday(now: Date = new Date()): string {
+  return now.toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+}
+
+function longDate(date: string): string {
+  return new Date(`${date}T12:00:00Z`).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" });
+}
+
+/** The Streaks screen only ever shows today's list. Past days live on the Results tab. */
+export async function renderStreaks(view: HTMLElement, _ledger?: unknown, source: PicksSource = streakSource, blow: BlowoutSource = blowoutSource, today: () => string = () => easternToday()): Promise<void> {
   clear(view);
-  let dates: string[];
-  try {
-    dates = (await source.loadIndex()).dates;
-  } catch {
-    dates = [];
-  }
-  if (dates.length === 0) {
-    view.append(h("p", { class: "empty" }, "No streaks yet. The first list appears after the next automatic run."));
-    return;
-  }
   const body = h("div", {});
   const loadBlow = async () => ({ tracked: await blow.load("tracked").catch(() => null), history: await blow.load("history").catch(() => null) });
   const loadModels = async () => fit(gradedRows(await loadHistory(source).catch(() => [])));
   try { const r = await fetch(`${import.meta.env.BASE_URL}data/nba-minutes.json`); if (r.ok) { const j = (await r.json()) as { minutes: Record<string, number>; nhl?: Record<string, number> }; setMinutes(new Map(Object.entries(j.minutes)), new Map(Object.entries(j.nhl ?? {}))); } } catch { /* the filter then treats every NBA player as unknown */ }
   try { const r = await fetch(`${import.meta.env.BASE_URL}data/season-avgs.json`); if (r.ok) setSeasonAvgs((await r.json()) as Parameters<typeof setSeasonAvgs>[0]); } catch { /* rows just omit the season average */ }
   let state: StreakState = { chosen: new Map(), tab: "multi", filters: loadFilters(), blow: await loadBlow(), models: await loadModels(), grading: "ours" };
-  let shown = dates[dates.length - 1]!;
+  let shown = "";
   let shownPicks: HandedPick[] = [];
-  const load = async (date: string) => {
+  const heading = h("div", { class: "today-date" });
+  const load = async () => {
+    const date = today();
+    heading.textContent = `Today · ${longDate(date)}`;
+    // A new day keeps the screen settings but drops ticked props from yesterday's list.
     if (date !== shown) state = { chosen: new Map(), tab: state.tab, category: state.category, filters: state.filters, ...(state.blow ? { blow: state.blow } : {}), ...(state.models ? { models: state.models } : {}), ...(state.grading ? { grading: state.grading } : {}), ...(state.sort ? { sort: state.sort } : {}) };
     shown = date;
+    shownPicks = [];
+    let dates: string[] = [];
+    try {
+      dates = (await source.loadIndex()).dates;
+    } catch {
+      /* treated as not posted yet */
+    }
+    clear(body);
+    if (!dates.includes(date)) {
+      body.append(
+        h("p", { class: "empty" }, "Today's streaks aren't posted yet. The first run is around 8:45 AM Eastern, with a backup about an hour later. Pull down or tap Refresh to check again."),
+        h("p", { class: "muted" }, "Earlier days and their grades are on the ", h("a", { href: "#results" }, "Results"), " tab."),
+      );
+      return;
+    }
     try {
       const day = await source.loadDay(date);
       shownPicks = day.picks;
-      clear(body);
       renderStreakDay(body, day, state);
     } catch {
-      clear(body);
-      body.append(h("p", { class: "empty" }, `Could not load streaks for ${date}.`));
+      body.append(h("p", { class: "empty" }, "Could not load today's streaks. Tap Refresh to try again."));
     }
   };
-  const select = h("select", { "aria-label": "Pick a day", onchange: () => void load(select.value) }, ...[...dates].reverse().map((d) => h("option", { value: d }, d)));
   const status = h("span", { class: "muted", "aria-live": "polite" });
   const refresh = async () => {
     status.textContent = "Refreshing…";
     state.blow = await loadBlow();
     state.models = await loadModels();
-    await load(select.value);
+    await load();
     status.textContent = `Updated ${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
   };
-  view.append(h("div", { class: "controls" }, select, h("button", { type: "button", class: "refresh", onclick: () => void refresh() }, "Refresh")), status, body);
+  view.append(h("div", { class: "controls" }, heading, h("button", { type: "button", class: "refresh", onclick: () => void refresh() }, "Refresh")), status, body);
   pullToRefresh(view, refresh);
-  await load(shown);
+  await load();
   // Live tracking: while games are on, each prop row shows the player's number so far against the line.
   watchProps(view, () => shownPicks);
   watchInjuries(view, () => shownPicks);
