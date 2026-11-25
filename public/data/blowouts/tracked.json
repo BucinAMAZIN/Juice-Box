@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-24T23:38:42.450Z",
+ "updatedAt": "2026-11-25T01:24:03.385Z",
  "games": [
   {
    "id": "401864545",
@@ -189,7 +189,7 @@
    "date": "2026-11-27",
    "fav": "MISS",
    "dog": "MSST",
-   "spread": 18.5,
+   "spread": 19.5,
    "total": 56.5,
    "status": "pre"
   },
