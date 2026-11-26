@@ -1,0 +1,1734 @@
+{
+  "date": "2026-11-25",
+  "gradedAt": "2026-11-26T08:06:09.790Z",
+  "grades": [
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-rebounds-7.5",
+      "actual": 10,
+      "outcome": "win",
+      "profitAtLimit": 0.8403361344537816
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-j-hart-assists-1.5",
+      "actual": 11,
+      "outcome": "win",
+      "profitAtLimit": 0.8130081300813008
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-j-hart-rebounds-3.5",
+      "actual": 7,
+      "outcome": "win",
+      "profitAtLimit": 0.7462686567164178
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-rebounds-5.5",
+      "actual": 10,
+      "outcome": "win",
+      "profitAtLimit": 0.7142857142857144
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-j-hart-rebounds-1.5",
+      "actual": 7,
+      "outcome": "win",
+      "profitAtLimit": 0.6896551724137931
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-rebounds-1.5",
+      "actual": 10,
+      "outcome": "win",
+      "profitAtLimit": 0.6578947368421053
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-m-smart-pr-4.5",
+      "actual": 7,
+      "outcome": "win",
+      "profitAtLimit": 0.25773195876288657
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-j-mcdaniels-pr-18.5",
+      "actual": 42,
+      "outcome": "win",
+      "profitAtLimit": 0.2666666666666666
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-rebounds-9.5",
+      "actual": 10,
+      "outcome": "win",
+      "profitAtLimit": 0.18214936247723124
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-spencer-points-6.5",
+      "actual": 16,
+      "outcome": "win",
+      "profitAtLimit": 0.3003003003003002
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-k-dunn-rebounds-1.5",
+      "actual": 6,
+      "outcome": "win",
+      "profitAtLimit": 0.28985507246376807
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-points-9.5",
+      "actual": 12,
+      "outcome": "win",
+      "profitAtLimit": 0.78125
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-k-maluach-points-3.5",
+      "actual": 12,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-t-shannon-ra-4.5",
+      "actual": 5,
+      "outcome": "win",
+      "profitAtLimit": 0.5291005291005291
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-rebounds-10.5",
+      "actual": 10,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-f-vanvleet-threes-1.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.33333333333333326
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-s-gilgeousalexander-points-25.5",
+      "actual": 32,
+      "outcome": "win",
+      "profitAtLimit": 0.2597402597402598
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-b-lopez-threes-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-s-gilgeousalexander-pr-29.5",
+      "actual": 35,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-c-gillespie-rebounds-1.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 0.33333333333333326
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-b-lopez-ra-4.5",
+      "actual": 4,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909318-n-reid-assists-1.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.2857142857142856
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909322-b-burries-threes-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-c-gillespie-points-5.5",
+      "actual": 5,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-k-durant-points-15.5",
+      "actual": 20,
+      "outcome": "win",
+      "profitAtLimit": 0.2597402597402598
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-a-thompson-pra-19.5",
+      "actual": 32,
+      "outcome": "win",
+      "profitAtLimit": 0.25380710659898487
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-k-thompson-points-8.5",
+      "actual": 7,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-a-sengun-threes-0.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.8333333333333335
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909318-s-james-pra-11.5",
+      "actual": 12,
+      "outcome": "win",
+      "profitAtLimit": 0.44052863436123335
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-k-durant-assists-2.5",
+      "actual": 2,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-lillard-ra-5.5",
+      "actual": 10,
+      "outcome": "win",
+      "profitAtLimit": 0.33333333333333326
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-spencer-ra-5.5",
+      "actual": 4,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-points-15.5",
+      "actual": 12,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-spencer-pr-8.5",
+      "actual": 16,
+      "outcome": "win",
+      "profitAtLimit": 0.2666666666666666
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-points-14.5",
+      "actual": 12,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-spencer-pra-18.5",
+      "actual": 20,
+      "outcome": "win",
+      "profitAtLimit": 1.1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-spencer-pra-17.5",
+      "actual": 20,
+      "outcome": "win",
+      "profitAtLimit": 0.9090909090909092
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-d-mitchell-pr-17.5",
+      "actual": 24,
+      "outcome": "win",
+      "profitAtLimit": 0.8695652173913042
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-j-small-assists-3.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-pra-37.5",
+      "actual": 29,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-spencer-pra-16.5",
+      "actual": 20,
+      "outcome": "win",
+      "profitAtLimit": 0.8
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-spencer-points-8.5",
+      "actual": 16,
+      "outcome": "win",
+      "profitAtLimit": 0.6451612903225805
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-c-gillespie-threes-1.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-d-mitchell-points-13.5",
+      "actual": 20,
+      "outcome": "win",
+      "profitAtLimit": 0.6369426751592355
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-pra-36.5",
+      "actual": 29,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-ra-15.5",
+      "actual": 17,
+      "outcome": "win",
+      "profitAtLimit": 0.5988023952095807
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-spencer-pra-15.5",
+      "actual": 20,
+      "outcome": "win",
+      "profitAtLimit": 0.5882352941176472
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-coward-pra-25.5",
+      "actual": 25,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-d-mitchell-pr-16.5",
+      "actual": 24,
+      "outcome": "win",
+      "profitAtLimit": 0.5555555555555556
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-pra-35.5",
+      "actual": 29,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909318-m-diabate-assists-1.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.5405405405405406
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-spencer-pr-10.5",
+      "actual": 16,
+      "outcome": "win",
+      "profitAtLimit": 0.5405405405405406
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-s-cissoko-threes-0.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 0.5263157894736841
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-coward-pra-24.5",
+      "actual": 25,
+      "outcome": "win",
+      "profitAtLimit": 0.5
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-pra-34.5",
+      "actual": 29,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-v-edgecombe-ra-8.5",
+      "actual": 11,
+      "outcome": "win",
+      "profitAtLimit": 0.4694835680751175
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-spencer-points-7.5",
+      "actual": 16,
+      "outcome": "win",
+      "profitAtLimit": 0.4545454545454546
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-spencer-pra-14.5",
+      "actual": 20,
+      "outcome": "win",
+      "profitAtLimit": 0.4545454545454546
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909322-k-ware-pr-11.5",
+      "actual": 27,
+      "outcome": "win",
+      "profitAtLimit": 0.4444444444444444
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-d-mitchell-points-12.5",
+      "actual": 20,
+      "outcome": "win",
+      "profitAtLimit": 0.4347826086956521
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-ra-14.5",
+      "actual": 17,
+      "outcome": "win",
+      "profitAtLimit": 0.4347826086956521
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-d-mitchell-pr-15.5",
+      "actual": 24,
+      "outcome": "win",
+      "profitAtLimit": 0.40816326530612246
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-pr-29.5",
+      "actual": 22,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-spencer-pr-9.5",
+      "actual": 16,
+      "outcome": "win",
+      "profitAtLimit": 0.3999999999999999
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-pr-30.5",
+      "actual": 22,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-assists-2.5",
+      "actual": 7,
+      "outcome": "win",
+      "profitAtLimit": 0.3846153846153846
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-coward-points-13.5",
+      "actual": 14,
+      "outcome": "win",
+      "profitAtLimit": 0.3802281368821292
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-d-mitchell-points-11.5",
+      "actual": 20,
+      "outcome": "win",
+      "profitAtLimit": 0.37735849056603765
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909322-k-ware-points-5.5",
+      "actual": 13,
+      "outcome": "win",
+      "profitAtLimit": 0.36900369003690026
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-v-edgecombe-assists-2.5",
+      "actual": 5,
+      "outcome": "win",
+      "profitAtLimit": 0.36363636363636376
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-d-mitchell-pr-14.5",
+      "actual": 24,
+      "outcome": "win",
+      "profitAtLimit": 0.3597122302158273
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-coward-pra-23.5",
+      "actual": 25,
+      "outcome": "win",
+      "profitAtLimit": 0.3571428571428572
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-pra-33.5",
+      "actual": 29,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-clingan-rebounds-9.5",
+      "actual": 8,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909322-j-jaquez-threes-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.33333333333333326
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-spencer-pra-13.5",
+      "actual": 20,
+      "outcome": "win",
+      "profitAtLimit": 0.33333333333333326
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-coward-pr-19.5",
+      "actual": 24,
+      "outcome": "win",
+      "profitAtLimit": 0.3278688524590163
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-v-edgecombe-ra-7.5",
+      "actual": 11,
+      "outcome": "win",
+      "profitAtLimit": 0.303030303030303
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-s-gilgeousalexander-pr-31.5",
+      "actual": 35,
+      "outcome": "win",
+      "profitAtLimit": 0.2941176470588236
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909322-k-ware-points-4.5",
+      "actual": 13,
+      "outcome": "win",
+      "profitAtLimit": 0.2666666666666666
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-coward-points-12.5",
+      "actual": 14,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-a-sengun-rebounds-6.5",
+      "actual": 11,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-j-small-assists-2.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-ra-13.5",
+      "actual": 17,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-clingan-rebounds-8.5",
+      "actual": 8,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-k-towns-assists-1.5",
+      "actual": 7,
+      "outcome": "win",
+      "profitAtLimit": 0.11806375442739081
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-c-gillespie-pr-11.5",
+      "actual": 9,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-c-gillespie-points-8.5",
+      "actual": 5,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-v-edgecombe-assists-3.5",
+      "actual": 5,
+      "outcome": "win",
+      "profitAtLimit": 0.8
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-spencer-assists-4.5",
+      "actual": 4,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-avdija-threes-1.5",
+      "actual": 5,
+      "outcome": "win",
+      "profitAtLimit": 0.7407407407407407
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909318-i-okoro-pr-11.5",
+      "actual": 13,
+      "outcome": "win",
+      "profitAtLimit": 0.6711409395973154
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909318-i-okoro-pra-13.5",
+      "actual": 13,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-c-gillespie-pr-10.5",
+      "actual": 9,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-c-gillespie-points-7.5",
+      "actual": 5,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909318-i-okoro-points-8.5",
+      "actual": 10,
+      "outcome": "win",
+      "profitAtLimit": 0.5813953488372094
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909318-i-okoro-points-7.5",
+      "actual": 10,
+      "outcome": "win",
+      "profitAtLimit": 0.5208333333333335
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-c-gillespie-pr-9.5",
+      "actual": 9,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-s-gilgeousalexander-pr-33.5",
+      "actual": 35,
+      "outcome": "win",
+      "profitAtLimit": 0.4545454545454546
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-j-harden-threes-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-c-gillespie-points-6.5",
+      "actual": 5,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909318-i-okoro-pr-9.5",
+      "actual": 13,
+      "outcome": "win",
+      "profitAtLimit": 0.3787878787878789
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-spencer-assists-3.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 0.36363636363636376
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-c-gillespie-pr-8.5",
+      "actual": 9,
+      "outcome": "win",
+      "profitAtLimit": 0.3571428571428572
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-c-gillespie-pra-11.5",
+      "actual": 11,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-j-holiday-ra-6.5",
+      "actual": 13,
+      "outcome": "win",
+      "profitAtLimit": 0.33333333333333326
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909318-i-okoro-pra-11.5",
+      "actual": 13,
+      "outcome": "win",
+      "profitAtLimit": 0.33003300330033003
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-m-bridges-assists-1.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 0.3076923076923077
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-k-williams-points-5.5",
+      "actual": 13,
+      "outcome": "win",
+      "profitAtLimit": 0.30487804878048785
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-j-brunson-ra-7.5",
+      "actual": 8,
+      "outcome": "win",
+      "profitAtLimit": 0.303030303030303
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909318-i-okoro-points-6.5",
+      "actual": 10,
+      "outcome": "win",
+      "profitAtLimit": 0.3003003003003002
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-j-green-threes-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909318-b-hield-threes-1.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-k-williams-pra-11.5",
+      "actual": 19,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-j-brunson-assists-4.5",
+      "actual": 5,
+      "outcome": "win",
+      "profitAtLimit": 0.23474178403755874
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-j-small-assists-4.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-avdija-pr-28.5",
+      "actual": 45,
+      "outcome": "win",
+      "profitAtLimit": 0.9523809523809523
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-m-thomas-assists-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-a-thompson-pr-21.5",
+      "actual": 28,
+      "outcome": "win",
+      "profitAtLimit": 0.8333333333333335
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-a-thompson-pra-24.5",
+      "actual": 32,
+      "outcome": "win",
+      "profitAtLimit": 0.8
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-t-eason-ra-6.5",
+      "actual": 2,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909318-n-reid-assists-2.5",
+      "actual": 2,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-avdija-pr-27.5",
+      "actual": 45,
+      "outcome": "win",
+      "profitAtLimit": 0.7142857142857144
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-avdija-pra-33.5",
+      "actual": 52,
+      "outcome": "win",
+      "profitAtLimit": 0.7142857142857144
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909324-d-sabonis-rebounds-11.5",
+      "actual": 10,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-s-gilgeousalexander-points-30.5",
+      "actual": 32,
+      "outcome": "win",
+      "profitAtLimit": 0.6211180124223601
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-coward-points-15.5",
+      "actual": 14,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-s-gilgeousalexander-pr-34.5",
+      "actual": 35,
+      "outcome": "win",
+      "profitAtLimit": 0.6211180124223601
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-a-thompson-pra-23.5",
+      "actual": 32,
+      "outcome": "win",
+      "profitAtLimit": 0.6211180124223601
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-m-smart-rebounds-1.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.606060606060606
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-t-lyles-assists-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.606060606060606
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-j-brunson-ra-8.5",
+      "actual": 8,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-j-small-ra-6.5",
+      "actual": 3,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-t-shannon-pra-16.5",
+      "actual": 13,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-a-thompson-pr-19.5",
+      "actual": 28,
+      "outcome": "win",
+      "profitAtLimit": 0.5714285714285714
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-j-goodwin-assists-1.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909324-d-hunter-assists-1.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.5405405405405406
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-j-walker-assists-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.5263157894736841
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-avdija-pra-32.5",
+      "actual": 52,
+      "outcome": "win",
+      "profitAtLimit": 0.5208333333333335
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-s-gilgeousalexander-points-29.5",
+      "actual": 32,
+      "outcome": "win",
+      "profitAtLimit": 0.5128205128205128
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-a-thompson-pra-22.5",
+      "actual": 32,
+      "outcome": "win",
+      "profitAtLimit": 0.5
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-coward-points-14.5",
+      "actual": 14,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-m-bridges-pra-19.5",
+      "actual": 14,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909324-d-sabonis-ra-15.5",
+      "actual": 16,
+      "outcome": "win",
+      "profitAtLimit": 0.4694835680751175
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-j-walker-pra-12.5",
+      "actual": 10,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-clingan-pr-19.5",
+      "actual": 13,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-coward-pr-21.5",
+      "actual": 24,
+      "outcome": "win",
+      "profitAtLimit": 0.4545454545454546
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-avdija-pra-31.5",
+      "actual": 52,
+      "outcome": "win",
+      "profitAtLimit": 0.4545454545454546
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-t-shannon-points-9.5",
+      "actual": 8,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-avdija-points-19.5",
+      "actual": 33,
+      "outcome": "win",
+      "profitAtLimit": 0.4444444444444444
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-a-mitchell-assists-2.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.4347826086956521
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-avdija-pr-25.5",
+      "actual": 45,
+      "outcome": "win",
+      "profitAtLimit": 0.42553191489361697
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-d-garland-points-15.5",
+      "actual": 12,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-t-eason-ra-5.5",
+      "actual": 2,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909324-d-sabonis-rebounds-10.5",
+      "actual": 10,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909318-t-jones-assists-3.5",
+      "actual": 8,
+      "outcome": "win",
+      "profitAtLimit": 0.3999999999999999
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-d-garland-threes-1.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.3999999999999999
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-j-walker-ra-5.5",
+      "actual": 3,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-m-bridges-points-10.5",
+      "actual": 2,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-v-edgecombe-pra-20.5",
+      "actual": 29,
+      "outcome": "win",
+      "profitAtLimit": 0.392156862745098
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-s-gilgeousalexander-points-27.5",
+      "actual": 32,
+      "outcome": "win",
+      "profitAtLimit": 0.37735849056603765
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-s-gilgeousalexander-points-28.5",
+      "actual": 32,
+      "outcome": "win",
+      "profitAtLimit": 0.37735849056603765
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-m-bridges-pra-18.5",
+      "actual": 14,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-avdija-pr-24.5",
+      "actual": 45,
+      "outcome": "win",
+      "profitAtLimit": 0.37593984962406024
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-j-walker-points-5.5",
+      "actual": 7,
+      "outcome": "win",
+      "profitAtLimit": 0.3731343283582089
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-j-walker-rebounds-4.5",
+      "actual": 2,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-d-garland-points-14.5",
+      "actual": 12,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-t-eason-rebounds-3.5",
+      "actual": 2,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-k-dunn-pra-8.5",
+      "actual": 22,
+      "outcome": "win",
+      "profitAtLimit": 0.3597122302158273
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-v-edgecombe-pra-19.5",
+      "actual": 29,
+      "outcome": "win",
+      "profitAtLimit": 0.3389830508474576
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-v-edgecombe-points-10.5",
+      "actual": 18,
+      "outcome": "win",
+      "profitAtLimit": 0.33333333333333326
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-avdija-points-18.5",
+      "actual": 33,
+      "outcome": "win",
+      "profitAtLimit": 0.33333333333333326
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-m-bridges-pr-15.5",
+      "actual": 10,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-t-eason-pr-11.5",
+      "actual": 9,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-a-thompson-points-11.5",
+      "actual": 18,
+      "outcome": "win",
+      "profitAtLimit": 0.33003300330033003
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909324-d-sabonis-ra-14.5",
+      "actual": 16,
+      "outcome": "win",
+      "profitAtLimit": 0.3278688524590163
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-j-mccain-points-11.5",
+      "actual": 9,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-avdija-pra-29.5",
+      "actual": 52,
+      "outcome": "win",
+      "profitAtLimit": 0.31645569620253156
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-clingan-pr-18.5",
+      "actual": 13,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-t-shannon-pr-11.5",
+      "actual": 10,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-s-castle-assists-5.5",
+      "actual": 9,
+      "outcome": "win",
+      "profitAtLimit": 0.3076923076923077
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-j-kuminga-points-10.5",
+      "actual": 7,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-a-mitchell-ra-5.5",
+      "actual": 6,
+      "outcome": "win",
+      "profitAtLimit": 0.303030303030303
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-t-eason-points-6.5",
+      "actual": 7,
+      "outcome": "win",
+      "profitAtLimit": 0.3003003003003002
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-clingan-pra-19.5",
+      "actual": 15,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-avdija-points-17.5",
+      "actual": 33,
+      "outcome": "win",
+      "profitAtLimit": 0.29325513196480935
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-d-mitchell-points-19.5",
+      "actual": 30,
+      "outcome": "win",
+      "profitAtLimit": 0.2857142857142856
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-m-bridges-points-9.5",
+      "actual": 2,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-v-edgecombe-points-9.5",
+      "actual": 18,
+      "outcome": "win",
+      "profitAtLimit": 0.2857142857142856
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-t-shannon-points-8.5",
+      "actual": 8,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-m-bridges-pr-10.5",
+      "actual": 27,
+      "outcome": "win",
+      "profitAtLimit": 0.2857142857142856
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909317-j-walker-pr-10.5",
+      "actual": 9,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-d-booker-pra-26.5",
+      "actual": 30,
+      "outcome": "win",
+      "profitAtLimit": 0.2857142857142856
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-j-kuminga-points-9.5",
+      "actual": 7,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020395-r-colton-sog-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020396-k-kaprizov-points-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020392-r-leonard-sog-1.5",
+      "actual": 5,
+      "outcome": "win",
+      "profitAtLimit": 0.2857142857142856
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020394-b-boeser-points-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020387-j-miller-sog-1.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 0.5555555555555556
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020392-j-chychrun-sog-1.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.33333333333333326
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020386-d-pastrnak-sog-2.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020393-t-meier-sog-2.5",
+      "actual": 2,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020394-b-boeser-assists-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020393-m-knies-sog-1.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.6896551724137931
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020392-c-hutson-sog-1.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 0.625
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020392-t-sanheim-sog-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.28985507246376807
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020396-k-kaprizov-assists-1.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020392-c-hutson-sog-2.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 1.7999999999999998
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020391-a-suniev-sog-1.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 1.1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020396-k-kaprizov-points-1.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020399-f-nazar-points-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020396-k-kaprizov-assists-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020399-p-kane-sog-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020391-a-hayes-sog-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020399-p-kane-assists-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 1.15
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020392-r-leonard-points-0.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.8695652173913042
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020395-s-stamkos-points-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020393-t-meier-points-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020396-b-hayton-sog-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020393-c-brown-sog-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020399-p-kane-points-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.6451612903225805
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020396-b-coleman-sog-1.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 0.606060606060606
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020388-b-point-sog-1.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.5882352941176472
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020395-w-johnston-points-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.5714285714285714
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020393-z-werenski-points-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020387-j-quinn-sog-1.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 0.2857142857142856
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020397-d-larkin-sog-1.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 0.2666666666666666
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020392-s-couturier-sog-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-m-thomas-pra-8.5",
+      "actual": 12,
+      "outcome": "win",
+      "profitAtLimit": 0.2857142857142856
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-j-mcdaniels-rebounds-3.5",
+      "actual": 10,
+      "outcome": "win",
+      "profitAtLimit": 0.22222222222222232
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-j-brunson-points-20.5",
+      "actual": 19,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-m-thomas-ra-2.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-j-brunson-points-19.5",
+      "actual": 19,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909318-s-james-pr-7.5",
+      "actual": 10,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909318-s-james-pra-10.5",
+      "actual": 12,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-coward-pra-26.5",
+      "actual": 25,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-clingan-ra-10.5",
+      "actual": 10,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-t-jerome-pra-26.5",
+      "actual": 29,
+      "outcome": "win",
+      "profitAtLimit": 0.2857142857142856
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-t-eason-points-5.5",
+      "actual": 7,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909318-i-okoro-pra-12.5",
+      "actual": 13,
+      "outcome": "win",
+      "profitAtLimit": 0.44052863436123335
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909318-i-okoro-pr-10.5",
+      "actual": 13,
+      "outcome": "win",
+      "profitAtLimit": 0.4098360655737705
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-c-gillespie-pra-12.5",
+      "actual": 11,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-j-brunson-pra-29.5",
+      "actual": 27,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-a-thompson-pr-20.5",
+      "actual": 28,
+      "outcome": "win",
+      "profitAtLimit": 0.641025641025641
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909321-c-coward-pr-22.5",
+      "actual": 24,
+      "outcome": "win",
+      "profitAtLimit": 0.641025641025641
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-t-shannon-pra-15.5",
+      "actual": 13,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-a-thompson-pra-21.5",
+      "actual": 32,
+      "outcome": "win",
+      "profitAtLimit": 0.3802281368821292
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-a-thompson-pr-17.5",
+      "actual": 28,
+      "outcome": "win",
+      "profitAtLimit": 0.3134796238244515
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-a-thompson-pra-20.5",
+      "actual": 32,
+      "outcome": "win",
+      "profitAtLimit": 0.3134796238244515
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-avdija-pr-23.5",
+      "actual": 45,
+      "outcome": "win",
+      "profitAtLimit": 0.303030303030303
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909324-d-sabonis-pra-26.5",
+      "actual": 43,
+      "outcome": "win",
+      "profitAtLimit": 0.2666666666666666
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-j-harden-pra-22.5",
+      "actual": 34,
+      "outcome": "win",
+      "profitAtLimit": 0.2666666666666666
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-m-bridges-pr-14.5",
+      "actual": 10,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909322-j-randle-points-16.5",
+      "actual": 28,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-d-mitchell-rebounds-2.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909324-d-hunter-ra-4.5",
+      "actual": 10,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-b-stirtz-assists-1.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 1.33
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-s-gilgeousalexander-points-33.5",
+      "actual": 32,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-s-gilgeousalexander-pr-38.5",
+      "actual": 35,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909319-j-harden-ra-10.5",
+      "actual": 6,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-s-gilgeousalexander-pr-37.5",
+      "actual": 35,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-s-gilgeousalexander-pr-36.5",
+      "actual": 35,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909322-b-burries-pa-16.5",
+      "actual": 6,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909322-m-turner-ra-7.5",
+      "actual": 8,
+      "outcome": "win",
+      "profitAtLimit": 0.8333333333333335
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909320-s-gilgeousalexander-points-32.5",
+      "actual": 32,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909322-b-burries-points-12.5",
+      "actual": 3,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909323-m-bridges-pa-16.5",
+      "actual": 6,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020388-j-martinook-sog-0.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.2666666666666666
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020386-f-minten-sog-0.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.22222222222222232
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020390-j-berggren-sog-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.22222222222222232
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020396-k-yamamoto-sog-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020390-d-dvorsky-sog-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.2666666666666666
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020396-d-yurov-sog-0.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.2666666666666666
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020391-a-suniev-sog-0.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.21097046413502119
+    },
+    {
+      "pickId": "2026-11-25-s-nhl-2026020390-l-mailloux-sog-0.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.303030303030303
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-vassell-rebounds-3.5",
+      "actual": 3,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-s-cissoko-pr-8.5",
+      "actual": 20,
+      "outcome": "win",
+      "profitAtLimit": 0.5988023952095807
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-v-wembanyama-ra-13.5",
+      "actual": 19,
+      "outcome": "win",
+      "profitAtLimit": 0.4545454545454546
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-s-cissoko-points-4.5",
+      "actual": 16,
+      "outcome": "win",
+      "profitAtLimit": 0.4444444444444444
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-s-cissoko-pr-7.5",
+      "actual": 20,
+      "outcome": "win",
+      "profitAtLimit": 0.4347826086956521
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-j-holiday-pr-13.5",
+      "actual": 17,
+      "outcome": "win",
+      "profitAtLimit": 0.40816326530612246
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-vassell-ra-5.5",
+      "actual": 4,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-j-holiday-points-9.5",
+      "actual": 11,
+      "outcome": "win",
+      "profitAtLimit": 0.3846153846153846
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-v-wembanyama-ra-12.5",
+      "actual": 19,
+      "outcome": "win",
+      "profitAtLimit": 0.3003003003003002
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-s-cissoko-points-3.5",
+      "actual": 16,
+      "outcome": "win",
+      "profitAtLimit": 0.28985507246376807
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-v-wembanyama-rebounds-9.5",
+      "actual": 16,
+      "outcome": "win",
+      "profitAtLimit": 0.2857142857142856
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-d-vassell-rebounds-2.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.2666666666666666
+    },
+    {
+      "pickId": "2026-11-25-s-nba-401909325-j-holiday-points-8.5",
+      "actual": 11,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    }
+  ]
+}
