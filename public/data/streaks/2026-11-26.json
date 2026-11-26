@@ -959,6 +959,39 @@
       "avg": 88.4,
       "teamName": "Cowboys",
       "note": "Over 49.5 in 5 straight games."
+    },
+    {
+      "id": "2026-11-26-s-nfl-401873082-n-gray-receptions-0.5",
+      "createdAt": "2026-11-26T22:38:17.535Z",
+      "gameStart": "2026-11-27T01:20Z",
+      "gameId": 401873082,
+      "sport": "nfl",
+      "kind": "streak",
+      "player": "Noah Gray",
+      "team": "KC",
+      "opponent": "BUF",
+      "market": "receptions",
+      "line": 0.5,
+      "side": "over",
+      "modelProb": 0.7802197802197802,
+      "limitOdds": -355,
+      "mean": 0.5,
+      "price": -355,
+      "book": "Novig",
+      "streak": 8,
+      "home": false,
+      "alt": true,
+      "h2h": {
+        "games": 2,
+        "hits": 1
+      },
+      "split": {
+        "games": 7,
+        "hits": 7
+      },
+      "avg": 2.25,
+      "teamName": "Chiefs",
+      "note": "Over 0.5 in 8 straight games."
     }
   ],
   "tickets": [],
