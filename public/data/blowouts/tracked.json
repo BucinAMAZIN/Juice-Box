@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-27T10:24:36.024Z",
+ "updatedAt": "2026-11-27T14:43:31.461Z",
  "games": [
   {
    "id": "401864545",
@@ -200,7 +200,7 @@
    "fav": "UTAH",
    "dog": "WVU",
    "spread": 25.5,
-   "total": 66.5,
+   "total": 65.5,
    "status": "pre"
   },
   {
@@ -219,7 +219,7 @@
    "date": "2026-11-28",
    "fav": "MIA",
    "dog": "BC",
-   "spread": 25.5,
+   "spread": 24.5,
    "total": 53.5,
    "status": "pre"
   },
