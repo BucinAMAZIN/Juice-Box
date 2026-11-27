@@ -1,6 +1,6 @@
 {
   "date": "2026-11-26",
-  "gradedAt": "2026-11-27T01:00:07.178Z",
+  "gradedAt": "2026-11-27T08:15:31.096Z",
   "grades": [
     {
       "pickId": "2026-11-26-s-nfl-401873081-d-swift-rushYds-29.5",
@@ -37,6 +37,150 @@
       "actual": 205,
       "outcome": "win",
       "profitAtLimit": 0.3984063745019921
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873082-d-knox-receptions-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873082-j-allen-passYds-189.5",
+      "actual": 81,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873082-j-allen-passYds-174.5",
+      "actual": 81,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873082-j-allen-passYds-179.5",
+      "actual": 81,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873082-j-cook-rushYds-74.5",
+      "actual": 117,
+      "outcome": "win",
+      "profitAtLimit": 0.5813953488372094
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873082-j-cook-rushYds-69.5",
+      "actual": 117,
+      "outcome": "win",
+      "profitAtLimit": 0.5376344086021505
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873082-j-cook-rushRecYds-79.5",
+      "actual": 125,
+      "outcome": "win",
+      "profitAtLimit": 0.5
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873082-j-cook-rushRecYds-74.5",
+      "actual": 125,
+      "outcome": "win",
+      "profitAtLimit": 0.3496503496503496
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873082-j-cook-rushYds-59.5",
+      "actual": 117,
+      "outcome": "win",
+      "profitAtLimit": 0.30959752321981426
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873082-j-cook-rushRecYds-69.5",
+      "actual": 125,
+      "outcome": "win",
+      "profitAtLimit": 0.2941176470588236
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873080-g-pickens-recYds-39.5",
+      "actual": 67,
+      "outcome": "win",
+      "profitAtLimit": 0.26595744680851063
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873082-n-gray-recYds-4.5",
+      "actual": 23,
+      "outcome": "win",
+      "profitAtLimit": 0.3003003003003002
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873082-k-shakir-recYds-24.5",
+      "actual": 33,
+      "outcome": "win",
+      "profitAtLimit": 0.3999999999999999
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873080-d-smith-recYds-39.5",
+      "actual": 200,
+      "outcome": "win",
+      "profitAtLimit": 0.3067484662576687
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873082-k-shakir-recYds-19.5",
+      "actual": 33,
+      "outcome": "win",
+      "profitAtLimit": 0.2816901408450705
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873080-d-goedert-recYds-29.5",
+      "actual": 9,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873082-j-cook-rushYds-79.5",
+      "actual": 117,
+      "outcome": "win",
+      "profitAtLimit": 0.8695652173913042
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873082-j-cook-rushRecYds-91.5",
+      "actual": 125,
+      "outcome": "win",
+      "profitAtLimit": 0.847457627118644
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873082-j-cook-rushRecYds-89.5",
+      "actual": 125,
+      "outcome": "win",
+      "profitAtLimit": 0.78125
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873080-d-goedert-recYds-24.5",
+      "actual": 9,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873080-d-goedert-recYds-19.5",
+      "actual": 9,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873080-d-goedert-recYds-14.5",
+      "actual": 9,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873080-j-williams-rushYds-49.5",
+      "actual": 101,
+      "outcome": "win",
+      "profitAtLimit": 0.26595744680851063
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873082-n-gray-receptions-0.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.2816901408450705
     }
   ]
 }
