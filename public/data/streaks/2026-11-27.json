@@ -2299,7 +2299,11 @@
       },
       "avg": 18.78,
       "teamName": "Knicks",
-      "note": "Over 15.5 in 9 straight games."
+      "note": "Over 15.5 in 9 straight games.",
+      "h2h": {
+        "games": 7,
+        "hits": 3
+      }
     },
     {
       "id": "2026-11-27-s-nba-401909331-c-coward-points-13.5",
@@ -2460,7 +2464,11 @@
       },
       "avg": 18.78,
       "teamName": "Heat",
-      "note": "Over 11.5 in 9 straight games."
+      "note": "Over 11.5 in 9 straight games.",
+      "h2h": {
+        "games": 9,
+        "hits": 3
+      }
     },
     {
       "id": "2026-11-27-s-nba-401909331-c-spencer-points-7.5",
@@ -3116,7 +3124,11 @@
       "teamName": "Knicks",
       "sid": "4158216311633215884",
       "url": "https://share.hardrock.bet/Pt0T/bet?deep_link_value=hardrock://betslip/4158216311633215884",
-      "note": "Over 2.5 in 9 straight games."
+      "note": "Over 2.5 in 9 straight games.",
+      "h2h": {
+        "games": 4,
+        "hits": 1
+      }
     },
     {
       "id": "2026-11-27-s-nba-401909331-c-coward-pr-18.5",
@@ -10395,6 +10407,93 @@
       "avg": 20,
       "teamName": "Pelicans",
       "note": "Over 13.5 in 7 straight games."
+    },
+    {
+      "id": "2026-11-27-s-nba-401909326-r-conwell-pr-7.5",
+      "createdAt": "2026-11-27T22:55:05.957Z",
+      "gameStart": "2026-11-28T00:00Z",
+      "gameId": 401909326,
+      "sport": "nba",
+      "kind": "streak",
+      "player": "Ryan Conwell",
+      "team": "MIA",
+      "opponent": "NYK",
+      "market": "pr",
+      "line": 7.5,
+      "side": "over",
+      "modelProb": 0.6428571428571428,
+      "limitOdds": -180,
+      "mean": 7.5,
+      "price": -180,
+      "book": "Onyxodds",
+      "streak": 9,
+      "home": false,
+      "alt": true,
+      "split": {
+        "games": 4,
+        "hits": 4
+      },
+      "avg": 13.33,
+      "teamName": "Heat",
+      "note": "Over 7.5 in 9 straight games."
+    },
+    {
+      "id": "2026-11-27-s-nba-401909326-r-conwell-pra-7.5",
+      "createdAt": "2026-11-27T22:55:05.957Z",
+      "gameStart": "2026-11-28T00:00Z",
+      "gameId": 401909326,
+      "sport": "nba",
+      "kind": "streak",
+      "player": "Ryan Conwell",
+      "team": "MIA",
+      "opponent": "NYK",
+      "market": "pra",
+      "line": 7.5,
+      "side": "over",
+      "modelProb": 0.75,
+      "limitOdds": -300,
+      "mean": 7.5,
+      "price": -300,
+      "book": "Fanatics",
+      "streak": 9,
+      "home": false,
+      "alt": true,
+      "split": {
+        "games": 4,
+        "hits": 4
+      },
+      "avg": 15,
+      "teamName": "Heat",
+      "note": "Over 7.5 in 9 straight games."
+    },
+    {
+      "id": "2026-11-27-s-nba-401909326-r-conwell-pr-5.5",
+      "createdAt": "2026-11-27T22:55:05.957Z",
+      "gameStart": "2026-11-28T00:00Z",
+      "gameId": 401909326,
+      "sport": "nba",
+      "kind": "streak",
+      "player": "Ryan Conwell",
+      "team": "MIA",
+      "opponent": "NYK",
+      "market": "pr",
+      "line": 5.5,
+      "side": "over",
+      "modelProb": 0.7894736842105263,
+      "limitOdds": -375,
+      "mean": 5.5,
+      "price": -375,
+      "book": "Fanatics",
+      "streak": 9,
+      "home": false,
+      "alt": true,
+      "split": {
+        "games": 4,
+        "hits": 4
+      },
+      "avg": 13.33,
+      "teamName": "Heat",
+      "note": "Over 5.5 in 9 straight games."
     }
   ],
   "tickets": [],
