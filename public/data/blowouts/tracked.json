@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-27T19:34:51.912Z",
+ "updatedAt": "2026-11-27T22:23:54.716Z",
  "games": [
   {
    "id": "401864545",
@@ -191,7 +191,11 @@
    "dog": "MSST",
    "spread": 17.5,
    "total": 56.5,
-   "status": "in"
+   "status": "post",
+   "favScore": 41,
+   "dogScore": 17,
+   "points": 58,
+   "result": "over"
   },
   {
    "id": "401856880",
@@ -199,7 +203,7 @@
    "date": "2026-11-27",
    "fav": "UTAH",
    "dog": "WVU",
-   "spread": 25.5,
+   "spread": 24.5,
    "total": 65.5,
    "status": "pre"
   },
