@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-26",
+  "gradedAt": "2026-11-27T01:00:07.178Z",
+  "grades": [
+    {
+      "pickId": "2026-11-26-s-nfl-401873081-d-swift-rushYds-29.5",
+      "actual": 65,
+      "outcome": "win",
+      "profitAtLimit": 0.34246575342465757
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873081-j-williams-recYds-29.5",
+      "actual": 68,
+      "outcome": "win",
+      "profitAtLimit": 0.273972602739726
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873081-r-odunze-recYds-29.5",
+      "actual": 87,
+      "outcome": "win",
+      "profitAtLimit": 0.40816326530612246
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873081-r-odunze-recYds-24.5",
+      "actual": 87,
+      "outcome": "win",
+      "profitAtLimit": 0.29940119760479034
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873081-r-odunze-receptions-2.5",
+      "actual": 6,
+      "outcome": "win",
+      "profitAtLimit": 0.5154639175257731
+    },
+    {
+      "pickId": "2026-11-26-s-nfl-401873081-j-gibbs-rushYds-69.5",
+      "actual": 205,
+      "outcome": "win",
+      "profitAtLimit": 0.3984063745019921
+    }
+  ]
+}
