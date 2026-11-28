@@ -1,0 +1,288 @@
+{
+  "date": "2026-11-27",
+  "gradedAt": "2026-11-28T00:31:39.361Z",
+  "grades": [
+    {
+      "pickId": "2026-11-27-s-nfl-401873083-m-pittman-recYds-10.5",
+      "actual": 7,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-27-s-nfl-401873083-m-pittman-recYds-9.5",
+      "actual": 7,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-27-s-nfl-401873083-m-pittman-recYds-4.5",
+      "actual": 7,
+      "outcome": "win",
+      "profitAtLimit": 0.44052863436123335
+    },
+    {
+      "pickId": "2026-11-27-s-nfl-401873083-d-washington-receptions-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-27-s-nfl-401873083-m-pittman-receptions-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-27-s-nfl-401873083-p-freiermuth-recYds-9.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-27-s-nfl-401873083-p-freiermuth-receptions-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-27-s-nfl-401873083-m-pittman-receptions-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-27-s-nfl-401873083-m-mims-receptions-0.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-27-s-nfl-401873083-r-dowdle-rushRecYds-29.5",
+      "actual": 74,
+      "outcome": "win",
+      "profitAtLimit": 0.33333333333333326
+    },
+    {
+      "pickId": "2026-11-27-s-nfl-401873083-j-coleman-recYds-14.5",
+      "actual": 46,
+      "outcome": "win",
+      "profitAtLimit": 0.4926108374384237
+    },
+    {
+      "pickId": "2026-11-27-s-nfl-401873083-j-coleman-recYds-9.5",
+      "actual": 46,
+      "outcome": "win",
+      "profitAtLimit": 0.2666666666666666
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020406-r-leonard-sog-1.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.33333333333333326
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020406-j-chychrun-sog-1.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 0.33333333333333326
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020406-c-hutson-sog-1.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 0.5714285714285714
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020407-m-knies-sog-1.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020406-c-hutson-sog-2.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 1.65
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020401-a-suniev-sog-1.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 1.1
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020410-t-connelly-sog-1.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020410-t-connelly-sog-2.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020406-r-leonard-points-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 1
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020403-w-johnston-points-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.6451612903225805
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020408-b-coleman-sog-1.5",
+      "actual": 4,
+      "outcome": "win",
+      "profitAtLimit": 0.606060606060606
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020404-b-point-sog-1.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.4545454545454546
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020405-s-couturier-sog-0.5",
+      "actual": 5,
+      "outcome": "win",
+      "profitAtLimit": 0.2666666666666666
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020410-m-misa-sog-0.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020401-s-nemec-points-0.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 2.1
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020402-l-cooley-assists-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 1.2000000000000002
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020403-r-thomas-assists-0.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 1.0499999999999998
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020410-m-marner-sog-2.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020406-a-protas-sog-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020402-v-trocheck-points-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.7142857142857144
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020403-r-thomas-sog-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020404-b-hagel-sog-2.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020402-l-cooley-points-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.5714285714285714
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020403-r-thomas-points-0.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.5714285714285714
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020402-j-marchessault-sog-1.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020406-m-tkachuk-sog-1.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.3846153846153846
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020406-a-tuch-sog-1.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.36363636363636376
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020402-r-josi-sog-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020410-j-eichel-points-0.5",
+      "actual": 1,
+      "outcome": "win",
+      "profitAtLimit": 0.29940119760479034
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020409-a-laferriere-sog-1.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.2666666666666666
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020403-w-johnston-sog-1.5",
+      "actual": 3,
+      "outcome": "win",
+      "profitAtLimit": 0.25
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020409-j-lacombe-sog-0.5",
+      "actual": 2,
+      "outcome": "win",
+      "profitAtLimit": 0.22222222222222232
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020410-m-marner-sog-1.5",
+      "actual": 0,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020408-j-erikssonek-sog-1.5",
+      "actual": 5,
+      "outcome": "win",
+      "profitAtLimit": 0.19999999999999996
+    },
+    {
+      "pickId": "2026-11-27-s-nhl-2026020404-b-hagel-sog-1.5",
+      "actual": 1,
+      "outcome": "loss",
+      "profitAtLimit": -1
+    }
+  ]
+}
